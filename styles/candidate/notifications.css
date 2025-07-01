@@ -1,0 +1,885 @@
+:root {
+    --primary: #257180;
+    --secondary: #F2E5BF;
+    --accent: #FD8B51;
+    --accent-secondary: #CB6040;
+    --bg-color: #ffffff;
+    --sidebar: #2F8A99;
+    --light-gray: #f5f5f5;
+    --border-color: #e0e0e0;
+    --text-primary: #333333;
+    --text-secondary: #666666;
+    --text-light: #999999;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color);
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 250px;
+    background-color: var(--sidebar);
+    color: white;
+    transition: all 0.3s ease;
+    position: sticky;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.sidebar.collapsed {
+    width: 80px;
+}
+
+.logo {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    text-align: center;
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo img {
+    max-width: 30%;
+    height: auto;
+    margin-left: 15px;
+    margin-top: 20px;
+}
+
+.sidebar.collapsed .logo img {
+    max-width: 60%;
+}
+
+.sidebar-menu {
+    padding: 20px 0;
+}
+
+.sidebar-menu a {
+    text-decoration: none;
+    color: white;
+    display: block;
+}
+
+.menu-item {
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.menu-item.active {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.menu-item i {
+    margin-right: 15px;
+    font-size: 18px;
+    width: 20px;
+    text-align: center;
+}
+
+.menu-text {
+    transition: opacity 0.3s;
+}
+
+.sidebar.collapsed .menu-text {
+    display: none;
+}
+
+.toggle-btn {
+    position: absolute;
+    top: 20px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    background-color: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: white;
+    border: 2px solid white;
+    z-index: 100;
+}
+
+/* Main Content Styles */
+.main-content {
+    flex: 1;
+    padding: 20px;
+    position: relative;
+    overflow-y: auto;
+}
+
+.notifications-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.notifications-header h1 {
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-primary);
+}
+
+.notification-icons {
+    display: flex;
+    gap: 15px;
+}
+
+.notification-icons a {
+    text-decoration: none;
+}
+
+.notification-icons i {
+    font-size: 20px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.notification-icons i:hover {
+    color: var(--accent);
+}
+
+/* Notifications Container */
+.notifications-container {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.notification-filters {
+    display: flex;
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--light-gray);
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    background: none;
+    border: none;
+    border-radius: 20px;
+    margin-right: 10px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: all 0.2s;
+}
+
+.filter-btn:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.filter-btn.active {
+    background-color: var(--primary);
+    color: white;
+}
+
+.notification-list {
+    padding: 0;
+}
+
+.notification-item {
+    display: flex;
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s;
+    align-items: flex-start;
+}
+
+.notification-item:hover {
+    background-color: var(--light-gray);
+}
+
+.notification-item.unread {
+    background-color: #e6f3f5;
+}
+
+.notification-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+}
+
+.notification-icon.application {
+    background-color: var(--primary);
+}
+
+.notification-icon.message {
+    background-color: var(--accent);
+}
+
+.notification-icon.system {
+    background-color: #6c757d;
+}
+
+.notification-icon.job {
+    background-color: #28a745;
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-title {
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: var(--text-primary);
+}
+
+.notification-body {
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.notification-time {
+    font-size: 12px;
+    color: var(--text-light);
+}
+
+.notification-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.notification-btn {
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.primary-btn {
+    background-color: var(--primary);
+    color: white;
+}
+
+.primary-btn:hover {
+    background-color: #1d5a66;
+}
+
+.secondary-btn {
+    background-color: #f0f0f0;
+    color: var(--text-secondary);
+}
+
+.secondary-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.notification-meta {
+    display: flex;
+    align-items: center;
+    min-width: 80px;
+    justify-content: flex-end;
+}
+
+.mark-read {
+    color: var(--text-light);
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 5px;
+}
+
+.mark-read:hover {
+    color: var(--accent);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 50px 20px;
+    color: var(--text-secondary);
+}
+
+.empty-state i {
+    font-size: 48px;
+    margin-bottom: 20px;
+    color: var(--text-light);
+}
+
+.empty-state h3 {
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        z-index: 1000;
+        transform: translateX(-100%);
+    }
+    
+    .sidebar.show {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        width: 100%;
+    }
+    
+    .notifications-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .notification-filters {
+        overflow-x: auto;
+        padding: 15px;
+    }
+
+    .notification-item {
+        flex-direction: column;
+    }
+
+    .notification-meta {
+        width: 100%;
+        justify-content: flex-start;
+        margin-top: 10px;
+    }
+}
+
+/* Accessibility Toggle */
+.accessibility-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: var(--primary);
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+    border: none;
+    transition: background-color 0.3s;
+}
+
+.accessibility-toggle:hover, .accessibility-toggle:focus {
+    background-color: var(--accent);
+    outline: none;
+}
+
+.accessibility-toggle i {
+    font-size: 24px;
+}
+
+.accessibility-panel {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    background-color: white;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    width: 250px;
+    display: none;
+}
+
+.accessibility-panel h3 {
+    margin-bottom: 15px;
+    font-family: 'Poppins', sans-serif;
+    color: var(--primary);
+    font-size: 16px;
+    border-bottom: 1px solid var(--divider);
+    padding-bottom: 8px;
+}
+
+.accessibility-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.accessibility-option label {
+    font-size: 14px;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--accent);
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px var(--accent);
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+/* Font size control */
+.font-size-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.font-size-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.font-size-btn:hover {
+    background-color: var(--secondary);
+}
+
+.font-size-value {
+    font-size: 14px;
+    color: #666;
+}
+
+/* High contrast mode */
+body.high-contrast {
+    --primary: #004052;
+    --secondary: #FFE066;
+    --accent: #FF5722;
+    --accent-secondary: #E64A19;
+    --bg-color: #000000;
+    --sidebar: #004052;
+    --light-gray: #333333;
+    --border-color: #444444;
+    --text-primary: #FFFFFF;
+    --text-secondary: #CCCCCC;
+    color: #FFFFFF;
+}
+
+/* Large text mode */
+body.large-text {
+    font-size: 120%;
+}
+
+body.larger-text {
+    font-size: 140%;
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+    }
+}
+
+body.reduce-motion * {
+    transition: none !important;
+    animation: none !important;
+}
+
+/* ===================================================================
+   ADDITIONAL STYLES FOR REAL DATA INTEGRATION
+   Add these styles to your existing notifications.css file
+   ================================================================== */
+
+/* Loading State */
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.loading-spinner {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
+
+.loading-spinner i {
+    animation: spin 1s linear infinite;
+}
+
+.loading-state h3 {
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.loading-state p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+/* Error State */
+.error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.error-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #e74c3c;
+}
+
+.error-state h3 {
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.error-state p {
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+}
+
+.error-state button {
+    padding: 0.75rem 1.5rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.error-state button:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+.error-state button i {
+    margin-right: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Enhanced Empty State */
+.empty-state button {
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--secondary-color);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.empty-state button:hover {
+    background: var(--hover-color);
+    transform: translateY(-1px);
+}
+
+/* Notification Feedback */
+.notification-feedback {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+    min-width: 300px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.notification-feedback.show {
+    transform: translateX(0);
+}
+
+.notification-feedback.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.notification-feedback.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.notification-feedback.info {
+    background: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.notification-feedback i {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+/* Pagination Controls */
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem 1rem 1rem;
+    border-top: 1px solid var(--border-color);
+    margin-top: 1rem;
+}
+
+.pagination-btn {
+    padding: 0.75rem 1.25rem;
+    background: var(--card-background);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pagination-btn:hover:not(.disabled) {
+    background: var(--hover-color);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pagination-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--disabled-background);
+    color: var(--text-muted);
+}
+
+.pagination-info {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Enhanced notification actions */
+.notification-actions button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.notification-actions button.loading {
+    position: relative;
+    color: transparent;
+}
+
+.notification-actions button.loading::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 16px;
+    height: 16px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Animations */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Animation for notification items */
+.notification-item {
+    animation: fadeIn 0.3s ease;
+}
+
+/* Mobile responsiveness for new elements */
+@media (max-width: 768px) {
+    .notification-feedback {
+        right: 10px;
+        left: 10px;
+        min-width: auto;
+        top: 10px;
+    }
+    
+    .pagination-controls {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .pagination-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .loading-state,
+    .error-state {
+        padding: 2rem 1rem;
+    }
+    
+    .loading-state h3,
+    .error-state h3 {
+        font-size: 1.1rem;
+    }
+}
+
+/* High contrast mode support */
+.high-contrast .notification-feedback.success {
+    background: #000;
+    color: #00ff00;
+    border-color: #00ff00;
+}
+
+.high-contrast .notification-feedback.error {
+    background: #000;
+    color: #ff0000;
+    border-color: #ff0000;
+}
+
+.high-contrast .notification-feedback.info {
+    background: #000;
+    color: #0099ff;
+    border-color: #0099ff;
+}
+
+.high-contrast .pagination-btn {
+    background: #000;
+    color: #fff;
+    border-color: #fff;
+}
+
+.high-contrast .pagination-btn:hover:not(.disabled) {
+    background: #333;
+}
+
+/* Reduced motion support */
+.reduce-motion .notification-feedback {
+    transition: none;
+}
+
+.reduce-motion .notification-item {
+    animation: none;
+}
+
+.reduce-motion .pagination-btn {
+    transition: none;
+}
+
+.reduce-motion .loading-spinner i {
+    animation: none;
+}
+
+/* Focus styles for accessibility */
+.pagination-btn:focus,
+.error-state button:focus,
+.empty-state button:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+    .notification-feedback,
+    .pagination-controls {
+        display: none;
+    }
+}

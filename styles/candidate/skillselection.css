@@ -1,0 +1,352 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@400;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background-color: #f7f9fa;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    text-align: center;
+    padding: 20px;
+    position: relative;
+}
+
+.logo {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 70px;
+    height: auto;
+}
+
+.header {
+    margin-top: 60px;
+    margin-bottom: 30px;
+    max-width: 600px;
+}
+
+h1 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 28px;
+    color: #257180;
+    margin-bottom: 15px;
+}
+
+p {
+    font-size: 16px;
+    color: #555;
+    line-height: 1.5;
+}
+
+.progress-bar {
+    width: 100%;
+    max-width: 600px;
+    height: 8px;
+    background-color: #e1e1e1;
+    border-radius: 4px;
+    margin: 20px 0 30px;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-indicator {
+    position: absolute;
+    height: 100%;
+    width: 50%;
+    background-color: #FD8B51;
+    border-radius: 4px;
+}
+
+.search-container {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 30px;
+}
+
+.search-box {
+    width: 100%;
+    padding: 12px 40px 12px 15px;
+    border: 2px solid #257180;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+    background-color: white;
+}
+
+.search-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #257180;
+}
+
+.category-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    max-width: 800px;
+}
+
+.category-tab {
+    background-color: #e1f0f2;
+    color: #257180;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 2px solid transparent;
+}
+
+.category-tab:hover {
+    background-color: #c5e1e5;
+}
+
+.category-tab.active {
+    background-color: #257180;
+    color: white;
+    border-color: #257180;
+}
+
+.category-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    max-width: 800px;
+    margin-bottom: 30px;
+}
+
+.skill-card {
+    width: 160px;
+    height: 110px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    padding: 15px 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid transparent;
+}
+
+.skill-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+.skill-card.selected {
+    border-color: #FD8B51;
+    background-color: #fff9f2;
+}
+
+.skill-icon {
+    font-size: 24px;
+    color: #257180;
+    margin-bottom: 5px;
+}
+
+.skill-card.selected .skill-icon {
+    color: #FD8B51;
+}
+
+.skill-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+}
+
+.skill-tooltip {
+    position: absolute;
+    bottom: -50px;
+    left: 0;
+    right: 0;
+    background-color: #333;
+    color: white;
+    padding: 5px;
+    border-radius: 4px;
+    font-size: 12px;
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.skill-card:hover .skill-tooltip {
+    bottom: 0;
+    opacity: 0.9;
+}
+
+.selected-skills-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 20px 0 80px;
+}
+
+.selected-skills-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 18px;
+    color: #257180;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.selected-skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-start;
+    min-height: 50px;
+    padding: 15px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.selected-skill {
+    background-color: #257180;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.remove-skill {
+    background-color: rgba(255,255,255,0.2);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background 0.3s;
+}
+
+.remove-skill:hover {
+    background-color: rgba(255,255,255,0.4);
+}
+
+.buttons {
+    width: 100%;
+    max-width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    background-color: #f7f9fa;
+    border-top: 1px solid #e1e1e1;
+    z-index: 100;
+}
+
+.btn {
+    font-size: 16px;
+    font-weight: 600;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn.back {
+    background-color: #e1e1e1;
+    color: #333;
+}
+
+.btn.back:hover {
+    background-color: #d1d1d1;
+}
+
+.btn.clear {
+    background-color: #f2d9d5;
+    color: #CB6040;
+}
+
+.btn.clear:hover {
+    background-color: #f0c5bd;
+}
+
+.btn.continue {
+    background-color: #FD8B51;
+    color: white;
+}
+
+.btn.continue:hover {
+    background-color: #CB6040;
+}
+
+.right-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .category-content {
+        gap: 10px;
+    }
+    
+    .skill-card {
+        width: 130px;
+        height: 100px;
+    }
+    
+    .buttons {
+        padding: 15px;
+    }
+    
+    .btn {
+        padding: 10px 16px;
+        font-size: 14px;
+    }
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.skill-card {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.skill-card:nth-child(2n) {
+    animation-delay: 0.1s;
+}
+
+.skill-card:nth-child(3n) {
+    animation-delay: 0.2s;
+}

@@ -1,0 +1,715 @@
+/* CSS Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    line-height: 1.6;
+    color: #333;
+    background-color: #f9f9f9;
+    font-size: 16px; /* Base font size for better readability */
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+ul {
+    list-style: none;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Accessibility Classes */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Focus styles for keyboard navigation */
+a:focus, button:focus, input:focus, textarea:focus {
+    outline: 3px solid #FD8B51;
+    outline-offset: 2px;
+}
+
+/* Button Styles with improved contrast */
+.btn {
+    display: inline-block;
+    padding: 10px 20px; /* Adjusted to match landing page */
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    font-size: 14px;
+}
+
+.btn-primary {
+    background-color: #FD8B51;
+    color: white; /* Changed to match landing page */
+}
+
+.btn-primary:hover {
+    background-color: #FD8B51; /* Changed to match landing page */
+}
+
+.btn-secondary {
+    background-color: #257180;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #257180; /* Changed to match landing page */
+}
+
+/* Header Styles */
+header {
+    background-color: #ffffff;
+    color: black;
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo img {
+    height: 50px;
+    margin-right: 10px;
+}
+
+.logo span {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+nav ul {
+    display: flex;
+}
+
+nav ul li {
+    margin-left: 20px;
+}
+
+nav ul li a {
+    font-weight: 500;
+    padding: 5px 10px; /* Adjusted to match landing page */
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+nav ul li a:hover, nav ul li a.active {
+    background-color: #F2E5BF;
+}
+
+/* About Hero Section */
+.about-hero {
+    background-color: #257180;
+    color: white;
+    padding: 60px 0; /* Adjusted to match landing page hero */
+    text-align: center;
+}
+
+.about-hero h1 {
+    font-size: 2.5rem; /* Changed from 2.8rem to match landing page */
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+}
+
+.about-hero p {
+    font-size: 1.1rem; /* Changed from 1.25rem to match landing page */
+    max-width: 700px; /* Changed from 800px to match landing page */
+    margin: 0 auto 30px;
+    line-height: 1.6; /* Adjusted to match landing page */
+}
+
+/* Infographic Timeline Section */
+.timeline-section {
+    padding: 60px 0; /* Changed from 80px to match landing page sections */
+    background-color: #fff;
+    position: relative;
+}
+
+.timeline-section h2 {
+    font-size: 2rem; /* Changed from 2.5rem to match landing page */
+    margin-bottom: 40px; /* Changed from 60px to match landing page */
+    color: #257180;
+    text-align: center;
+}
+
+.timeline {
+    position: relative;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.timeline::after {
+    content: '';
+    position: absolute;
+    width: 6px;
+    background-color: #FD8B51;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    margin-left: -3px;
+    border-radius: 3px;
+}
+
+.timeline-item {
+    padding: 10px 40px;
+    position: relative;
+    width: 50%;
+    box-sizing: border-box;
+}
+
+.timeline-item:nth-child(odd) {
+    left: 0;
+}
+
+.timeline-item:nth-child(even) {
+    left: 50%;
+}
+
+.timeline-content {
+    padding: 20px; /* Changed from 30px to be more consistent */
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.timeline-content:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.timeline-item:nth-child(odd) .timeline-content {
+    border-left: 5px solid #257180;
+}
+
+.timeline-item:nth-child(even) .timeline-content {
+    border-right: 5px solid #257180;
+}
+
+.timeline-icon {
+    width: 60px;
+    height: 60px;
+    background-color: #FD8B51;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 20px;
+    z-index: 10;
+}
+
+.timeline-item:nth-child(odd) .timeline-icon {
+    right: -30px;
+}
+
+.timeline-item:nth-child(even) .timeline-icon {
+    left: -30px;
+}
+
+.timeline-icon i {
+    font-size: 24px;
+    color: white;
+}
+
+.timeline-content h3 {
+    margin-bottom: 10px; /* Changed from 15px to match landing page */
+    color: #257180;
+    font-size: 1.2rem; /* Changed from 1.5rem to match landing page */
+}
+
+.timeline-content p {
+    color: #666; /* Changed from #333 to match landing page */
+    font-size: 0.9rem; /* Changed from 1.1rem to match landing page */
+    line-height: 1.6;
+}
+
+/* Mission and Values */
+.mission-values {
+    background-color: #f9f9f9;
+    padding: 60px 0; /* Changed from 80px to match landing page */
+}
+
+.mission-values h2 {
+    font-size: 2rem; /* Changed from 2.5rem to match landing page */
+    margin-bottom: 40px; /* Changed from 60px to match landing page */
+    color: #257180;
+    text-align: center;
+}
+
+.values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Changed from 280px to match landing page */
+    gap: 30px; /* Changed from 40px to match landing page */
+}
+
+.value-card {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 30px 20px; /* Changed from 40px 30px to match landing page category cards */
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.value-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 8px;
+    background-color: #FD8B51;
+    z-index: -1;
+}
+
+.value-card:hover {
+    transform: translateY(-5px); /* Changed from -10px to match landing page */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Adjusted to match landing page */
+}
+
+.value-card .icon {
+    width: 70px; /* Changed from 90px to match landing page */
+    height: 70px; /* Changed from 90px to match landing page */
+    background-color: #e6f3f0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px; /* Changed from 25px to match landing page */
+}
+
+.value-card .icon i {
+    font-size: 30px; /* Changed from 40px to match landing page */
+    color: #257180;
+}
+
+.value-card h3 {
+    margin-bottom: 10px; /* Changed from 20px to match landing page */
+    color: #257180;
+    font-size: 1.2rem; /* Changed from 1.5rem to match landing page */
+}
+
+.value-card p {
+    color: #666; /* Changed from #333 to match landing page */
+    font-size: 0.9rem; /* Changed from 1.1rem to match landing page */
+    line-height: 1.6; /* Adjusted to match landing page */
+}
+
+/* Team Section */
+.team-section {
+    padding: 60px 0; /* Changed from 80px to match landing page sections */
+    background-color: #fff;
+}
+
+.team-section h2 {
+    font-size: 2rem; /* Changed from 2.5rem to match landing page */
+    margin-bottom: 40px; /* Changed from 60px to match landing page */
+    color: #257180;
+    text-align: center;
+}
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px; /* Changed from 40px to match landing page */
+}
+
+.team-member {
+    background-color: #f9f9f9;
+    border-radius: 10px; /* Changed from 15px for consistency */
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.team-member:hover {
+    transform: translateY(-5px); /* Changed from -10px to match landing page */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Adjusted to match landing page */
+}
+
+.member-image {
+    height: 270px;
+    background-color: #e6f3f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.member-image i {
+    font-size: 100px;
+    color: #257180;
+}
+
+.member-info {
+    padding: 20px; /* Changed from 25px to match landing page padding */
+    text-align: center;
+    background-color: #fff;
+}
+
+.member-info h3 {
+    margin-bottom: 10px;
+    color: #257180;
+    font-size: 1.2rem; /* Changed from 1.4rem to match landing page */
+}
+
+.member-info p {
+    color: #666; /* Changed from #333 to match landing page */
+    margin-bottom: 20px;
+    font-size: 0.9rem; /* Changed from 1.1rem to match landing page */
+}
+
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.social-links a {
+    width: 40px;
+    height: 40px;
+    background-color: #257180;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.social-links a:hover {
+    background-color: #FD8B51;
+    transform: translateY(-3px);
+}
+
+/* Contact Section */
+.contact-section {
+    padding: 60px 0; /* Changed from 80px to match landing page sections */
+    background-color: #f9f9f9;
+}
+
+.contact-section h2 {
+    font-size: 2rem; /* Changed from 2.5rem to match landing page */
+    margin-bottom: 40px; /* Changed from 60px to match landing page */
+    color: #257180;
+    text-align: center;
+}
+
+.contact-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px; /* Changed from 50px to match landing page */
+    align-items: flex-start;
+}
+
+.contact-info {
+    flex: 1;
+    min-width: 300px;
+    background-color: #fff;
+    padding: 30px; /* Changed from 40px to match landing page padding */
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    height: 100%;
+}
+
+.contact-info p {
+    margin-bottom: 20px; /* Changed from 30px to match landing page */
+    color: #666; /* Changed from #333 to match landing page */
+    font-size: 0.9rem; /* Changed from 1.1rem to match landing page */
+    line-height: 1.6;
+}
+
+.contact-details {
+    margin-top: 20px; /* Changed from 30px to match landing page */
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px; /* Changed from 25px to match landing page */
+}
+
+.contact-item i {
+    font-size: 24px;
+    color: #fff;
+    margin-right: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: #257180;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.contact-item div h4 {
+    font-size: 1.1rem; /* Changed from 1.2rem to match landing page */
+    margin-bottom: 5px;
+    color: #257180;
+}
+
+.contact-item div p {
+    margin-bottom: 0;
+    font-size: 0.9rem; /* Changed from 1.1rem to match landing page */
+}
+
+.contact-form {
+    flex: 1;
+    min-width: 300px;
+    background-color: #fff;
+    padding: 30px; /* Changed from 40px to match landing page padding */
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.form-group {
+    margin-bottom: 20px; /* Changed from 25px to match landing page */
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px; /* Changed from 10px to match landing page */
+    font-weight: 500;
+    font-size: 1rem; /* Changed from 1.1rem to match landing page */
+    color: #333; /* Changed to match landing page */
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px; /* Changed from 15px to match landing page */
+    border-radius: 5px; /* Changed from 8px to match landing page */
+    border: 1px solid #ddd; /* Changed from 2px to match landing page */
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: #FD8B51;
+    outline: none;
+}
+
+.form-group textarea {
+    height: 150px;
+    resize: vertical;
+}
+
+/* Footer Styles */
+footer {
+    background-color: #257180;
+    color: white;
+    padding: 60px 0 20px;
+}
+
+.footer-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 40px;
+}
+
+.footer-section {
+    flex: 1;
+    min-width: 200px;
+    margin-bottom: 30px;
+}
+
+.footer-section h3 {
+    font-size: 1.2rem; /* Adjusted to match landing page */
+    margin-bottom: 20px; /* Changed from 25px to match landing page */
+    position: relative;
+}
+
+.footer-section h3:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -10px;
+    width: 40px;
+    height: 2px; /* Changed from 3px to match landing page */
+    background-color: #FD8B51;
+}
+
+.footer-section ul li {
+    margin-bottom: 10px; /* Changed from 15px to match landing page */
+}
+
+.footer-section ul li a {
+    opacity: 0.8; /* Changed from 0.9 to match landing page */
+    transition: all 0.3s ease;
+    font-size: 1rem; /* Changed from 1.1rem to match landing page */
+}
+
+.footer-section ul li a:hover {
+    opacity: 1;
+    padding-left: 5px;
+    color: #FD8B51; /* Added to match hover effect in about page */
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1); /* Changed from 0.2 to match landing page */
+    font-size: 1rem; /* Changed from 1.1rem to match landing page */
+}
+
+/* Accessibility Features for Skip Navigation */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #FD8B51;
+    color: #000;
+    padding: 10px;
+    z-index: 1000;
+    transition: top 0.3s;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
+/* Responsive Styles with accessibility improvements */
+@media (max-width: 992px) {
+    .contact-container {
+        flex-direction: column;
+    }
+
+    .timeline::after {
+        left: 40px;
+    }
+
+    .timeline-item {
+        width: 100%;
+        padding-left: 80px;
+        padding-right: 0;
+    }
+
+    .timeline-item:nth-child(even) {
+        left: 0;
+    }
+
+    .timeline-icon {
+        left: 10px !important;
+        right: auto !important;
+    }
+
+    .timeline-item:nth-child(odd) .timeline-content,
+    .timeline-item:nth-child(even) .timeline-content {
+        border-left: 5px solid #257180;
+        border-right: none;
+    }
+}
+
+@media (max-width: 768px) {
+    header .container {
+        flex-direction: column;
+    }
+    
+    .logo {
+        margin-bottom: 15px;
+    }
+    
+    nav ul {
+        margin-bottom: 15px;
+    }
+
+    .about-hero h1 {
+        font-size: 2rem; /* Changed from 2.2rem to match landing page */
+    }
+
+    .about-hero p {
+        font-size: 1.1rem;
+    }
+
+    section h2 {
+        font-size: 1.8rem; /* Changed from 2rem to match landing page */
+    }
+
+    .footer-section {
+        min-width: 100%;
+    }
+    
+    .category-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+}
+
+@media (max-width: 576px) {
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    nav ul li {
+        margin: 5px 0;
+    }
+    
+    .about-hero h1 {
+        font-size: 1.8rem;
+    }
+
+    .value-card .icon {
+        width: 70px;
+        height: 70px;
+    }
+
+    .value-card .icon i {
+        font-size: 30px;
+    }
+
+    .value-card h3 {
+        font-size: 1.2rem; /* Changed from 1.3rem to match landing page */
+    }
+
+    .team-grid,
+    .values-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .timeline-content h3 {
+        font-size: 1.2rem; /* Changed from 1.3rem to match landing page */
+    }
+
+    .timeline-content p {
+        font-size: 0.9rem; /* Changed from 1rem to match landing page */
+    }
+}

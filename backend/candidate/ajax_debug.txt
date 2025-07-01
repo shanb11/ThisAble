@@ -1,0 +1,3800 @@
+{
+    "time": "2025-05-20 21:08:54",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-20T19:08:54.344Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-20 21:08:58",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-20T19:08:58.394Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-20 21:10:27",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-20T19:10:27.238Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-20 21:10:39",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-20T19:10:39.294Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-20 21:11:07",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-20T19:11:07.788Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "Test_5479",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-20 21:15:20",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-20T19:15:20.282Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "Test_5479",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-20 21:16:51",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-20T19:16:51.576Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "Test_5479",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-20 21:17:29",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-20T19:17:29.031Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "Test_5479",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-20 21:17:44",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-20T19:17:44.242Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "Test_5479",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-20 21:17:46",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-20T19:17:46.722Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "Test_5479",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-20 21:18:08",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-20T19:18:08.397Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "Test_5479",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-20 21:18:10",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-20T19:18:10.976Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "Test_5479",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-21 16:52:18",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-21T14:52:18.310Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-21 17:12:25",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-21T15:12:25.618Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-21 17:12:26",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-21T15:12:26.906Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-21 17:12:29",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-21T15:12:29.412Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-21 18:57:57",
+    "method": "POST",
+    "request_uri": "\/thisable\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-21T16:57:57.944Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": "0",
+        "seeker_id": "20",
+        "user_email": "eme@eme.com",
+        "user_name": "eme",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-21 18:58:02",
+    "method": "POST",
+    "request_uri": "\/thisable\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-21T16:58:02.559Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": "0",
+        "seeker_id": "20",
+        "user_email": "eme@eme.com",
+        "user_name": "eme",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-21 20:18:46",
+    "method": "POST",
+    "request_uri": "\/thisable\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-21T18:18:46.851Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": "0",
+        "seeker_id": "20",
+        "user_email": "eme@eme.com",
+        "user_name": "eme",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-21 21:32:57",
+    "method": "POST",
+    "request_uri": "\/thisable\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-21T19:32:57.304Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": "0",
+        "seeker_id": "21",
+        "user_email": "emeeme@eme.com",
+        "user_name": "Rob",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-21 21:49:22",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-21T19:49:22.860Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": "0",
+        "seeker_id": "25",
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-21 21:53:43",
+    "method": "POST",
+    "request_uri": "\/thisable\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-21T19:53:43.204Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": "26",
+        "seeker_id": "26",
+        "user_email": "weh@weh.com",
+        "user_name": "Weh",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-21 21:53:54",
+    "method": "POST",
+    "request_uri": "\/thisable\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-21T19:53:54.786Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": "26",
+        "seeker_id": "26",
+        "user_email": "weh@weh.com",
+        "user_name": "Weh",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-21 22:44:22",
+    "method": "POST",
+    "request_uri": "\/thisable\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-21T20:44:22.057Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": "26",
+        "seeker_id": "26",
+        "user_email": "weh@weh.com",
+        "user_name": "Weh",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 07:54:19",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T05:54:19.725Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 07:54:33",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T05:54:33.533Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 07:57:31",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T05:57:31.113Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 07:57:33",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T05:57:33.797Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 07:57:57",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T05:57:57.893Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 08:12:11",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T06:12:11.714Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 08:12:25",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T06:12:25.284Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 08:12:27",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T06:12:27.849Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 08:13:24",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T06:13:24.361Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 08:13:27",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T06:13:27.080Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 08:13:43",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T06:13:43.096Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 08:18:55",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T06:18:55.137Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 08:22:30",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T06:22:29.956Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 08:22:32",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T06:22:32.136Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 08:22:35",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T06:22:35.336Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 08:28:07",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T06:28:07.219Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 08:28:52",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T06:28:52.382Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 08:28:57",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T06:28:57.856Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 08:29:13",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T06:29:13.646Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 08:32:13",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T06:32:13.502Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 08:32:33",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T06:32:33.545Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 08:32:34",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T06:32:34.861Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 08:32:38",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T06:32:38.423Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 08:42:55",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T06:42:55.812Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 08:42:57",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T06:42:57.136Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 08:42:59",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T06:42:59.574Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 08:43:14",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T06:43:14.989Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 08:43:21",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T06:43:21.372Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 08:47:32",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T06:47:32.669Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 09:17:19",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T07:17:18.947Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 09:17:21",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T07:17:21.419Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 09:17:33",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T07:17:33.767Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 09:17:47",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T07:17:47.079Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 26,
+        "seeker_id": 27,
+        "user_email": "smbacs02@gmail.com",
+        "user_name": "Mich",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 12:38:30",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T10:38:30.252Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 12:38:55",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T10:38:55.577Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 12:39:33",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T10:39:33.233Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 12:39:36",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T10:39:36.700Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 12:39:38",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T10:39:38.091Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 12:44:43",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T10:44:43.053Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 12:44:44",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T10:44:44.285Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 12:44:45",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T10:44:45.784Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 12:45:16",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T10:45:16.840Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 12:45:19",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T10:45:19.351Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 12:45:48",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T10:45:48.045Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 12:45:52",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T10:45:52.591Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 12:46:16",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T10:46:16.075Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 12:46:33",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T10:46:33.275Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 12:47:16",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T10:47:16.810Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 12:47:20",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T10:47:20.196Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 12:47:22",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T10:47:22.464Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 12:47:29",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T10:47:29.741Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 12:47:33",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T10:47:33.637Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 12:47:55",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T10:47:55.984Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 12:55:58",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T10:55:58.248Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 12:56:07",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T10:56:07.724Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 12:56:38",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T10:56:38.648Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 12:56:49",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T10:56:49.859Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 12:57:05",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T10:57:05.130Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 12:57:34",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T10:57:34.508Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 12:57:36",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T10:57:36.164Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 12:59:27",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T10:59:27.328Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 13:32:03",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T11:32:03.045Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-22 18:38:32",
+    "method": "POST",
+    "request_uri": "\/thisable\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-22T16:38:32.897Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": "28",
+        "seeker_id": "28",
+        "user_email": "test@user.com",
+        "user_name": "Test",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 04:16:43",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T02:16:43.883Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 04:18:09",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T02:18:09.910Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 04:18:30",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T02:18:30.208Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 04:58:46",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T02:58:46.530Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 04:58:49",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T02:58:49.785Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 04:58:59",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T02:58:59.807Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 04:59:32",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T02:59:32.805Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 05:04:38",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T03:04:38.412Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 05:04:41",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T03:04:41.403Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 05:04:44",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T03:04:44.351Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 05:13:37",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T03:13:37.441Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 05:13:58",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T03:13:58.797Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 05:14:02",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T03:14:02.347Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 05:14:04",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T03:14:04.869Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 05:14:22",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T03:14:22.470Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 05:26:18",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T03:26:18.229Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 05:37:02",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T03:37:02.281Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 05:37:05",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T03:37:04.969Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 05:37:06",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T03:37:06.331Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 05:37:23",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T03:37:23.251Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 05:38:22",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T03:38:22.011Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 05:38:26",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T03:38:26.363Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 05:38:29",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T03:38:29.146Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 05:38:44",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T03:38:44.502Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:06:22",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:06:22.508Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:06:24",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:06:23.987Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:06:25",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:06:25.366Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:06:37",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:06:37.502Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:06:40",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:06:40.448Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:06:47",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:06:47.667Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:14:36",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:14:36.388Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:14:39",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:14:39.615Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:14:48",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:14:48.979Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:15:12",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:15:12.086Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:15:14",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:15:14.199Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:15:20",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:15:20.196Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:21:06",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:21:06.047Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:21:10",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:21:10.833Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:21:20",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:21:20.172Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:21:21",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:21:21.637Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:22:19",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:22:19.059Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:28:40",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:28:40.531Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:28:43",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:28:43.118Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:29:13",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:29:13.313Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:29:19",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:29:19.541Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:31:01",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:31:01.936Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:37:09",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:37:09.742Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:40:44",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:40:44.606Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:46:41",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:46:41.920Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:46:45",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:46:45.446Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:46:50",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:46:50.559Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:54:43",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:54:43.590Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:54:49",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:54:49.206Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:55:49",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:55:49.972Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 06:59:04",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T04:59:04.360Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 08:23:59",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T06:23:59.623Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 08:24:16",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T06:24:16.462Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 08:24:49",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T06:24:49.739Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 08:24:51",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T06:24:51.034Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 08:24:54",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T06:24:54.604Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 08:25:39",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T06:25:39.472Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 08:26:15",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T06:26:15.643Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 08:26:37",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T06:26:37.631Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 08:38:04",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T06:38:04.004Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 08:38:22",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T06:38:22.245Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 08:54:35",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T06:54:35.030Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 08:54:46",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T06:54:46.219Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 09:02:22",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T07:02:22.844Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 18:49:44",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T16:49:44.769Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 18:50:30",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T16:50:30.579Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 18:57:13",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T16:57:13.392Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 18:57:14",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T16:57:14.734Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 18:57:16",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T16:57:16.032Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 18:57:48",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T16:57:48.183Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 19:02:54",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T17:02:54.557Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 14,
+        "seeker_id": 15,
+        "user_email": "thisableee@gmail.com",
+        "user_name": "This",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 19:03:39",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T17:03:39.766Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 19:06:26",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T17:06:26.297Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 19:34:48",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T17:34:48.254Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 19:51:02",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T17:51:02.843Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 20:21:37",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T18:21:37.188Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 20:21:45",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T18:21:45.698Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 20:21:51",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T18:21:51.124Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 20:22:03",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T18:22:03.682Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 20:22:14",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T18:22:14.675Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 20:49:14",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T18:49:14.071Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 20:49:25",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T18:49:25.706Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 20:49:45",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T18:49:45.535Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 20:52:39",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T18:52:39.884Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 20:52:42",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T18:52:42.416Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 20:53:50",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T18:53:50.828Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 20:53:56",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T18:53:56.083Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 20:54:40",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T18:54:40.055Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 20:54:45",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T18:54:45.429Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-23 20:55:24",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-23T18:55:24.595Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-24 07:08:19",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-24T05:08:19.411Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-24 07:20:46",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-24T05:20:46.771Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-24 07:20:49",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-24T05:20:49.708Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-24 07:21:16",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-24T05:21:16.182Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-24 07:21:18",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-24T05:21:18.681Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-24 07:21:36",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-24T05:21:36.791Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-24 07:21:38",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-24T05:21:38.151Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-24 07:21:39",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-24T05:21:39.623Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-24 07:21:42",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-24T05:21:42.868Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-24 07:22:39",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-24T05:22:39.267Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-24 07:22:42",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-24T05:22:42.589Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-24 07:24:05",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-24T05:24:05.286Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-24 07:32:57",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-24T05:32:57.684Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-24 07:33:00",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-24T05:33:00.165Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-24 07:34:46",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-24T05:34:46.901Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-24 07:40:29",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-24T05:40:29.218Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-24 08:38:03",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-24T06:38:03.149Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-24 08:41:15",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-24T06:41:15.433Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+
+{
+    "time": "2025-05-24 08:41:18",
+    "method": "POST",
+    "request_uri": "\/ThisAble\/backend\/candidate\/ajax_debug.php",
+    "post": {
+        "test_field": "test_value",
+        "timestamp": "2025-05-24T06:41:18.775Z"
+    },
+    "get": [],
+    "session": {
+        "user_id": 15,
+        "seeker_id": 16,
+        "user_email": "baccayshan@gmail.com",
+        "user_name": "Shan Michael",
+        "logged_in": true,
+        "setup_complete": true
+    }
+}
+

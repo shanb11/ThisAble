@@ -1,0 +1,194 @@
+--- New signup attempt: 2025-05-06 00:50:53 ---
+POST data: Array
+(
+    [firstName] => Shan
+    [middleName] => 
+    [lastName] => Baccay
+    [suffix] => 
+    [email] => user1@gmail.com
+    [phone] => 09664873735
+    [disability] => 2
+    [password] => aaa
+    [pwdIdNumber] => 111
+    [pwdIdIssuedDate] => 2025-05-10
+    [pwdIdIssuingLGU] => Indang
+    [verificationToken] => 
+)
+
+FILES data: Array
+(
+    [pwdIdFile] => Array
+        (
+            [name] => Bookshelf.jpg
+            [full_path] => Bookshelf.jpg
+            [type] => image/jpeg
+            [tmp_name] => C:\xampp\tmp\php754E.tmp
+            [error] => 0
+            [size] => 32865
+        )
+
+)
+
+Starting form processing
+Form data processed: Shan, Baccay, user1@gmail.com, 09664873735, 2, PWD ID: 111
+Starting database operations
+Inserted job_seeker, got seeker_id: 4
+Inserted pwd_id
+Database error: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'user1@gmail.com' for key 'username'
+--- New signup attempt: 2025-05-06 00:51:39 ---
+POST data: Array
+(
+    [firstName] => Shan
+    [middleName] => 
+    [lastName] => Baccay
+    [suffix] => 
+    [email] => baccayshan@gmail.com
+    [phone] => 09664873735
+    [disability] => 8
+    [password] => aaa
+    [pwdIdNumber] => 111
+    [pwdIdIssuedDate] => 2025-05-15
+    [pwdIdIssuingLGU] => Mendez
+    [verificationToken] => 
+)
+
+FILES data: Array
+(
+    [pwdIdFile] => Array
+        (
+            [name] => Bed.jpg
+            [full_path] => Bed.jpg
+            [type] => image/jpeg
+            [tmp_name] => C:\xampp\tmp\php293E.tmp
+            [error] => 0
+            [size] => 80033
+        )
+
+)
+
+Starting form processing
+Form data processed: Shan, Baccay, baccayshan@gmail.com, 09664873735, 8, PWD ID: 111
+Starting database operations
+Inserted job_seeker, got seeker_id: 5
+Inserted pwd_id
+Inserted user_account
+Transaction committed successfully
+2025-05-21 21:41:18 | Signup process started
+2025-05-21 21:41:18 | POST data received: {"firstName":"Please","middleName":"","lastName":"Gumana ","suffix":"Ka","email":"admin1@gmail.com","phone":"09664873735","disability":"9","password":"www","pwdIdNumber":"109010","pwdIdIssuedDate":"2025-05-06","pwdIdIssuingLGU":"General Mariano Alvarez (GMA)","action":"signup","verificationToken":""}
+2025-05-21 21:41:18 | FILES data received: {"pwdIdFile":{"name":"moonlit-taj-mahal-with-van-gogh-inspired-sky-1234042397831200838.jpeg","full_path":"moonlit-taj-mahal-with-van-gogh-inspired-sky-1234042397831200838.jpeg","type":"image\/jpeg","tmp_name":"C:\\xampp\\tmp\\phpE051.tmp","error":0,"size":1083652}}
+2025-05-21 21:41:19 | Transaction started
+2025-05-21 21:41:19 | New seeker_id created: 23
+2025-05-21 21:41:19 | File upload found: {"name":"moonlit-taj-mahal-with-van-gogh-inspired-sky-1234042397831200838.jpeg","full_path":"moonlit-taj-mahal-with-van-gogh-inspired-sky-1234042397831200838.jpeg","type":"image\/jpeg","tmp_name":"C:\\xampp\\tmp\\phpE051.tmp","error":0,"size":1083652}
+2025-05-21 21:41:19 | Attempting to move uploaded file to: ../../uploads/pwd_ids/23_682e2c5f63439.jpeg
+2025-05-21 21:41:19 | Failed to move uploaded file. PHP error: 
+2025-05-21 21:41:19 | Preparing to insert PWD ID with imagePath: NULL
+2025-05-21 21:41:19 | PWD ID record inserted with image path: NULL
+2025-05-21 21:41:19 | Transaction committed successfully
+2025-05-21 21:45:15 | POST request received
+2025-05-21 21:45:15 | Form data received: {"firstName":"Jewel","lastName":"Baccay","email":"user1@gmail.com","phone":"09123456789","disability":5,"pwdIdNumber":"123112"}
+2025-05-21 21:45:15 | File upload found: {"name":"moonlit-taj-mahal-with-van-gogh-inspired-sky-1234042397831200838.jpeg","full_path":"moonlit-taj-mahal-with-van-gogh-inspired-sky-1234042397831200838.jpeg","type":"image\/jpeg","tmp_name":"C:\\xampp\\tmp\\php7CA3.tmp","error":0,"size":1083652}
+2025-05-21 21:45:15 | Transaction started
+2025-05-21 21:45:15 | New seeker_id created: 24
+2025-05-21 21:45:15 | Attempting to move uploaded file to: ../../uploads/pwd_ids/24_682e2d4b405bc.jpeg
+2025-05-21 21:45:15 | File successfully moved to: ../../uploads/pwd_ids/24_682e2d4b405bc.jpeg
+2025-05-21 21:45:15 | PWD ID inserted with image path: ../../uploads/pwd_ids/24_682e2d4b405bc.jpeg
+2025-05-21 21:45:15 | Transaction committed successfully
+2025-05-21 21:51:22 | POST request received
+2025-05-21 21:51:22 | Form data received: {"firstName":"Weh","lastName":"Weh","email":"weh@weh.com","phone":"09664873735","disability":10,"pwdIdNumber":"8787"}
+2025-05-21 21:51:22 | File upload found: {"name":"sarap.jpg","full_path":"sarap.jpg","type":"image\/jpeg","tmp_name":"C:\\xampp\\tmp\\php17B6.tmp","error":0,"size":106631}
+2025-05-21 21:51:22 | Transaction started
+2025-05-21 21:51:22 | New seeker_id created: 26
+2025-05-21 21:51:22 | Attempting to move uploaded file to: ../../uploads/pwd_ids/26_682e2eba91672.jpg
+2025-05-21 21:51:22 | File successfully moved to: ../../uploads/pwd_ids/26_682e2eba91672.jpg
+2025-05-21 21:51:22 | PWD ID inserted with image path: ../../uploads/pwd_ids/26_682e2eba91672.jpg
+2025-05-21 21:51:22 | Transaction committed successfully
+2025-05-22 18:11:56 | POST request received
+2025-05-22 18:11:56 | Form data received: {"firstName":"Test","lastName":"User","email":"test@user.com","phone":"09123456789","disability":8,"pwdIdNumber":"464865132"}
+2025-05-22 18:11:56 | File upload found: {"name":"512690dc44a224e060c9a645c30247be.jpg","full_path":"512690dc44a224e060c9a645c30247be.jpg","type":"image\/jpeg","tmp_name":"C:\\xampp\\tmp\\phpB6B1.tmp","error":0,"size":31740}
+2025-05-22 18:11:56 | Transaction started
+2025-05-22 18:11:56 | New seeker_id created: 28
+2025-05-22 18:11:56 | Attempting to move uploaded file to: ../../uploads/pwd_ids/28_682f4cccae05c.jpg
+2025-05-22 18:11:56 | File successfully moved to: ../../uploads/pwd_ids/28_682f4cccae05c.jpg
+2025-05-22 18:11:56 | PWD ID inserted with image path: ../../uploads/pwd_ids/28_682f4cccae05c.jpg
+2025-05-22 18:11:56 | Transaction committed successfully
+2025-05-29 21:32:53 | POST request received
+2025-05-29 21:32:53 | Form data received: {"firstName":"Shan","lastName":"Baccay","email":"admin@system.com","phone":"09664873735","disability":10,"pwdIdNumber":"0"}
+2025-05-29 21:32:53 | File upload found: {"name":"IMG_20250422_174805-01.jpeg","full_path":"IMG_20250422_174805-01.jpeg","type":"image\/jpeg","tmp_name":"C:\\xampp\\tmp\\phpC7CF.tmp","error":0,"size":615591}
+2025-05-29 21:32:53 | Transaction started
+2025-05-29 21:32:53 | New seeker_id created: 29
+2025-05-29 21:32:53 | Attempting to move uploaded file to: ../../uploads/pwd_ids/29_6838b665c2622.jpeg
+2025-05-29 21:32:53 | File successfully moved to: ../../uploads/pwd_ids/29_6838b665c2622.jpeg
+2025-05-29 21:32:53 | PWD ID inserted with image path: ../../uploads/pwd_ids/29_6838b665c2622.jpeg
+2025-05-29 21:32:53 | Transaction committed successfully
+2025-06-08 15:09:13 | POST request received
+2025-06-08 15:09:13 | Form data received: {"firstName":"Michelle","lastName":"Naligo","email":"michelle@eme.com","phone":"09123456789","disability":5,"pwdIdNumber":"789-456-89585"}
+2025-06-08 15:09:13 | File upload found: {"name":"IMG_20250521_182909-01.jpeg","full_path":"IMG_20250521_182909-01.jpeg","type":"image\/jpeg","tmp_name":"C:\\xampp\\tmp\\phpAD6E.tmp","error":0,"size":640247}
+2025-06-08 15:09:13 | Transaction started
+2025-06-08 15:09:13 | New seeker_id created: 31
+2025-06-08 15:09:13 | Attempting to move uploaded file to: ../../uploads/pwd_ids/31_68458b79d4c3d.jpeg
+2025-06-08 15:09:13 | File successfully moved to: ../../uploads/pwd_ids/31_68458b79d4c3d.jpeg
+2025-06-08 15:09:13 | PWD ID inserted with image path: ../../uploads/pwd_ids/31_68458b79d4c3d.jpeg
+2025-06-08 15:09:14 | Transaction committed successfully
+2025-06-08 20:27:30 | POST request received
+2025-06-08 20:27:30 | Form data received: {"firstName":"Maria","lastName":"Garcia","email":"maria@email.com","phone":"09123456789","disability":1,"pwdIdNumber":"797979"}
+2025-06-08 20:27:30 | File upload found: {"name":"thisablelogo.png","full_path":"thisablelogo.png","type":"image\/png","tmp_name":"C:\\xampp\\tmp\\php58DB.tmp","error":0,"size":50539}
+2025-06-08 20:27:30 | Transaction started
+2025-06-08 20:27:30 | New seeker_id created: 32
+2025-06-08 20:27:30 | Attempting to move uploaded file to: ../../uploads/pwd_ids/32_6845d6129c01c.png
+2025-06-08 20:27:30 | File successfully moved to: ../../uploads/pwd_ids/32_6845d6129c01c.png
+2025-06-08 20:27:30 | PWD ID inserted with image path: ../../uploads/pwd_ids/32_6845d6129c01c.png
+2025-06-08 20:27:30 | Transaction committed successfully
+2025-06-08 20:43:46 | POST request received
+2025-06-08 20:43:46 | Form data received: {"firstName":"Stanley","lastName":"Getez","email":"stan@email.com","phone":"09123456789","disability":1,"pwdIdNumber":"77667"}
+2025-06-08 20:43:46 | File upload found: {"name":"thisablelogo.png","full_path":"thisablelogo.png","type":"image\/png","tmp_name":"C:\\xampp\\tmp\\php3C34.tmp","error":0,"size":50539}
+2025-06-08 20:43:46 | Transaction started
+2025-06-08 20:43:46 | New seeker_id created: 33
+2025-06-08 20:43:46 | Attempting to move uploaded file to: ../../uploads/pwd_ids/33_6845d9e247fb6.png
+2025-06-08 20:43:46 | File successfully moved to: ../../uploads/pwd_ids/33_6845d9e247fb6.png
+2025-06-08 20:43:46 | PWD ID inserted with image path: ../../uploads/pwd_ids/33_6845d9e247fb6.png
+2025-06-08 20:43:46 | Transaction committed successfully
+2025-06-08 20:44:59 | POST request received
+2025-06-08 20:44:59 | Form data received: {"firstName":"Stan","lastName":"Getez","email":"stan3@email.com","phone":"09123456789","disability":1,"pwdIdNumber":"7373737"}
+2025-06-08 20:44:59 | File upload found: {"name":"thisablelogo.png","full_path":"thisablelogo.png","type":"image\/png","tmp_name":"C:\\xampp\\tmp\\php5873.tmp","error":0,"size":50539}
+2025-06-08 20:44:59 | Transaction started
+2025-06-08 20:44:59 | New seeker_id created: 34
+2025-06-08 20:44:59 | Attempting to move uploaded file to: ../../uploads/pwd_ids/34_6845da2b0f61e.png
+2025-06-08 20:44:59 | File successfully moved to: ../../uploads/pwd_ids/34_6845da2b0f61e.png
+2025-06-08 20:44:59 | PWD ID inserted with image path: ../../uploads/pwd_ids/34_6845da2b0f61e.png
+2025-06-08 20:44:59 | Transaction committed successfully
+2025-06-09 06:52:49 | POST request received
+2025-06-09 06:52:49 | Form data received: {"firstName":"Test","lastName":"Ulit","email":"testing@email.com","phone":"09123456789","disability":2,"pwdIdNumber":"46116"}
+2025-06-09 06:52:49 | File upload found: {"name":"asasasasas.pdf","full_path":"asasasasas.pdf","type":"application\/pdf","tmp_name":"C:\\xampp\\tmp\\phpD834.tmp","error":0,"size":383717}
+2025-06-09 06:52:49 | Transaction started
+2025-06-09 06:52:49 | New seeker_id created: 35
+2025-06-09 06:52:49 | Attempting to move uploaded file to: ../../uploads/pwd_ids/35_684668a1c0455.pdf
+2025-06-09 06:52:49 | File successfully moved to: ../../uploads/pwd_ids/35_684668a1c0455.pdf
+2025-06-09 06:52:49 | PWD ID inserted with image path: ../../uploads/pwd_ids/35_684668a1c0455.pdf
+2025-06-09 06:52:49 | Transaction committed successfully
+2025-06-09 22:43:51 | POST request received
+2025-06-09 22:43:51 | Form data received: {"firstName":"Shan","lastName":"Baccay","email":"shan@email.com","phone":"09123456789","disability":2,"pwdIdNumber":"064"}
+2025-06-09 22:43:51 | File upload found: {"name":"John Cruz - PWD ID.jpg","full_path":"John Cruz - PWD ID.jpg","type":"image\/jpeg","tmp_name":"C:\\xampp\\tmp\\phpC468.tmp","error":0,"size":35927}
+2025-06-09 22:43:51 | Transaction started
+2025-06-09 22:43:51 | New seeker_id created: 1
+2025-06-09 22:43:51 | Attempting to move uploaded file to: ../../uploads/pwd_ids/1_684747872f62f.jpg
+2025-06-09 22:43:51 | File successfully moved to: ../../uploads/pwd_ids/1_684747872f62f.jpg
+2025-06-09 22:43:51 | PWD ID inserted with image path: ../../uploads/pwd_ids/1_684747872f62f.jpg
+2025-06-09 22:43:51 | Transaction committed successfully
+2025-06-30 00:14:38 | POST request received
+2025-06-30 00:14:38 | Form data received: {"firstName":"Applicant","lastName":"One","email":"applicant1@email.com","phone":"09123456789","disability":1,"pwdIdNumber":"001"}
+2025-06-30 00:14:38 | File upload found: {"name":"Maria Santos - PWD ID.jpg","full_path":"Maria Santos - PWD ID.jpg","type":"image\/jpeg","tmp_name":"C:\\xampp\\tmp\\phpF044.tmp","error":0,"size":36273}
+2025-06-30 00:14:38 | Transaction started
+2025-06-30 00:14:38 | New seeker_id created: 5
+2025-06-30 00:14:38 | Attempting to move uploaded file to: ../../uploads/pwd_ids/5_6861bace7f33f.jpg
+2025-06-30 00:14:38 | File successfully moved to: ../../uploads/pwd_ids/5_6861bace7f33f.jpg
+2025-06-30 00:14:38 | PWD ID inserted with image path: ../../uploads/pwd_ids/5_6861bace7f33f.jpg
+2025-06-30 00:14:38 | Transaction committed successfully
+2025-06-30 00:17:21 | POST request received
+2025-06-30 00:17:21 | Form data received: {"firstName":"Applicant","lastName":"Two","email":"applicant2@email.com","phone":"09123456789","disability":2,"pwdIdNumber":"002"}
+2025-06-30 00:17:21 | File upload found: {"name":"John Cruz - PWD ID.jpg","full_path":"John Cruz - PWD ID.jpg","type":"image\/jpeg","tmp_name":"C:\\xampp\\tmp\\php6C63.tmp","error":0,"size":35927}
+2025-06-30 00:17:21 | Transaction started
+2025-06-30 00:17:21 | New seeker_id created: 6
+2025-06-30 00:17:21 | Attempting to move uploaded file to: ../../uploads/pwd_ids/6_6861bb7149100.jpg
+2025-06-30 00:17:21 | File successfully moved to: ../../uploads/pwd_ids/6_6861bb7149100.jpg
+2025-06-30 00:17:21 | PWD ID inserted with image path: ../../uploads/pwd_ids/6_6861bb7149100.jpg
+2025-06-30 00:17:21 | Transaction committed successfully

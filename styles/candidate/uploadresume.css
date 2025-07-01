@@ -1,0 +1,375 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@400;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f7f9fa;
+    text-align: center;
+    padding: 20px;
+    position: relative;
+    padding-bottom: 100px;
+}
+
+.logo {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 70px;
+    height: auto;
+}
+
+.header {
+    margin-top: 60px;
+    margin-bottom: 20px;
+    max-width: 700px;
+}
+
+h1 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 28px;
+    color: #257180;
+    margin-bottom: 15px;
+}
+
+.tagline {
+    font-size: 16px;
+    color: #555;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.progress-bar {
+    width: 100%;
+    max-width: 600px;
+    height: 8px;
+    background-color: #e1e1e1;
+    border-radius: 4px;
+    margin: 20px 0 30px;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-indicator {
+    position: absolute;
+    height: 100%;
+    width: 80%;
+    background-color: #FD8B51;
+    border-radius: 4px;
+}
+
+.guidance-box {
+    background-color: #e1f0f2;
+    border-radius: 12px;
+    padding: 15px 20px;
+    margin-bottom: 30px;
+    max-width: 600px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.guidance-icon {
+    color: #257180;
+    font-size: 24px;
+}
+
+.guidance-text {
+    color: #333;
+    font-size: 15px;
+    text-align: left;
+    line-height: 1.5;
+}
+
+.infographic-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    margin: 30px 0;
+    max-width: 700px;
+}
+
+.resume-tips {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.tip-card {
+    background-color: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.tip-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+}
+
+.tip-icon {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f8fa;
+    color: #257180;
+    border-radius: 50%;
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+.tip-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    color: #257180;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.tip-description {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.5;
+}
+
+.upload-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.upload-container {
+    background: white;
+    border: 2px dashed #257180;
+    border-radius: 12px;
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 500px;
+    animation: fadeUp 0.6s ease forwards;
+}
+
+.upload-container.dragover {
+    background: #e6f3f5;
+    border-color: #FD8B51;
+}
+
+.upload-icon {
+    font-size: 48px;
+    color: #257180;
+    margin-bottom: 15px;
+}
+
+.upload-text {
+    color: #257180;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.upload-subtext {
+    color: #666;
+    font-size: 14px;
+}
+
+.file-types {
+    margin: 15px 0;
+    color: #666;
+    font-size: 14px;
+}
+
+.choose-file {
+    display: inline-block;
+    background: #257180;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin-top: 15px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.choose-file:hover {
+    background: #1c5a66;
+}
+
+#fileInput {
+    display: none;
+}
+
+.file-info {
+    width: 100%;
+    max-width: 500px;
+    margin-top: 20px;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    display: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    animation: fadeIn 0.4s ease forwards;
+}
+
+.file-info.show {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.file-preview {
+    width: 60px;
+    height: 60px;
+    background-color: #f0f8fa;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    font-size: 24px;
+    color: #257180;
+}
+
+.file-details {
+    text-align: center;
+}
+
+.file-name {
+    color: #257180;
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 16px;
+}
+
+.file-size {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.file-status {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #28a745;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.remove-file {
+    color: #d9534f;
+    cursor: pointer;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: color 0.3s;
+}
+
+.remove-file:hover {
+    color: #c9302c;
+}
+
+.buttons {
+    width: 100%;
+    max-width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    background-color: #f7f9fa;
+    border-top: 1px solid #e1e1e1;
+    z-index: 100;
+}
+
+.btn {
+    font-size: 16px;
+    font-weight: 600;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.btn.back {
+    background-color: #e1e1e1;
+    color: #333;
+}
+
+.btn.back:hover {
+    background-color: #d1d1d1;
+}
+
+.btn.continue {
+    background-color: #FD8B51;
+    color: white;
+}
+
+.btn.continue:hover {
+    background-color: #CB6040;
+}
+
+/* Animation */
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.tip-card {
+    animation: fadeUp 0.5s ease forwards;
+}
+
+.tip-card:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.tip-card:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .resume-tips {
+        grid-template-columns: 1fr;
+    }
+    
+    .upload-container {
+        padding: 30px 15px;
+    }
+    
+    h1 {
+        font-size: 24px;
+    }
+}

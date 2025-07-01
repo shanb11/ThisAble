@@ -1,0 +1,4 @@
+2025-05-02 06:32:58 - Attempting database connection
+2025-05-02 06:32:58 - Connection params: Host=localhost, User=root, DB=jobportal_db
+2025-05-02 06:32:58 - Connection successful
+2025-05-02 06:32:58 - Test query successful

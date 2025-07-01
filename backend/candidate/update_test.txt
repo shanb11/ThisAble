@@ -1,0 +1,27 @@
+Test started: 2025-05-20 21:10:19
+Session: Array
+(
+    [user_id] => 14
+    [seeker_id] => 15
+    [user_email] => thisableee@gmail.com
+    [user_name] => This
+    [logged_in] => 1
+    [setup_complete] => 1
+)
+
+Seeker ID: 15
+Test data:
+First name: Test_5479
+Last name: User_211019
+Bio: This is a test bio update at 2025-05-20 21:10:19
+Transaction started
+SQL Query: UPDATE job_seekers SET 
+              first_name = :first_name,
+              last_name = :last_name
+              WHERE seeker_id = :seeker_id
+Query executed. Rows affected: 1
+Profile exists. Bio query: UPDATE profile_details SET bio = :bio WHERE seeker_id = :seeker_id
+Bio query executed. Rows affected: 1
+Transaction committed
+Test completed
+

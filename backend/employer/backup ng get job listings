@@ -1,0 +1,290 @@
+<?php
+/**
+ * Get Job Listings API - FIXED FOR YOUR SESSION STRUCTURE
+ * Replace your existing get_job_listings.php with this version
+ */
+
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+
+// Handle preflight requests
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
+session_start();
+
+// Include required files
+require_once('../db.php');
+require_once('../shared/session_helper.php');
+
+try {
+    // Check if employer is logged in - USING YOUR SESSION STRUCTURE
+    if (!isset($_SESSION['employer_id']) || !isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+        throw new Exception('Unauthorized access. Please log in.');
+    }
+
+    $employer_id = $_SESSION['employer_id'];
+    
+    // Validate employer exists - using your existing function
+    if (function_exists('getEmployerData')) {
+        $employer_data = getEmployerData($employer_id);
+        if (!$employer_data) {
+            throw new Exception('Employer not found.');
+        }
+    } else {
+        // Fallback if function doesn't exist
+        $employer_data = ['company_name' => $_SESSION['company_name'] ?? 'Unknown Company'];
+    }
+
+    // Get request parameters
+    $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+    $status_filter = isset($_GET['status']) ? $_GET['status'] : 'all';
+    $sort_by = isset($_GET['sort']) ? $_GET['sort'] : 'recent';
+    $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+    $limit = isset($_GET['limit']) ? min(50, max(1, intval($_GET['limit']))) : 20;
+    $offset = ($page - 1) * $limit;
+
+    // Build the main query
+    $where_conditions = ['jp.employer_id = :employer_id'];
+    $params = ['employer_id' => $employer_id];
+
+    // Add search condition
+    if (!empty($search)) {
+        $where_conditions[] = '(jp.job_title LIKE :search OR jp.job_description LIKE :search OR jp.department LIKE :search)';
+        $params['search'] = '%' . $search . '%';
+    }
+
+    // Add status filter
+    if ($status_filter !== 'all') {
+        $where_conditions[] = 'jp.job_status = :status';
+        $params['status'] = $status_filter;
+    }
+
+    // Build ORDER BY clause
+    $order_clause = '';
+    switch ($sort_by) {
+        case 'recent':
+            $order_clause = 'ORDER BY jp.posted_at DESC, jp.created_at DESC';
+            break;
+        case 'applicants':
+            $order_clause = 'ORDER BY jp.applications_count DESC, jp.posted_at DESC';
+            break;
+        case 'views':
+            $order_clause = 'ORDER BY jp.views_count DESC, jp.posted_at DESC';
+            break;
+        default:
+            $order_clause = 'ORDER BY jp.posted_at DESC, jp.created_at DESC';
+    }
+
+    $where_clause = 'WHERE ' . implode(' AND ', $where_conditions);
+
+    // Count total jobs for pagination
+    $count_sql = "
+        SELECT COUNT(*) as total
+        FROM job_posts jp
+        $where_clause
+    ";
+
+    $count_stmt = $conn->prepare($count_sql);
+    $count_stmt->execute($params);
+    $total_jobs = $count_stmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+    // Main query to fetch job listings with accommodations
+    $sql = "
+        SELECT 
+            jp.job_id,
+            jp.job_title,
+            jp.department,
+            jp.location,
+            jp.employment_type,
+            jp.salary_range,
+            jp.application_deadline,
+            jp.job_description,
+            jp.job_requirements,
+            jp.remote_work_available,
+            jp.flexible_schedule,
+            jp.job_status,
+            jp.posted_at,
+            jp.created_at,
+            jp.updated_at,
+            jp.applications_count,
+            jp.views_count,
+            
+            -- Accommodation data
+            COALESCE(ja.wheelchair_accessible, 0) as wheelchair_accessible,
+            COALESCE(ja.flexible_schedule, 0) as acc_flexible_schedule,
+            COALESCE(ja.assistive_technology, 0) as assistive_technology,
+            COALESCE(ja.remote_work_option, 0) as remote_work_option,
+            COALESCE(ja.screen_reader_compatible, 0) as screen_reader_compatible,
+            COALESCE(ja.sign_language_interpreter, 0) as sign_language_interpreter,
+            COALESCE(ja.modified_workspace, 0) as modified_workspace,
+            COALESCE(ja.transportation_support, 0) as transportation_support,
+            COALESCE(ja.additional_accommodations, '') as additional_accommodations
+            
+        FROM job_posts jp
+        LEFT JOIN job_accommodations ja ON jp.job_id = ja.job_id
+        $where_clause
+        $order_clause
+        LIMIT :limit OFFSET :offset
+    ";
+
+    $stmt = $conn->prepare($sql);
+    
+    // Bind parameters
+    foreach ($params as $key => $value) {
+        $stmt->bindValue(':' . $key, $value);
+    }
+    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+    
+    $stmt->execute();
+    $jobs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Process and format job data
+    $formatted_jobs = [];
+    foreach ($jobs as $job) {
+        // Format accommodations
+        $accommodations = [
+            'wheelchair_accessible' => (bool)$job['wheelchair_accessible'],
+            'assistive_technology' => (bool)$job['assistive_technology'],
+            'remote_work_option' => (bool)$job['remote_work_option'],
+            'screen_reader_compatible' => (bool)$job['screen_reader_compatible'],
+            'sign_language_interpreter' => (bool)$job['sign_language_interpreter'],
+            'modified_workspace' => (bool)$job['modified_workspace'],
+            'transportation_support' => (bool)$job['transportation_support'],
+            'additional_accommodations' => $job['additional_accommodations'] ?? ''
+        ];
+
+        // Format dates
+        $posted_at = $job['posted_at'] ? date('Y-m-d', strtotime($job['posted_at'])) : date('Y-m-d', strtotime($job['created_at']));
+        $application_deadline = $job['application_deadline'] ? date('Y-m-d', strtotime($job['application_deadline'])) : null;
+
+        $formatted_job = [
+            'job_id' => $job['job_id'],
+            'job_title' => $job['job_title'],
+            'department' => $job['department'],
+            'location' => $job['location'],
+            'employment_type' => $job['employment_type'],
+            'salary_range' => $job['salary_range'],
+            'application_deadline' => $application_deadline,
+            'job_description' => $job['job_description'],
+            'job_requirements' => $job['job_requirements'],
+            'remote_work_available' => (bool)$job['remote_work_available'],
+            'flexible_schedule' => (bool)$job['flexible_schedule'],
+            'job_status' => $job['job_status'],
+            'posted_at' => $posted_at,
+            'applications_count' => (int)$job['applications_count'],
+            'views_count' => (int)$job['views_count'],
+            'accommodations' => $accommodations,
+            'company_name' => $employer_data['company_name'] ?? $_SESSION['company_name'] ?? 'Unknown Company'
+        ];
+
+        $formatted_jobs[] = $formatted_job;
+    }
+
+    // Get summary statistics
+    $stats_sql = "
+        SELECT 
+            COUNT(*) as total_jobs,
+            SUM(CASE WHEN job_status = 'active' THEN 1 ELSE 0 END) as active_jobs,
+            SUM(CASE WHEN job_status = 'draft' THEN 1 ELSE 0 END) as draft_jobs,
+            SUM(CASE WHEN job_status = 'closed' THEN 1 ELSE 0 END) as closed_jobs,
+            SUM(CASE WHEN job_status = 'paused' THEN 1 ELSE 0 END) as paused_jobs,
+            COALESCE(SUM(applications_count), 0) as total_applications,
+            COALESCE(SUM(views_count), 0) as total_views
+        FROM job_posts 
+        WHERE employer_id = :employer_id
+    ";
+
+    $stats_stmt = $conn->prepare($stats_sql);
+    $stats_stmt->execute(['employer_id' => $employer_id]);
+    $stats = $stats_stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Calculate pagination info
+    $total_pages = ceil($total_jobs / $limit);
+    $has_next = $page < $total_pages;
+    $has_prev = $page > 1;
+
+    // Prepare response
+    $response = [
+        'success' => true,
+        'data' => [
+            'jobs' => $formatted_jobs,
+            'pagination' => [
+                'current_page' => $page,
+                'total_pages' => $total_pages,
+                'total_jobs' => (int)$total_jobs,
+                'per_page' => $limit,
+                'has_next' => $has_next,
+                'has_prev' => $has_prev
+            ],
+            'statistics' => [
+                'total_jobs' => (int)$stats['total_jobs'],
+                'active_jobs' => (int)$stats['active_jobs'],
+                'draft_jobs' => (int)$stats['draft_jobs'],
+                'closed_jobs' => (int)$stats['closed_jobs'],
+                'paused_jobs' => (int)$stats['paused_jobs'],
+                'total_applications' => (int)$stats['total_applications'],
+                'total_views' => (int)$stats['total_views']
+            ],
+            'filters' => [
+                'search' => $search,
+                'status' => $status_filter,
+                'sort_by' => $sort_by
+            ]
+        ],
+        'message' => 'Job listings retrieved successfully',
+        'timestamp' => date('Y-m-d H:i:s')
+    ];
+
+    http_response_code(200);
+    echo json_encode($response, JSON_PRETTY_PRINT);
+
+} catch (PDOException $e) {
+    error_log("Database error in get_job_listings.php: " . $e->getMessage());
+    
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'error' => 'Database error occurred',
+        'message' => 'Unable to fetch job listings. Please try again.',
+        'debug' => $e->getMessage(),
+        'timestamp' => date('Y-m-d H:i:s')
+    ], JSON_PRETTY_PRINT);
+
+} catch (Exception $e) {
+    error_log("Error in get_job_listings.php: " . $e->getMessage());
+    
+    $status_code = ($e->getMessage() === 'Unauthorized access. Please log in.') ? 401 : 400;
+    
+    http_response_code($status_code);
+    echo json_encode([
+        'success' => false,
+        'error' => $e->getMessage(),
+        'message' => $e->getMessage(),
+        'debug' => [
+            'session_data' => $_SESSION ?? [],
+            'employer_id_exists' => isset($_SESSION['employer_id']),
+            'logged_in_exists' => isset($_SESSION['logged_in']),
+            'logged_in_value' => $_SESSION['logged_in'] ?? 'not set'
+        ],
+        'timestamp' => date('Y-m-d H:i:s')
+    ], JSON_PRETTY_PRINT);
+
+} catch (Throwable $e) {
+    error_log("Unexpected error in get_job_listings.php: " . $e->getMessage());
+    
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'error' => 'An unexpected error occurred',
+        'message' => 'Please try again later or contact support.',
+        'debug' => $e->getMessage(),
+        'timestamp' => date('Y-m-d H:i:s')
+    ], JSON_PRETTY_PRINT);
+}
+?>

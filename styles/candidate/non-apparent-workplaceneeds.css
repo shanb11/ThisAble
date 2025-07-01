@@ -1,0 +1,339 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@400;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f7f9fa;
+    text-align: center;
+    padding: 20px;
+    position: relative;
+    padding-bottom: 100px;
+}
+
+.logo {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 70px;
+    height: auto;
+}
+
+.header {
+    margin-top: 60px;
+    margin-bottom: 20px;
+    max-width: 700px;
+}
+
+h1 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 28px;
+    color: #257180;
+    margin-bottom: 15px;
+}
+
+.tagline {
+    font-size: 16px;
+    color: #555;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.progress-bar {
+    width: 100%;
+    max-width: 600px;
+    height: 8px;
+    background-color: #e1e1e1;
+    border-radius: 4px;
+    margin: 20px 0 30px;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-indicator {
+    position: absolute;
+    height: 100%;
+    width: 65%;
+    background-color: #FD8B51;
+    border-radius: 4px;
+}
+
+.guidance-box {
+    background-color: #e1f0f2;
+    border-radius: 12px;
+    padding: 15px 20px;
+    margin-bottom: 30px;
+    max-width: 600px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.guidance-icon {
+    color: #257180;
+    font-size: 24px;
+}
+
+.guidance-text {
+    color: #333;
+    font-size: 15px;
+    text-align: left;
+    line-height: 1.5;
+}
+
+.privacy-note {
+    font-size: 13px;
+    color: #666;
+    font-style: italic;
+    margin-top: 10px;
+    text-align: left;
+}
+
+.infographic-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px 0;
+    max-width: 900px;
+}
+
+.need-category {
+    width: 100%;
+    max-width: 900px;
+    margin-bottom: 40px;
+}
+
+.category-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 22px;
+    color: #257180;
+    margin-bottom: 15px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.category-icon {
+    font-size: 20px;
+    color: #FD8B51;
+}
+
+.needs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    width: 100%;
+}
+
+.need-card {
+    background-color: white;
+    border-radius: 12px;
+    padding: 0;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    overflow: hidden;
+    transition: all 0.3s;
+    position: relative;
+    height: 100%;
+}
+
+.need-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+}
+
+.need-card.selected {
+    border: 2px solid #FD8B51;
+}
+
+.need-header {
+    background-color: #f0f8fa;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.need-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #257180;
+    color: white;
+    border-radius: 50%;
+    font-size: 16px;
+}
+
+.need-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    color: #257180;
+    font-weight: 600;
+    text-align: left;
+}
+
+.need-content {
+    padding: 15px;
+    text-align: left;
+}
+
+.need-description {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.5;
+}
+
+.need-example {
+    margin-top: 12px;
+    font-size: 13px;
+    color: #666;
+    font-style: italic;
+}
+
+.select-indicator {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: #FD8B51;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    opacity: 0;
+    transition: all 0.3s;
+}
+
+.need-card.selected .select-indicator {
+    opacity: 1;
+}
+
+.no-needs-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #f5f5f5;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 100%;
+    max-width: 600px;
+}
+
+.no-needs-option:hover {
+    background-color: #e9e9e9;
+}
+
+.no-needs-option.selected {
+    border: 2px solid #FD8B51;
+}
+
+.no-needs-text {
+    font-size: 15px;
+    color: #444;
+    font-weight: 600;
+    text-align: left;
+}
+
+.no-needs-checkbox {
+    width: 22px;
+    height: 22px;
+    border: 2px solid #257180;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    background-color: white;
+    transition: all 0.3s;
+}
+
+.no-needs-option.selected .no-needs-checkbox {
+    background-color: #FD8B51;
+    border-color: #FD8B51;
+}
+
+.buttons {
+    width: 100%;
+    max-width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    background-color: #f7f9fa;
+    border-top: 1px solid #e1e1e1;
+    z-index: 100;
+}
+
+.btn {
+    font-size: 16px;
+    font-weight: 600;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.btn.back {
+    background-color: #e1e1e1;
+    color: #333;
+}
+
+.btn.back:hover {
+    background-color: #d1d1d1;
+}
+
+.btn.continue {
+    background-color: #FD8B51;
+    color: white;
+}
+
+.btn.continue:hover {
+    background-color: #CB6040;
+}
+
+/* Animation */
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.need-card {
+    animation: fadeUp 0.5s ease forwards;
+}
+
+/* Mobile Responsive */
+@media (max-width: 800px) {
+    .needs-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .need-card {
+        width: 100%;
+    }
+}

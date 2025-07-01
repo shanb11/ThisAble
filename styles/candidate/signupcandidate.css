@@ -1,0 +1,779 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+}
+
+.left {
+    width: 50%;
+    background-color: #257180;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+.left img {
+    width: 300px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.left h2 {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.left p {
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.right {
+    width: 50%;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 0;
+    overflow-y: auto;
+}
+
+.logo {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 70px;
+    height: auto;
+}
+
+.signup-box {
+    width: 70%;
+    text-align: center;
+}
+
+.signup-box h2 {
+    font-size: 32px;
+    color: #257180;
+    margin-bottom: 20px;
+}
+
+.signup-box h3 {
+    font-size: 24px;
+    color: #257180;
+    margin-bottom: 15px;
+}
+
+.signup-box p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* Google Sign In Button */
+.google-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #fff;
+    color: #757575;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.google-btn:hover {
+    background-color: #f5f5f5;
+    color: #000;
+    border-color: #aaa;
+}
+
+.google-icon {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+/* Divider */
+/* Updated divider style for centered "OR" with lines */
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 15px 0;
+    color: #767676;
+}
+
+.divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #ddd;
+}
+
+.divider span {
+    padding: 0 10px;
+    font-size: 14px;
+    color: #666; /* Less black color */
+}
+
+.input-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.input-box {
+    width: 100%;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.input-row .input-box {
+    margin-bottom: 0; /* Remove the bottom margin for input boxes that are inside input rows */
+}
+
+.input-box input:not([type="file"]),
+.input-box select {
+    width: 100%;
+    padding: 12px 40px 12px 40px;
+    border: 1px solid #CB6040;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+.input-box input:focus,
+.input-box select:focus {
+    outline: none;
+    border-color: #257180;
+}
+
+.input-box .input-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #CB6040;
+    font-size: 18px;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #CB6040;
+    cursor: pointer;
+    font-size: 18px;
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.toggle-password:hover {
+    color: #257180;
+}
+
+.file-upload-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.file-input-display {
+    flex-grow: 1;
+    padding: 12px 12px 12px 40px;
+    background-color: white;
+    border: 1px solid #CB6040;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #666;
+    cursor: default;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.file-upload-btn {
+    padding: 12px 20px;
+    background-color: #257180;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+}
+
+.file-upload-btn:hover {
+    background-color: #1a5761;
+}
+
+.file-input {
+    display: none;
+}
+
+.error-message {
+    color: #ff0000;
+    font-size: 12px;
+    text-align: left;
+    margin-top: 5px;
+    display: none;
+}
+
+.signup-btn, .next-btn, .verify-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #FD8B51;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+}
+
+.signup-btn:hover, .next-btn:hover, .verify-btn:hover {
+    background-color: #CB6040;
+}
+
+.login-link {
+    font-size: 14px;
+    margin-top: 15px;
+}
+
+.login-link a {
+    color: #257180;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.login-link a:hover {
+    color: #CB6040;
+}
+
+/* OTP Inputs */
+.otp-container {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+}
+
+.otp-input {
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    text-align: center;
+    border: 1px solid #CB6040;
+    border-radius: 5px;
+    margin: 0 5px;
+}
+
+.otp-input:focus {
+    outline: none;
+    border-color: #257180;
+    box-shadow: 0 0 5px rgba(37, 113, 128, 0.5);
+}
+
+.resend-otp {
+    color: #257180;
+    text-align: center;
+    margin-top: 15px;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.resend-otp:hover {
+    color: #CB6040;
+}
+
+.timer {
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    margin-top: 5px;
+}
+
+/* Google Sign In Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.google-modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    width: 450px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #CB6040;
+}
+
+.close-modal:hover {
+    color: #257180;
+}
+
+.google-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.google-logo {
+    width: 80px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.google-title {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.google-subtitle {
+    font-size: 16px;
+    color: #5f6368;
+    margin-bottom: 20px;
+}
+
+.google-form input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #dadce0;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.google-form input:focus {
+    outline: none;
+    border-color: #1a73e8;
+    box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+}
+
+.google-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.google-create-account {
+    color: #1a73e8;
+    font-size: 14px;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.google-next-btn {
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.google-next-btn:hover {
+    background-color: #0d66d0;
+}
+
+/* Progress indicator */
+.progress-bar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    position: relative;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.progress-bar::before {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 40px;
+    right: 40px;
+    height: 2px;
+    background-color: #ddd;
+    z-index: 0;
+}
+
+.progress-step {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    position: relative;
+    z-index: 1;
+}
+
+.progress-step.active {
+    background-color: #FD8B51;
+}
+
+.progress-step.completed {
+    background-color: #257180;
+}
+
+.step-label {
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    margin-top: 5px;
+    white-space: nowrap;
+}
+
+/* Form steps */
+.form-step {
+    display: none;
+}
+
+.form-step.active {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+    }
+
+    .left, .right {
+        width: 100%;
+        padding: 20px;
+    }
+
+    .left {
+        padding: 40px 20px;
+    }
+
+    .signup-box {
+        width: 90%;
+    }
+
+    .input-row {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .logo {
+        position: static;
+        margin-bottom: 20px;
+        width: 60px;
+    }
+
+    .file-upload-container {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .file-upload-btn {
+        width: 100%;
+    }
+
+    .otp-input {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+    }
+}
+.error-message {
+    color: #f44336;
+    font-size: 12px;
+    margin-top: 5px;
+    display: none;
+}
+
+.error-input {
+    border: 1px solid #f44336 !important;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* PWD Verification Styles */
+.verification-status {
+    margin: 15px 0;
+    padding: 10px;
+    border-radius: 5px;
+    display: none;
+}
+
+.verification-status.loading {
+    display: block;
+    background-color: #f5f5f5;
+    color: #333;
+    text-align: center;
+}
+
+.verification-status.success {
+    display: block;
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #a5d6a7;
+}
+
+.verification-status.error {
+    display: block;
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+}
+
+.verification-status.warning {
+    display: block;
+    background-color: #fff8e1;
+    color: #f57f17;
+    border: 1px solid #ffe082;
+}
+
+.info-text {
+    font-size: 12px;
+    color: #666;
+    margin-top: 3px;
+}
+
+.form-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.verify-btn {
+    background-color: #CB6040;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.verify-btn:hover {
+    background-color: #b85335;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+/* Error message styles (if not already in your CSS) */
+.error-message {
+    color: #f44336;
+    font-size: 12px;
+    margin-top: 5px;
+    display: none;
+}
+
+.error-input {
+    border: 1px solid #f44336 !important;
+}
+/* PWD Verification Styles */
+.verification-status {
+    margin: 15px 0; 
+    padding: 10px;
+    border-radius: 5px;
+    display: none;
+}
+
+.verification-status.loading {
+    display: block;
+    background-color: #f5f5f5;
+    color: #333;
+    text-align: center;
+}
+
+.verification-status.success {
+    display: block;
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #a5d6a7;
+}
+
+.verification-status.error {
+    display: block;
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+}
+
+.verification-status.warning {
+    display: block;
+    background-color: #fff8e1;
+    color: #f57f17;
+    border: 1px solid #ffe082;
+}
+
+.info-text {
+    font-size: 12px;
+    color: #666;
+    margin-top: 3px;
+}
+
+.form-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.verify-btn {
+    background-color: #CB6040;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.verify-btn:hover {
+    background-color: #b85335;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+/*
+.divider {
+    margin: 20px 0;
+    text-align: center;
+    position: relative;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 45%;
+    height: 1px;
+    background-color: #ddd;
+}
+
+.divider::before {
+    left: 0;
+}
+
+.divider::after {
+    right: 0;
+}
+
+.divider span {
+    display: inline-block;
+    background-color: white;
+    padding: 0 10px;
+    position: relative;
+    font-size: 14px;
+    color: #666;
+}
+*/
+.upload-info {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 15px;
+    text-align: center;
+}
+/* forms */
+.form-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 1px; /* Reduce gap between buttons */
+    width: 100%;
+    margin-top: 20px;
+}
+
+.back-btn {
+    background-color: #f8f8f8; /* Lighter background */
+    color: #FF7F50; /* Orange text to match theme */
+    border: 2px solid #FF7F50; /* Orange border */
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+    flex: 1; /* Make buttons equal width */
+}
+
+.back-btn:hover {
+    background-color: #ffebe5; /* Light orange on hover */
+}
+
+/* Update continue/next button to match */
+.next-btn, .signup-btn {
+    flex: 1; /* Make buttons equal width */
+}

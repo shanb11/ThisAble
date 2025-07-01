@@ -1,0 +1,440 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+body {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+}
+.left {
+    width: 50%;
+    background-color: #257180;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+}
+.left img {
+    width: 300px;
+    height: auto;
+    margin-bottom: 20px;
+}
+.left h2 {
+    font-size: 22px;
+    font-weight: bold;
+}
+.left p {
+    font-size: 14px;
+    margin-top: 10px;
+}
+.right {
+    width: 50%;
+    margin-left: 50%;
+    background-color: #fff;
+    overflow-y: auto;
+    height: 100vh;
+    padding: 20px 0;
+    position: relative;
+}
+.logo {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 70px;
+    height: auto;
+    z-index: 100;
+}
+.signup-box {
+    width: 80%;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px 0 60px 0;
+}
+.signup-box h2 {
+    font-size: 28px;
+    color: #257180;
+    margin-bottom: 20px;
+    text-align: center;
+    padding-top: 20px;
+    position: static;
+    top: 0;
+    background-color: #fff;
+    z-index: 10;
+}
+.input-box {
+    width: 100%;
+    margin-bottom: 15px;
+    position: relative;
+}
+.input-box input, .input-box select {
+    width: 100%;
+    padding: 12px 40px 12px 40px;
+    border: 1px solid #CB6040;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+.input-box input:focus, .input-box select:focus {
+    outline: none;
+    border-color: #257180;
+}
+.input-box .input-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #CB6040;
+    font-size: 18px;
+}
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #CB6040;
+    cursor: pointer;
+    font-size: 18px;
+    background: none;
+    border: none;
+    padding: 0;
+}
+.toggle-password:hover {
+    color: #257180;
+}
+.signup-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #FD8B51;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 15px;
+}
+.signup-btn:hover {
+    background-color: #CB6040;
+}
+.login-link {
+    font-size: 14px;
+    margin-top: 15px;
+    text-align: center;
+}
+.login-link a {
+    color: #257180;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+.login-link a:hover {
+    color: #CB6040;
+}
+.row {
+    display: flex;
+    gap: 10px;
+}
+.row .input-box {
+    flex: 1;
+}
+.section-title {
+    text-align: left;
+    color: #257180;
+    font-weight: bold;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    font-size: 18px;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 8px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    position: static;
+    top: 70px;
+    z-index: 5;
+}
+.section-title i {
+    margin-right: 8px;
+    color: #CB6040;
+    font-size: 20px;
+}
+.section-content {
+    padding-bottom: 5px;
+}
+
+/* Google Signup Button */
+.google-signup-btn {
+    width: 100%;
+    padding: 15px;
+    background: white;
+    border: 2px solid #e5e5e5;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    transition: all 0.3s ease;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.google-signup-btn:hover {
+    border-color: #4285f4;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}
+
+.google-signup-btn i {
+    color: #4285f4;
+    font-size: 20px;
+}
+
+/* Subtitle */
+.subtitle {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* Divider */
+.divider {
+    display: flex;
+    align-items: center;
+    margin: 25px 0;
+    color: #666;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #e5e5e5, transparent);
+}
+
+.divider span {
+    padding: 0 20px;
+    background: white;
+}
+
+/* Benefits Section */
+.benefits {
+    margin: 25px 0;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+    padding: 10px 0;
+}
+
+.benefit-item i {
+    color: #10b981;
+    font-size: 16px;
+    min-width: 20px;
+}
+
+.benefit-item span {
+    color: #555;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+/* Company Setup Form Styles */
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #CB6040;
+    font-weight: 600;
+    font-size: 16px;
+    margin: 25px 0 15px 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.section-title i {
+    font-size: 18px;
+}
+
+.section-content {
+    margin-bottom: 25px;
+}
+
+.row {
+    display: flex;
+    gap: 15px;
+}
+
+.row .input-box {
+    flex: 1;
+}
+
+.input-box textarea {
+    width: 100%;
+    padding: 12px 15px 12px 45px;
+    border: 2px solid #e5e5e5;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #333;
+    background: white;
+    transition: all 0.3s ease;
+    resize: vertical;
+    min-height: 80px;
+    font-family: inherit;
+}
+
+.input-box textarea:focus {
+    outline: none;
+    border-color: #CB6040;
+    box-shadow: 0 0 0 3px rgba(203, 96, 64, 0.1);
+}
+
+/* Input field readonly state */
+.input-box input[readonly] {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    cursor: not-allowed;
+}
+
+.input-box input[readonly]:focus {
+    border-color: #e5e5e5;
+    box-shadow: none;
+}
+
+/* Success Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    backdrop-filter: blur(4px);
+}
+
+.success-modal {
+    background: white;
+    padding: 40px;
+    border-radius: 16px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.success-icon {
+    font-size: 64px;
+    color: #10b981;
+    margin-bottom: 20px;
+    animation: bounce 0.6s ease;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+.success-modal h3 {
+    margin: 0 0 16px 0;
+    color: #1f2937;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.success-modal p {
+    margin: 0 0 32px 0;
+    color: #6b7280;
+    line-height: 1.5;
+    font-size: 16px;
+}
+
+.continue-btn {
+    background: #CB6040;
+    color: white;
+    border: none;
+    padding: 12px 32px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 150px;
+}
+
+.continue-btn:hover {
+    background: #b8543a;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(203, 96, 64, 0.3);
+}
+
+/* Error state for form validation */
+.error {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .row {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .benefits {
+        margin: 20px 0;
+    }
+    
+    .benefit-item {
+        margin-bottom: 12px;
+    }
+    
+    .success-modal {
+        margin: 20px;
+        padding: 30px;
+    }
+}

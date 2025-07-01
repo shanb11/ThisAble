@@ -1,0 +1,26 @@
+/* Employer Login CSS Overrides - Modal Fix Only */
+
+/* Fix selection modal centering for employer login */
+#selectionModal {
+    display: none;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    z-index: 9999 !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+/* Force flex display when shown */
+#selectionModal[style*="flex"] {
+    display: flex !important;
+}
+
+/* Ensure modal content is properly centered */
+.selection-modal-content {
+    position: relative !important;
+    margin: 0 !important;
+}

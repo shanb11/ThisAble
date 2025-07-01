@@ -1,0 +1,245 @@
+2025-06-09 06:54:05 | save_setup_data.php received data: Array
+(
+    [seeker_id] => 35
+    [skills] => ["Digital Literacy","Data Entry"]
+    [work_style] => remote
+    [job_type] => fulltime
+    [disability_type] => apparent
+    [accommodation_list] => ["Wheelchair Accessible"]
+    [no_accommodations_needed] => 0
+)
+
+2025-06-09 06:54:05 | Processing setup for seeker_id: 35
+2025-06-09 06:54:05 | Transaction started
+2025-06-09 06:54:05 | Processing skills: Array
+(
+    [0] => Digital Literacy
+    [1] => Data Entry
+)
+
+2025-06-09 06:54:05 | Cleared existing skills
+2025-06-09 06:54:05 | Added 2 skills
+2025-06-09 06:54:05 | Saving preferences - work_style: remote, job_type: fulltime
+2025-06-09 06:54:05 | Inserted new preferences
+2025-06-09 06:54:05 | Saving accommodations - type: apparent, list: ["Wheelchair Accessible"], no_needs: 0
+2025-06-09 06:54:05 | Inserted new accommodations
+2025-06-09 06:54:05 | Setup marked as complete for seeker_id: 35
+2025-06-09 06:54:05 | Transaction committed successfully
+2025-06-09 06:54:05 | Setup process completed successfully
+2025-06-09 06:54:33 | save_setup_data.php received data: Array
+(
+    [seeker_id] => 35
+    [skills] => ["Filing and Record Keeping"]
+    [work_style] => onsite
+    [job_type] => parttime
+    [disability_type] => non-apparent
+    [accommodation_list] => []
+    [no_accommodations_needed] => 1
+)
+
+2025-06-09 06:54:33 | Processing setup for seeker_id: 35
+2025-06-09 06:54:33 | Transaction started
+2025-06-09 06:54:33 | Processing skills: Array
+(
+    [0] => Filing and Record Keeping
+)
+
+2025-06-09 06:54:33 | Cleared existing skills
+2025-06-09 06:54:33 | Added 1 skills
+2025-06-09 06:54:33 | Saving preferences - work_style: onsite, job_type: parttime
+2025-06-09 06:54:33 | Updated existing preferences
+2025-06-09 06:54:33 | Saving accommodations - type: non-apparent, list: [], no_needs: 1
+2025-06-09 06:54:33 | Updated existing accommodations
+2025-06-09 06:54:33 | Setup marked as complete for seeker_id: 35
+2025-06-09 06:54:33 | Transaction committed successfully
+2025-06-09 06:54:33 | Setup process completed successfully
+2025-06-09 22:44:38 | save_setup_data.php received data: Array
+(
+    [seeker_id] => 1
+    [skills] => ["Digital Literacy"]
+    [work_style] => onsite
+    [job_type] => parttime
+    [disability_type] => non-apparent
+    [accommodation_list] => []
+    [no_accommodations_needed] => 1
+)
+
+2025-06-09 22:44:38 | Processing setup for seeker_id: 1
+2025-06-09 22:44:38 | Transaction started
+2025-06-09 22:44:38 | Processing skills: Array
+(
+    [0] => Digital Literacy
+)
+
+2025-06-09 22:44:38 | Cleared existing skills
+2025-06-09 22:44:38 | Added 1 skills
+2025-06-09 22:44:38 | Saving preferences - work_style: onsite, job_type: parttime
+2025-06-09 22:44:38 | Inserted new preferences
+2025-06-09 22:44:38 | Saving accommodations - type: non-apparent, list: [], no_needs: 1
+2025-06-09 22:44:38 | Inserted new accommodations
+2025-06-09 22:44:38 | Setup marked as complete for seeker_id: 1
+2025-06-09 22:44:38 | Transaction committed successfully
+2025-06-09 22:44:38 | Setup process completed successfully
+2025-06-09 22:44:51 | save_setup_data.php received data: Array
+(
+    [seeker_id] => 1
+    [skills] => ["Digital Literacy"]
+    [work_style] => onsite
+    [job_type] => parttime
+    [disability_type] => non-apparent
+    [accommodation_list] => []
+    [no_accommodations_needed] => 1
+)
+
+2025-06-09 22:44:51 | Processing setup for seeker_id: 1
+2025-06-09 22:44:51 | Transaction started
+2025-06-09 22:44:51 | Processing skills: Array
+(
+    [0] => Digital Literacy
+)
+
+2025-06-09 22:44:51 | Cleared existing skills
+2025-06-09 22:44:51 | Added 1 skills
+2025-06-09 22:44:51 | Saving preferences - work_style: onsite, job_type: parttime
+2025-06-09 22:44:51 | Updated existing preferences
+2025-06-09 22:44:51 | Saving accommodations - type: non-apparent, list: [], no_needs: 1
+2025-06-09 22:44:51 | Updated existing accommodations
+2025-06-09 22:44:51 | Setup marked as complete for seeker_id: 1
+2025-06-09 22:44:51 | Transaction committed successfully
+2025-06-09 22:44:51 | Setup process completed successfully
+2025-06-10 06:44:27 | save_setup_data.php received data: Array
+(
+    [seeker_id] => 2
+    [skills] => ["Basic Bookkeeping","Social Media Management"]
+    [work_style] => onsite
+    [job_type] => fulltime
+    [disability_type] => apparent
+    [accommodation_list] => []
+    [no_accommodations_needed] => 1
+)
+
+2025-06-10 06:44:27 | Processing setup for seeker_id: 2
+2025-06-10 06:44:27 | Transaction started
+2025-06-10 06:44:27 | Processing skills: Array
+(
+    [0] => Basic Bookkeeping
+    [1] => Social Media Management
+)
+
+2025-06-10 06:44:27 | Cleared existing skills
+2025-06-10 06:44:27 | Added 2 skills
+2025-06-10 06:44:27 | Saving preferences - work_style: onsite, job_type: fulltime
+2025-06-10 06:44:27 | Inserted new preferences
+2025-06-10 06:44:27 | Saving accommodations - type: apparent, list: [], no_needs: 1
+2025-06-10 06:44:27 | Inserted new accommodations
+2025-06-10 06:44:27 | Setup marked as complete for seeker_id: 2
+2025-06-10 06:44:27 | Transaction committed successfully
+2025-06-10 06:44:27 | Setup process completed successfully
+2025-06-30 00:15:25 | save_setup_data.php received data: Array
+(
+    [seeker_id] => 5
+    [skills] => ["Digital Literacy"]
+    [work_style] => remote
+    [job_type] => fulltime
+    [disability_type] => apparent
+    [accommodation_list] => []
+    [no_accommodations_needed] => 1
+)
+
+2025-06-30 00:15:25 | Processing setup for seeker_id: 5
+2025-06-30 00:15:25 | Transaction started
+2025-06-30 00:15:25 | Processing skills: Array
+(
+    [0] => Digital Literacy
+)
+
+2025-06-30 00:15:25 | Cleared existing skills
+2025-06-30 00:15:25 | Added 1 skills
+2025-06-30 00:15:25 | Saving preferences - work_style: remote, job_type: fulltime
+2025-06-30 00:15:25 | Inserted new preferences
+2025-06-30 00:15:25 | Saving accommodations - type: apparent, list: [], no_needs: 1
+2025-06-30 00:15:25 | Inserted new accommodations
+2025-06-30 00:15:25 | Setup marked as complete for seeker_id: 5
+2025-06-30 00:15:25 | Transaction committed successfully
+2025-06-30 00:15:25 | Setup process completed successfully
+2025-06-30 00:15:39 | save_setup_data.php received data: Array
+(
+    [seeker_id] => 5
+    [skills] => ["Digital Literacy"]
+    [work_style] => remote
+    [job_type] => fulltime
+    [disability_type] => apparent
+    [accommodation_list] => []
+    [no_accommodations_needed] => 1
+)
+
+2025-06-30 00:15:39 | Processing setup for seeker_id: 5
+2025-06-30 00:15:39 | Transaction started
+2025-06-30 00:15:39 | Processing skills: Array
+(
+    [0] => Digital Literacy
+)
+
+2025-06-30 00:15:39 | Cleared existing skills
+2025-06-30 00:15:39 | Added 1 skills
+2025-06-30 00:15:39 | Saving preferences - work_style: remote, job_type: fulltime
+2025-06-30 00:15:39 | Updated existing preferences
+2025-06-30 00:15:39 | Saving accommodations - type: apparent, list: [], no_needs: 1
+2025-06-30 00:15:39 | Updated existing accommodations
+2025-06-30 00:15:39 | Setup marked as complete for seeker_id: 5
+2025-06-30 00:15:39 | Transaction committed successfully
+2025-06-30 00:15:39 | Setup process completed successfully
+2025-06-30 00:18:07 | save_setup_data.php received data: Array
+(
+    [seeker_id] => 6
+    [skills] => ["Social Media Management"]
+    [work_style] => remote
+    [job_type] => fulltime
+    [disability_type] => apparent
+    [accommodation_list] => ["Lighting Adjustments"]
+    [no_accommodations_needed] => 0
+)
+
+2025-06-30 00:18:07 | Processing setup for seeker_id: 6
+2025-06-30 00:18:07 | Transaction started
+2025-06-30 00:18:07 | Processing skills: Array
+(
+    [0] => Social Media Management
+)
+
+2025-06-30 00:18:07 | Cleared existing skills
+2025-06-30 00:18:07 | Added 1 skills
+2025-06-30 00:18:07 | Saving preferences - work_style: remote, job_type: fulltime
+2025-06-30 00:18:07 | Inserted new preferences
+2025-06-30 00:18:07 | Saving accommodations - type: apparent, list: ["Lighting Adjustments"], no_needs: 0
+2025-06-30 00:18:07 | Inserted new accommodations
+2025-06-30 00:18:07 | Setup marked as complete for seeker_id: 6
+2025-06-30 00:18:07 | Transaction committed successfully
+2025-06-30 00:18:07 | Setup process completed successfully
+2025-06-30 00:18:18 | save_setup_data.php received data: Array
+(
+    [seeker_id] => 6
+    [skills] => ["Social Media Management"]
+    [work_style] => remote
+    [job_type] => fulltime
+    [disability_type] => apparent
+    [accommodation_list] => ["Lighting Adjustments"]
+    [no_accommodations_needed] => 0
+)
+
+2025-06-30 00:18:18 | Processing setup for seeker_id: 6
+2025-06-30 00:18:18 | Transaction started
+2025-06-30 00:18:18 | Processing skills: Array
+(
+    [0] => Social Media Management
+)
+
+2025-06-30 00:18:18 | Cleared existing skills
+2025-06-30 00:18:18 | Added 1 skills
+2025-06-30 00:18:18 | Saving preferences - work_style: remote, job_type: fulltime
+2025-06-30 00:18:18 | Updated existing preferences
+2025-06-30 00:18:18 | Saving accommodations - type: apparent, list: ["Lighting Adjustments"], no_needs: 0
+2025-06-30 00:18:18 | Updated existing accommodations
+2025-06-30 00:18:18 | Setup marked as complete for seeker_id: 6
+2025-06-30 00:18:18 | Transaction committed successfully
+2025-06-30 00:18:18 | Setup process completed successfully
