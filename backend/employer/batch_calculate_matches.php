@@ -1,8 +1,12 @@
 <?php
 // backend/employer/batch_calculate_matches.php
-// Endpoint for calculating matches for all applicants of a job
+// FIXED VERSION - Clean JSON output, proper session handling
 
-session_start();
+// Start session only if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once '../db.php';
 require_once 'session_check.php';
 require_once 'calculate_match_score.php';
@@ -12,14 +16,23 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
+// Prevent any HTML output from errors
+error_reporting(0);
+ini_set('display_errors', 0);
+
 try {
     // Validate session and get employer ID
     $employer_data = getValidatedEmployerData();
     $employer_id = $employer_data['employer_id'];
     
-    $input = json_decode(file_get_contents('php://input'), true);
+    // Get JSON input properly
+    $raw_input = file_get_contents('php://input');
+    $input = json_decode($raw_input, true);
     
-    if (!isset($input['job_id'])) {
+    // Debug log the input
+    error_log("Batch calculate input: " . $raw_input);
+    
+    if (!$input || !isset($input['job_id'])) {
         throw new Exception('Job ID is required');
     }
     
@@ -48,7 +61,21 @@ try {
         echo json_encode([
             'success' => true,
             'message' => 'No applicants found for this job',
-            'processed' => 0
+            'summary' => [
+                'total_applicants' => 0,
+                'processed' => 0,
+                'errors' => 0,
+                'skipped' => 0,
+                'average_score' => 0,
+                'highest_score' => 0,
+                'lowest_score' => 0,
+                'excellent_matches' => 0,
+                'good_matches' => 0,
+                'fair_matches' => 0,
+                'poor_matches' => 0
+            ],
+            'results' => [],
+            'timestamp' => date('Y-m-d H:i:s')
         ]);
         exit;
     }
@@ -127,7 +154,7 @@ try {
         'summary' => $summary,
         'results' => $results,
         'timestamp' => date('Y-m-d H:i:s')
-    ], JSON_PRETTY_PRINT);
+    ]);
     
 } catch (Exception $e) {
     error_log("Batch match calculation error: " . $e->getMessage());
