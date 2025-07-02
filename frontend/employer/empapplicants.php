@@ -181,6 +181,163 @@ requireEmployerLogin('emplogin.php');
         <!-- Bulk Actions Modals -->
         <?php include('../../modals/employer/bulk_actions_modal.php'); ?>
 
+        <!-- Category Results Modal - Add after existing modals -->
+        <div class="modal" id="categoryModal" style="display: none;">
+            <div class="modal-content category-modal">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="categoryModalTitle">
+                        <i class="fas fa-users"></i>
+                        Match Results
+                    </h2>
+                    <button class="close-modal" data-modal="categoryModal" aria-label="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="modal-body">
+                    <!-- Category Navigation Tabs -->
+                    <div class="category-tabs" id="categoryTabs">
+                        <button class="category-tab active" data-category="excellent">
+                            <span class="tab-icon">🔥</span>
+                            <span class="tab-label">Excellent</span>
+                            <span class="tab-count" id="excellent-tab-count">0</span>
+                        </button>
+                        <button class="category-tab" data-category="good">
+                            <span class="tab-icon">🟢</span>
+                            <span class="tab-label">Good</span>
+                            <span class="tab-count" id="good-tab-count">0</span>
+                        </button>
+                        <button class="category-tab" data-category="fair">
+                            <span class="tab-icon">🟡</span>
+                            <span class="tab-label">Fair</span>
+                            <span class="tab-count" id="fair-tab-count">0</span>
+                        </button>
+                        <button class="category-tab" data-category="needs-review">
+                            <span class="tab-icon">⚠️</span>
+                            <span class="tab-label">Needs Review</span>
+                            <span class="tab-count" id="needs-review-tab-count">0</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Category Content Area -->
+                    <div class="category-content" id="categoryContent">
+                        <div class="category-loading" id="categoryLoading">
+                            <div class="loading-spinner"></div>
+                            <p>Loading applicants...</p>
+                        </div>
+                        
+                        <div class="category-empty" id="categoryEmpty" style="display: none;">
+                            <div class="empty-icon">📭</div>
+                            <h3>No Applicants Found</h3>
+                            <p>There are no applicants in this category yet.</p>
+                        </div>
+                        
+                        <div class="jobs-accordion" id="jobsAccordion">
+                            <!-- Job accordions will be dynamically generated here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button class="footer-btn secondary-btn">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to Overview
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Templates -->
+        <template id="jobAccordionTemplate">
+            <div class="job-accordion">
+                <div class="job-accordion-header">
+                    <div class="job-info">
+                        <h4 class="job-title">Job Title</h4>
+                        <span class="job-applicant-count">0 applicants</span>
+                    </div>
+                    <div class="job-actions">
+                        <span class="job-average-score">Avg: 0%</span>
+                        <button class="accordion-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="job-accordion-content">
+                    <div class="applicants-list"></div>
+                </div>
+            </div>
+        </template>
+
+        <template id="categoryApplicantTemplate">
+            <div class="category-applicant-card">
+                <div class="applicant-header">
+                    <div class="applicant-avatar">
+                        <img src="" alt="Avatar">
+                        <div class="avatar-fallback">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                    <div class="applicant-info">
+                        <h5 class="applicant-name">Applicant Name</h5>
+                        <div class="applicant-score-container">
+                            <span class="applicant-score">0%</span>
+                            <span class="score-label">match</span>
+                        </div>
+                    </div>
+                    <div class="applicant-actions">
+                        <button class="action-btn view-resume-btn" title="View Resume">
+                            <i class="fas fa-file-pdf"></i>
+                        </button>
+                        <button class="action-btn view-profile-btn" title="View Profile">
+                            <i class="fas fa-user"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="applicant-details">
+                    <div class="skills-section">
+                        <h6>Skills Analysis</h6>
+                        <div class="skills-match">
+                            <div class="matched-skills">
+                                <span class="skills-label">✅ Matched:</span>
+                                <div class="skills-list matched"></div>
+                            </div>
+                            <div class="missing-skills">
+                                <span class="skills-label">❌ Missing:</span>
+                                <div class="skills-list missing"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="resume-section">
+                        <h6>Resume Preview</h6>
+                        <div class="resume-preview">
+                            <div class="resume-loading">Loading preview...</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="applicant-status-actions">
+                    <button class="status-btn review-btn" data-status="under_review">
+                        <i class="fas fa-eye"></i>
+                        Review
+                    </button>
+                    <button class="status-btn interview-btn" data-status="interview_scheduled">
+                        <i class="fas fa-calendar"></i>
+                        Interview
+                    </button>
+                    <button class="status-btn hire-btn" data-status="hired">
+                        <i class="fas fa-check"></i>
+                        Hire
+                    </button>
+                    <button class="status-btn reject-btn" data-status="rejected">
+                        <i class="fas fa-times"></i>
+                        Reject
+                    </button>
+                </div>
+            </div>
+        </template>
+
         <!-- Load the JavaScript -->
         <script src="../../scripts/employer/empapplicants.js"></script>
         

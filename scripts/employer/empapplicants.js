@@ -2542,28 +2542,627 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function displayMatchStatistics(summary) {
-        const matchStats = document.getElementById('match-stats');
-        if (!matchStats) return;
+        const matchStatsDiv = document.getElementById('match-stats');
+        if (!matchStatsDiv) return;
+
+        // Store summary data for category modal
+        window.currentMatchSummary = summary;
         
-        matchStats.style.display = 'block';
+        matchStatsDiv.style.display = 'block';
         
-        // Update stat cards
-        const elements = {
-            'excellent-count': summary.excellent_matches || 0,
-            'good-count': summary.good_matches || 0,
-            'fair-count': summary.fair_matches || 0,
-            'poor-count': summary.poor_matches || 0,
-            'average-score': (summary.average_score || 0) + '%',
-            'processed-count': summary.processed || 0
-        };
+        // Create enhanced statistics cards HTML
+        matchStatsDiv.innerHTML = `
+            <div class="stats-grid">
+                <div class="match-stat-card excellent-card" data-category="excellent" data-count="${summary.excellent_matches || 0}">
+                    <div class="stat-header">
+                        <div class="stat-icon">🔥</div>
+                        <div class="stat-info">
+                            <div class="stat-count">${summary.excellent_matches || 0}</div>
+                            <div class="stat-label">Excellent</div>
+                            <div class="stat-range">90-100%</div>
+                        </div>
+                    </div>
+                    <div class="stat-preview" id="excellent-preview">
+                        <div class="preview-content">
+                            <div class="preview-header">Top Candidates</div>
+                            <div class="preview-loading">Loading...</div>
+                        </div>
+                    </div>
+                    <div class="stat-action">
+                        <span class="view-details">Click to view details</span>
+                    </div>
+                </div>
+
+                <div class="match-stat-card good-card" data-category="good" data-count="${summary.good_matches || 0}">
+                    <div class="stat-header">
+                        <div class="stat-icon">🟢</div>
+                        <div class="stat-info">
+                            <div class="stat-count">${summary.good_matches || 0}</div>
+                            <div class="stat-label">Good</div>
+                            <div class="stat-range">75-89%</div>
+                        </div>
+                    </div>
+                    <div class="stat-preview" id="good-preview">
+                        <div class="preview-content">
+                            <div class="preview-header">Top Candidates</div>
+                            <div class="preview-loading">Loading...</div>
+                        </div>
+                    </div>
+                    <div class="stat-action">
+                        <span class="view-details">Click to view details</span>
+                    </div>
+                </div>
+
+                <div class="match-stat-card fair-card" data-category="fair" data-count="${summary.fair_matches || 0}">
+                    <div class="stat-header">
+                        <div class="stat-icon">🟡</div>
+                        <div class="stat-info">
+                            <div class="stat-count">${summary.fair_matches || 0}</div>
+                            <div class="stat-label">Fair</div>
+                            <div class="stat-range">60-74%</div>
+                        </div>
+                    </div>
+                    <div class="stat-preview" id="fair-preview">
+                        <div class="preview-content">
+                            <div class="preview-header">Top Candidates</div>
+                            <div class="preview-loading">Loading...</div>
+                        </div>
+                    </div>
+                    <div class="stat-action">
+                        <span class="view-details">Click to view details</span>
+                    </div>
+                </div>
+
+                <div class="match-stat-card needs-review-card" data-category="needs-review" data-count="${summary.poor_matches || 0}">
+                    <div class="stat-header">
+                        <div class="stat-icon">⚠️</div>
+                        <div class="stat-info">
+                            <div class="stat-count">${summary.poor_matches || 0}</div>
+                            <div class="stat-label">Needs Review</div>
+                            <div class="stat-range">0-59%</div>
+                        </div>
+                    </div>
+                    <div class="stat-preview" id="needs-review-preview">
+                        <div class="preview-content">
+                            <div class="preview-header">Top Candidates</div>
+                            <div class="preview-loading">Loading...</div>
+                        </div>
+                    </div>
+                    <div class="stat-action">
+                        <span class="view-details">Click to view details</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-summary">
+                <div class="summary-item">
+                    <span class="summary-label">Total Processed:</span>
+                    <span class="summary-value">${summary.processed || 0}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Average Score:</span>
+                    <span class="summary-value">${summary.average_score || 0}%</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Highest Score:</span>
+                    <span class="summary-value">${summary.highest_score || 0}%</span>
+                </div>
+            </div>
+        `;
+
+        // Add event listeners for enhanced cards
+        addStatisticsCardListeners();
+    }
+
+    function addStatisticsCardListeners() {
+        const cards = document.querySelectorAll('.match-stat-card');
         
-        Object.entries(elements).forEach(([id, value]) => {
-            const element = document.getElementById(id);
-            if (element) {
-                element.textContent = value;
+        cards.forEach(card => {
+            const category = card.dataset.category;
+            const count = parseInt(card.dataset.count);
+            
+            // Only add interactions if there are applicants in this category
+            if (count > 0) {
+                card.classList.add('interactive');
+                
+                // Hover event for preview
+                card.addEventListener('mouseenter', () => {
+                    showCategoryPreview(category, card);
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    hideCategoryPreview(card);
+                });
+                
+                // Click event for detailed modal
+                card.addEventListener('click', () => {
+                    openCategoryModal(category);
+                });
+            } else {
+                card.classList.add('empty');
             }
         });
     }
+
+    function updateCategoryTabs(activeCategory) {
+        const summary = window.currentMatchSummary;
+        if (!summary) return;
+        
+        const counts = {
+            'excellent': summary.excellent_matches || 0,
+            'good': summary.good_matches || 0,
+            'fair': summary.fair_matches || 0,
+            'needs-review': summary.poor_matches || 0
+        };
+        
+        // Update tab counts
+        Object.keys(counts).forEach(category => {
+            const countEl = document.getElementById(`${category}-tab-count`);
+            if (countEl) {
+                countEl.textContent = counts[category];
+            }
+        });
+        
+        // Set active tab
+        const tabs = document.querySelectorAll('.category-tab');
+        tabs.forEach(tab => {
+            const tabCategory = tab.dataset.category;
+            if (tabCategory === activeCategory) {
+                tab.classList.add('active');
+            } else {
+                tab.classList.remove('active');
+            }
+        });
+    }
+
+    async function showCategoryPreview(category, card) {
+        const preview = card.querySelector('.stat-preview');
+        const previewContent = card.querySelector('.preview-content');
+        
+        if (!preview || !previewContent) return;
+        
+        // Show preview with loading state
+        preview.classList.add('visible');
+        
+        try {
+            // Fetch preview data for this category
+            const previewData = await fetchCategoryPreview(category);
+            
+            if (previewData && previewData.length > 0) {
+                const previewHTML = previewData.slice(0, 3).map(applicant => `
+                    <div class="preview-applicant">
+                        <div class="preview-name">${applicant.full_name}</div>
+                        <div class="preview-score">${applicant.match_score}%</div>
+                        <div class="preview-job">${applicant.job_title}</div>
+                    </div>
+                `).join('');
+                
+                previewContent.innerHTML = `
+                    <div class="preview-header">Top Candidates</div>
+                    ${previewHTML}
+                    ${previewData.length > 3 ? `<div class="preview-more">+${previewData.length - 3} more</div>` : ''}
+                `;
+            } else {
+                previewContent.innerHTML = `
+                    <div class="preview-header">No Candidates</div>
+                    <div class="preview-empty">No applicants in this category</div>
+                `;
+            }
+        } catch (error) {
+            console.error('Failed to load preview:', error);
+            previewContent.innerHTML = `
+                <div class="preview-header">Preview Error</div>
+                <div class="preview-error">Failed to load preview</div>
+            `;
+        }
+    }
+
+    function hideCategoryPreview(card) {
+        const preview = card.querySelector('.stat-preview');
+        if (preview) {
+            preview.classList.remove('visible');
+        }
+    }
+
+    async function fetchCategoryPreview(category) {
+        try {
+            // Get score ranges for categories
+            const scoreRanges = {
+                'excellent': { min: 90, max: 100 },
+                'good': { min: 75, max: 89 },
+                'fair': { min: 60, max: 74 },
+                'needs-review': { min: 0, max: 59 }
+            };
+            
+            const range = scoreRanges[category];
+            if (!range) return [];
+            
+            // Filter current applicants data by score range
+            if (window.applicantsData && window.applicantsData.length > 0) {
+                return window.applicantsData
+                    .filter(applicant => {
+                        const score = parseFloat(applicant.match_score) || 0;
+                        return score >= range.min && score <= range.max;
+                    })
+                    .sort((a, b) => (parseFloat(b.match_score) || 0) - (parseFloat(a.match_score) || 0))
+                    .slice(0, 5); // Get top 5 for preview
+            }
+            
+            return [];
+        } catch (error) {
+            console.error('Error fetching category preview:', error);
+            return [];
+        }
+    }
+
+    function openCategoryModal(category) {
+        const modal = document.getElementById('categoryModal');
+        if (!modal) {
+            console.error('Category modal not found');
+            return;
+        }
+        
+        // Set active category
+        window.currentCategory = category;
+        
+        // Update modal title
+        const titleEl = document.getElementById('categoryModalTitle');
+        if (titleEl) {
+            const categoryLabels = {
+                'excellent': '🔥 Excellent Matches',
+                'good': '🟢 Good Matches', 
+                'fair': '🟡 Fair Matches',
+                'needs-review': '⚠️ Needs Review'
+            };
+            titleEl.innerHTML = `<i class="fas fa-users"></i> ${categoryLabels[category] || 'Match Results'}`;
+        }
+        
+        // Update tab counts and set active tab
+        updateCategoryTabs(category);
+        
+        // Load category content
+        loadCategoryContent(category);
+        
+        // Show modal
+        modal.style.display = 'flex';
+    }
+
+    // Helper function to filter main view by category (temporary)
+    function filterApplicantsByCategory(category) {
+        const scoreRanges = {
+            'excellent': { min: 90, max: 100 },
+            'good': { min: 75, max: 89 },
+            'fair': { min: 60, max: 74 },
+            'needs-review': { min: 0, max: 59 }
+        };
+        
+        const range = scoreRanges[category];
+        if (!range || !window.applicantsData) return;
+        
+        const filteredApplicants = window.applicantsData.filter(applicant => {
+            const score = parseFloat(applicant.match_score) || 0;
+            return score >= range.min && score <= range.max;
+        });
+        
+        // Update the main applicants display with filtered results
+        if (window.renderApplicants) {
+            window.renderApplicants(filteredApplicants);
+        }
+        
+        showNotification(`Showing ${filteredApplicants.length} applicants in "${category}" category`, 'success');
+    }
+
+    async function loadCategoryContent(category) {
+        const contentEl = document.getElementById('categoryContent');
+        const loadingEl = document.getElementById('categoryLoading');
+        const emptyEl = document.getElementById('categoryEmpty');
+        const accordionEl = document.getElementById('jobsAccordion');
+        
+        if (!contentEl) return;
+        
+        // Show loading state
+        loadingEl.style.display = 'block';
+        emptyEl.style.display = 'none';
+        accordionEl.style.display = 'none';
+        
+        try {
+            // Fetch categorized data
+            const response = await fetch(`../../backend/employer/get_categorized_matches.php?category=${category}`);
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to load category data');
+            }
+            
+            if (data.success) {
+                if (data.job_groups && data.job_groups.length > 0) {
+                    renderJobAccordions(data.job_groups);
+                    accordionEl.style.display = 'block';
+                } else {
+                    emptyEl.style.display = 'block';
+                }
+            } else {
+                throw new Error(data.error || 'Failed to load category data');
+            }
+            
+        } catch (error) {
+            console.error('Error loading category content:', error);
+            showError('Failed to load category data: ' + error.message);
+            emptyEl.style.display = 'block';
+        } finally {
+            loadingEl.style.display = 'none';
+        }
+    }
+
+    // Render job accordions
+    function renderJobAccordions(jobGroups) {
+        const accordionEl = document.getElementById('jobsAccordion');
+        if (!accordionEl) return;
+        
+        accordionEl.innerHTML = '';
+        
+        jobGroups.forEach((group, index) => {
+            const jobAccordion = createJobAccordion(group, index);
+            accordionEl.appendChild(jobAccordion);
+        });
+    }
+
+    // Create individual job accordion
+    function createJobAccordion(group, index) {
+        const template = document.getElementById('jobAccordionTemplate');
+        if (!template) return document.createElement('div');
+        
+        const accordion = template.content.cloneNode(true);
+        const accordionEl = accordion.querySelector('.job-accordion');
+        
+        // Set job info
+        const titleEl = accordion.querySelector('.job-title');
+        const countEl = accordion.querySelector('.job-applicant-count');
+        const scoreEl = accordion.querySelector('.job-average-score');
+        
+        if (titleEl) titleEl.textContent = group.job_info.job_title;
+        if (countEl) countEl.textContent = `${group.stats.count} applicant${group.stats.count !== 1 ? 's' : ''}`;
+        if (scoreEl) scoreEl.textContent = `Avg: ${group.stats.average_score}%`;
+        
+        // Set accordion ID
+        const accordionId = `job-accordion-${index}`;
+        accordionEl.setAttribute('id', accordionId);
+        
+        // Add toggle functionality
+        const header = accordion.querySelector('.job-accordion-header');
+        const content = accordion.querySelector('.job-accordion-content');
+        const toggle = accordion.querySelector('.accordion-toggle');
+        
+        if (header && content) {
+            header.addEventListener('click', () => {
+                const isExpanded = accordionEl.classList.contains('expanded');
+                
+                // Close all other accordions
+                document.querySelectorAll('.job-accordion.expanded').forEach(acc => {
+                    if (acc !== accordionEl) {
+                        acc.classList.remove('expanded');
+                        acc.querySelector('.job-accordion-content').style.display = 'none';
+                    }
+                });
+                
+                // Toggle current accordion
+                if (isExpanded) {
+                    accordionEl.classList.remove('expanded');
+                    content.style.display = 'none';
+                } else {
+                    accordionEl.classList.add('expanded');
+                    content.style.display = 'block';
+                    
+                    // Load applicants if not already loaded
+                    if (!content.dataset.loaded) {
+                        renderApplicantsInAccordion(group.applicants, content);
+                        content.dataset.loaded = 'true';
+                    }
+                }
+            });
+            
+            // Auto-expand first accordion
+            if (index === 0) {
+                accordionEl.classList.add('expanded');
+                content.style.display = 'block';
+                renderApplicantsInAccordion(group.applicants, content);
+                content.dataset.loaded = 'true';
+            }
+        }
+        
+        return accordionEl;
+    }
+
+    // Render applicants within accordion
+    function renderApplicantsInAccordion(applicants, contentEl) {
+        const listEl = contentEl.querySelector('.applicants-list');
+        if (!listEl) return;
+        
+        listEl.innerHTML = '';
+        
+        applicants.forEach(applicant => {
+            const applicantCard = createCategoryApplicantCard(applicant);
+            listEl.appendChild(applicantCard);
+        });
+    }
+
+    // Create individual applicant card for category modal
+    function createCategoryApplicantCard(applicant) {
+        const template = document.getElementById('categoryApplicantTemplate');
+        if (!template) return document.createElement('div');
+        
+        const card = template.content.cloneNode(true);
+        const cardEl = card.querySelector('.category-applicant-card');
+        
+        // Set applicant info
+        const nameEl = card.querySelector('.applicant-name');
+        const scoreEl = card.querySelector('.applicant-score');
+        const avatarImg = card.querySelector('.applicant-avatar img');
+        const avatarFallback = card.querySelector('.avatar-fallback');
+        
+        if (nameEl) nameEl.textContent = applicant.full_name;
+        if (scoreEl) scoreEl.textContent = `${applicant.match_score}%`;
+        
+        // Handle avatar
+        if (applicant.profile_picture) {
+            avatarImg.src = applicant.profile_picture;
+            avatarImg.style.display = 'block';
+            avatarFallback.style.display = 'none';
+        } else {
+            avatarImg.style.display = 'none';
+            avatarFallback.style.display = 'flex';
+        }
+        
+        // Set skills analysis
+        const matchedSkillsEl = card.querySelector('.skills-list.matched');
+        const missingSkillsEl = card.querySelector('.skills-list.missing');
+        
+        if (applicant.skills_analysis) {
+            if (matchedSkillsEl) {
+                matchedSkillsEl.innerHTML = applicant.skills_analysis.matched_skills
+                    .map(skill => `<span class="skill-tag">${skill}</span>`)
+                    .join('');
+            }
+            
+            if (missingSkillsEl) {
+                missingSkillsEl.innerHTML = applicant.skills_analysis.missing_skills
+                    .map(skill => `<span class="skill-tag">${skill}</span>`)
+                    .join('');
+            }
+        }
+        
+        // Set resume preview
+        const resumePreview = card.querySelector('.resume-preview');
+        if (resumePreview && applicant.resume_content) {
+            const preview = applicant.resume_content.substring(0, 200) + '...';
+            resumePreview.innerHTML = `<div class="resume-text">${preview}</div>`;
+        }
+        
+        // Add action button listeners
+        addCategoryApplicantActions(card, applicant);
+        
+        return cardEl;
+    }
+
+    // Add action button listeners for category applicant cards
+    function addCategoryApplicantActions(card, applicant) {
+        // View resume button
+        const viewResumeBtn = card.querySelector('.view-resume-btn');
+        if (viewResumeBtn) {
+            viewResumeBtn.addEventListener('click', () => {
+                if (applicant.resume_file) {
+                    window.open(`../../backend/employer/view_resume.php?application_id=${applicant.application_id}`, '_blank');
+                } else {
+                    showNotification('No resume file available', 'warning');
+                }
+            });
+        }
+        
+        // View profile button
+        const viewProfileBtn = card.querySelector('.view-profile-btn');
+        if (viewProfileBtn) {
+            viewProfileBtn.addEventListener('click', () => {
+                // Reuse existing applicant modal
+                if (window.openApplicantModal) {
+                    window.openApplicantModal(applicant.application_id);
+                }
+            });
+        }
+        
+        // Status action buttons
+        const statusBtns = card.querySelectorAll('.status-btn');
+        statusBtns.forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const status = btn.dataset.status;
+                const success = await updateApplicantStatusInCategory(applicant.application_id, status);
+                
+                if (success) {
+                    // Update button states or reload category
+                    showNotification(`Status updated to: ${status.replace('_', ' ')}`, 'success');
+                    // Optionally reload the category content
+                    // loadCategoryContent(window.currentCategory);
+                }
+            });
+        });
+    }
+
+    // Update applicant status from category modal
+    async function updateApplicantStatusInCategory(applicationId, newStatus) {
+        try {
+            const response = await fetch('../../backend/employer/update_application_status.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    application_id: applicationId,
+                    status: newStatus
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                return true;
+            } else {
+                showError(data.message || 'Failed to update status');
+                return false;
+            }
+        } catch (error) {
+            console.error('Error updating status:', error);
+            showError('Failed to update status');
+            return false;
+        }
+    }
+
+    // Add category tab switching functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        // Category tab switching
+        const categoryTabs = document.querySelectorAll('.category-tab');
+        categoryTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const category = tab.dataset.category;
+                const count = parseInt(tab.querySelector('.tab-count').textContent);
+                
+                if (count > 0) {
+                    // Update active tab
+                    categoryTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // Load new category content
+                    loadCategoryContent(category);
+                    window.currentCategory = category;
+                }
+            });
+        });
+        
+        // Category modal close handlers
+        const categoryModal = document.getElementById('categoryModal');
+        if (categoryModal) {
+            // Close button
+            const closeBtn = categoryModal.querySelector('.close-modal');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    categoryModal.style.display = 'none';
+                });
+            }
+            
+            // Back button
+            const backBtn = categoryModal.querySelector('.secondary-btn');
+            if (backBtn) {
+                backBtn.addEventListener('click', () => {
+                    categoryModal.style.display = 'none';
+                });
+            }
+            
+            // Click outside to close
+            categoryModal.addEventListener('click', (e) => {
+                if (e.target === categoryModal) {
+                    categoryModal.style.display = 'none';
+                }
+            });
+        }
+    });
 
     function showNotification(message, type = 'success') {
         const notification = document.createElement('div');
