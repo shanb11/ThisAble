@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentPage = 1;
     let isLoading = false;
     let searchTimeout = null;
+    let availableSkills = [];
+    loadAvailableSkills();
 
     // Add notification redirection functionality
     if (notificationIcon) {
@@ -84,6 +86,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Create new job via API
     async function createJob(jobData) {
         try {
+            console.log('🚀 Creating job with data:', jobData);
+            
             const response = await fetch('../../backend/employer/create_job.php', {
                 method: 'POST',
                 headers: {
@@ -91,21 +95,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: JSON.stringify(jobData)
             });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || 'Failed to create job');
+            
+            const responseText = await response.text();
+            console.log('📥 Raw response:', responseText);
+            
+            let data;
+            try {
+                data = JSON.parse(responseText);
+            } catch (parseError) {
+                console.error('JSON parse error:', parseError);
+                throw new Error('Invalid response from server: ' + responseText.substring(0, 100));
             }
-
+            
+            if (!response.ok) {
+                throw new Error(data.message || `HTTP error! status: ${response.status}`);
+            }
+            
             if (data.success) {
-                return data.data.job;
+                console.log('✅ Job created successfully:', data);
+                return data.data;
             } else {
                 throw new Error(data.message || 'Failed to create job');
             }
-
+            
         } catch (error) {
-            console.error('Error creating job:', error);
+            console.error('Create job error:', error);
             throw error;
         }
     }
@@ -206,6 +220,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return jobCard;
     }
 
+    // REPLACE your existing createJobFormModal function with this enhanced version:
     function createJobFormModal(existingJobData = null) {
         // Create the modal overlay element
         const modalOverlay = document.createElement('div');
@@ -238,10 +253,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 transportation_support: false,
                 additional_accommodations: ''
             },
-            required_skills: []
+            required_skills: [] // Will be populated from job_requirements table
         };
         
-        // Create the modal content
+        // Create skills selection HTML
+        const skillsSelectionHTML = generateSkillsSelectionHTML();
+        
+        // Create the modal content with enhanced skills section
         const modalHTML = `
             <div class="modal">
                 <div class="modal-header">
@@ -250,45 +268,46 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
                 <div class="modal-body">
                     <form id="job-post-form">
-                        <!-- 1. Job Information -->
+                        <!-- 1. Basic Job Information -->
                         <div class="form-section">
                             <h4 class="form-section-title">
-                                <i class="fas fa-info-circle"></i>
-                                Job Information
+                                <i class="fas fa-briefcase"></i>
+                                Basic Job Information
                             </h4>
                             
                             <div class="form-row">
                                 <label class="form-label" for="job-title">Job Title*</label>
-                                <input type="text" id="job-title" class="form-control" placeholder="e.g., Web Developer" value="${jobData.job_title || ''}" required>
+                                <input type="text" id="job-title" class="form-control" placeholder="e.g. Software Developer, Customer Service Representative" value="${jobData.job_title || ''}" required>
                             </div>
                             
-                            <div class="form-row-grid">
+                            <div class="form-row-group">
                                 <div class="form-row">
                                     <label class="form-label" for="department">Department*</label>
                                     <select id="department" class="form-control" required>
-                                        <option value="" ${!jobData.department ? 'selected' : ''}>Select department</option>
+                                        <option value="">Select Department</option>
                                         <option value="Engineering" ${jobData.department === 'Engineering' ? 'selected' : ''}>Engineering</option>
                                         <option value="Design" ${jobData.department === 'Design' ? 'selected' : ''}>Design</option>
-                                        <option value="Marketing" ${jobData.department === 'Marketing' ? 'selected' : ''}>Marketing</option>
-                                        <option value="Customer Support" ${jobData.department === 'Customer Support' ? 'selected' : ''}>Customer Support</option>
+                                        <option value="Customer Service" ${jobData.department === 'Customer Service' ? 'selected' : ''}>Customer Service</option>
                                         <option value="Sales" ${jobData.department === 'Sales' ? 'selected' : ''}>Sales</option>
-                                        <option value="Human Resources" ${jobData.department === 'Human Resources' ? 'selected' : ''}>Human Resources</option>
+                                        <option value="Marketing" ${jobData.department === 'Marketing' ? 'selected' : ''}>Marketing</option>
+                                        <option value="HR" ${jobData.department === 'HR' ? 'selected' : ''}>Human Resources</option>
                                         <option value="Finance" ${jobData.department === 'Finance' ? 'selected' : ''}>Finance</option>
                                         <option value="Operations" ${jobData.department === 'Operations' ? 'selected' : ''}>Operations</option>
+                                        <option value="Other" ${jobData.department === 'Other' ? 'selected' : ''}>Other</option>
                                     </select>
                                 </div>
                                 
                                 <div class="form-row">
                                     <label class="form-label" for="job-location">Location*</label>
-                                    <input type="text" id="job-location" class="form-control" placeholder="e.g., Manila, Philippines" value="${jobData.location || ''}" required>
+                                    <input type="text" id="job-location" class="form-control" placeholder="e.g. Manila, Philippines" value="${jobData.location || ''}" required>
                                 </div>
                             </div>
                             
-                            <div class="form-row-grid">
+                            <div class="form-row-group">
                                 <div class="form-row">
                                     <label class="form-label" for="employment-type">Employment Type*</label>
                                     <select id="employment-type" class="form-control" required>
-                                        <option value="" ${!jobData.employment_type ? 'selected' : ''}>Select employment type</option>
+                                        <option value="">Select Employment Type</option>
                                         <option value="Full-time" ${jobData.employment_type === 'Full-time' ? 'selected' : ''}>Full-time</option>
                                         <option value="Part-time" ${jobData.employment_type === 'Part-time' ? 'selected' : ''}>Part-time</option>
                                         <option value="Contract" ${jobData.employment_type === 'Contract' ? 'selected' : ''}>Contract</option>
@@ -299,7 +318,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 
                                 <div class="form-row">
                                     <label class="form-label" for="salary-range">Salary Range</label>
-                                    <input type="text" id="salary-range" class="form-control" placeholder="₱50,000 - ₱80,000" value="${jobData.salary_range || ''}">
+                                    <input type="text" id="salary-range" class="form-control" placeholder="e.g. 25,000 - 35,000" value="${jobData.salary_range || ''}">
                                 </div>
                             </div>
                             
@@ -307,32 +326,29 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <label class="form-label" for="application-deadline">Application Deadline</label>
                                 <input type="date" id="application-deadline" class="form-control" value="${jobData.application_deadline || ''}">
                             </div>
-                        </div>
-                        
-                        <!-- 2. Work Arrangements -->
-                        <div class="form-section">
-                            <h4 class="form-section-title">
-                                <i class="fas fa-laptop-house"></i>
-                                Work Arrangements
-                            </h4>
                             
-                            <div class="form-row-grid">
-                                <div class="form-row">
-                                    <label class="form-label">
-                                        <input type="checkbox" id="remote-work" ${jobData.remote_work_available ? 'checked' : ''}> 
-                                        Remote Work Available
-                                    </label>
+                            <div class="form-row-group">
+                                <div class="form-row checkbox-row">
+                                    <div class="checkbox-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="remote-work" class="checkbox-input" ${jobData.remote_work_available ? 'checked' : ''}> 
+                                            Remote Work Available
+                                        </label>
+                                    </div>
                                 </div>
-                                <div class="form-row">
-                                    <label class="form-label">
-                                        <input type="checkbox" id="flexible-schedule" ${jobData.flexible_schedule ? 'checked' : ''}> 
-                                        Flexible Schedule
-                                    </label>
+                                
+                                <div class="form-row checkbox-row">
+                                    <div class="checkbox-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="flexible-schedule" class="checkbox-input" ${jobData.flexible_schedule ? 'checked' : ''}> 
+                                            Flexible Schedule
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- 3. Job Description -->
+                        <!-- 2. Job Description -->
                         <div class="form-section">
                             <h4 class="form-section-title">
                                 <i class="fas fa-file-alt"></i>
@@ -345,7 +361,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>
                         </div>
                         
-                        <!-- 4. Requirements & Qualifications -->
+                        <!-- 3. Requirements & Qualifications -->
                         <div class="form-section">
                             <h4 class="form-section-title">
                                 <i class="fas fa-graduation-cap"></i>
@@ -353,9 +369,29 @@ document.addEventListener('DOMContentLoaded', function() {
                             </h4>
                             
                             <div class="form-row">
-                                <label class="form-label" for="job-requirements">Requirements & Qualifications*</label>
-                                <textarea id="job-requirements" class="form-control" rows="6" placeholder="List all job requirements, qualifications, responsibilities, and skills needed for this position..." required>${jobData.job_requirements || ''}</textarea>
-                                <small class="form-help">Include education requirements, experience levels, technical skills, soft skills, and key responsibilities.</small>
+                                <label class="form-label" for="job-requirements">Additional Requirements & Qualifications</label>
+                                <textarea id="job-requirements" class="form-control" rows="4" placeholder="List education requirements, experience levels, certifications, and other qualifications not covered by skills below...">${jobData.job_requirements || ''}</textarea>
+                                <small class="form-help">Use this field for education requirements, years of experience, certifications, and other non-skill qualifications.</small>
+                            </div>
+                        </div>
+                        
+                        <!-- 4. SKILLS SELECTION SECTION -->
+                        <div class="form-section">
+                            <h4 class="form-section-title">
+                                <i class="fas fa-tools"></i>
+                                Required Skills
+                            </h4>
+                            
+                            <div class="skills-selection-container">
+                                <div class="skills-selection-header">
+                                    <p class="skills-help-text">Select the skills required for this position. You can mark skills as required or preferred.</p>
+                                    <div class="skills-actions">
+                                        <button type="button" class="btn-secondary" id="select-all-skills">Select All</button>
+                                        <button type="button" class="btn-secondary" id="clear-all-skills">Clear All</button>
+                                    </div>
+                                </div>
+                                
+                                ${skillsSelectionHTML}
                             </div>
                         </div>
                         
@@ -367,55 +403,55 @@ document.addEventListener('DOMContentLoaded', function() {
                             </h4>
                             
                             <div class="accommodations-section">
-                                <div class="accommodation-item ${jobData.accommodations?.wheelchair_accessible ? 'checked' : ''}">
+                                <div class="accommodation-item">
                                     <input type="checkbox" id="wheelchair-accessible" class="accommodation-checkbox" ${jobData.accommodations?.wheelchair_accessible ? 'checked' : ''}>
                                     <label for="wheelchair-accessible" class="accommodation-label">
-                                        <strong>Wheelchair Accessible Workplace</strong>
-                                        <div class="accommodation-description">Ramps, elevators, accessible restrooms and workspaces</div>
+                                        <strong>Wheelchair Accessible</strong>
+                                        <div class="accommodation-description">Wheelchair accessible entrances, elevators, and workspaces</div>
                                     </label>
                                 </div>
                                 
-                                <div class="accommodation-item ${jobData.accommodations?.assistive_technology ? 'checked' : ''}">
+                                <div class="accommodation-item">
                                     <input type="checkbox" id="assistive-technology" class="accommodation-checkbox" ${jobData.accommodations?.assistive_technology ? 'checked' : ''}>
                                     <label for="assistive-technology" class="accommodation-label">
                                         <strong>Assistive Technology Support</strong>
-                                        <div class="accommodation-description">Screen readers, speech-to-text, magnification software</div>
+                                        <div class="accommodation-description">Screen readers, voice recognition software, and other assistive tools</div>
                                     </label>
                                 </div>
                                 
-                                <div class="accommodation-item ${jobData.accommodations?.remote_work_option ? 'checked' : ''}">
+                                <div class="accommodation-item">
                                     <input type="checkbox" id="remote-work-option" class="accommodation-checkbox" ${jobData.accommodations?.remote_work_option ? 'checked' : ''}>
                                     <label for="remote-work-option" class="accommodation-label">
-                                        <strong>Remote Work Options</strong>
-                                        <div class="accommodation-description">Work from home options and flexible arrangements</div>
+                                        <strong>Remote Work Option</strong>
+                                        <div class="accommodation-description">Flexible work-from-home arrangements</div>
                                     </label>
                                 </div>
                                 
-                                <div class="accommodation-item ${jobData.accommodations?.screen_reader_compatible ? 'checked' : ''}">
+                                <div class="accommodation-item">
                                     <input type="checkbox" id="screen-reader-compatible" class="accommodation-checkbox" ${jobData.accommodations?.screen_reader_compatible ? 'checked' : ''}>
                                     <label for="screen-reader-compatible" class="accommodation-label">
-                                        <strong>Screen Reader Compatible Systems</strong>
-                                        <div class="accommodation-description">All digital systems compatible with screen reading software</div>
+                                        <strong>Screen Reader Compatible</strong>
+                                        <div class="accommodation-description">All digital tools and platforms work with screen readers</div>
                                     </label>
                                 </div>
                                 
-                                <div class="accommodation-item ${jobData.accommodations?.sign_language_interpreter ? 'checked' : ''}">
+                                <div class="accommodation-item">
                                     <input type="checkbox" id="sign-language-interpreter" class="accommodation-checkbox" ${jobData.accommodations?.sign_language_interpreter ? 'checked' : ''}>
                                     <label for="sign-language-interpreter" class="accommodation-label">
                                         <strong>Sign Language Interpreter</strong>
-                                        <div class="accommodation-description">Interpreter services available for meetings and communications</div>
+                                        <div class="accommodation-description">Professional interpreters for meetings and communications</div>
                                     </label>
                                 </div>
                                 
-                                <div class="accommodation-item ${jobData.accommodations?.modified_workspace ? 'checked' : ''}">
+                                <div class="accommodation-item">
                                     <input type="checkbox" id="modified-workspace" class="accommodation-checkbox" ${jobData.accommodations?.modified_workspace ? 'checked' : ''}>
                                     <label for="modified-workspace" class="accommodation-label">
                                         <strong>Modified Workspace</strong>
-                                        <div class="accommodation-description">Adjustable desks, ergonomic equipment, and customized workstations</div>
+                                        <div class="accommodation-description">Adjustable desks, ergonomic equipment, and workspace modifications</div>
                                     </label>
                                 </div>
                                 
-                                <div class="accommodation-item ${jobData.accommodations?.transportation_support ? 'checked' : ''}">
+                                <div class="accommodation-item">
                                     <input type="checkbox" id="transportation-support" class="accommodation-checkbox" ${jobData.accommodations?.transportation_support ? 'checked' : ''}>
                                     <label for="transportation-support" class="accommodation-label">
                                         <strong>Transportation Support</strong>
@@ -458,98 +494,119 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Setup event listeners for the modal
         setupJobFormEventListeners(modalOverlay, isEditing, jobData);
+        
+        // Setup skills selection event listeners
+        setupSkillsSelectionListeners(modalOverlay);
     }
 
-    // Setup event listeners for the job form
     function setupJobFormEventListeners(modalOverlay, isEditing, jobData = null) {
         const closeBtn = modalOverlay.querySelector('#close-job-form');
         const cancelBtn = modalOverlay.querySelector('#cancel-job-form');
         const form = modalOverlay.querySelector('#job-post-form');
         const submitBtn = modalOverlay.querySelector('#submit-job-btn');
         
-        // Close modal events
-        closeBtn.addEventListener('click', () => closeModal(modalOverlay));
-        cancelBtn.addEventListener('click', () => closeModal(modalOverlay));
-        modalOverlay.addEventListener('click', (e) => {
+        // Close button events
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => closeModal(modalOverlay));
+        }
+        
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => closeModal(modalOverlay));
+        }
+        
+        // Close on overlay click
+        modalOverlay.addEventListener('click', function(e) {
             if (e.target === modalOverlay) {
                 closeModal(modalOverlay);
             }
         });
         
-        // Setup accommodation checkboxes
-        const accommodationItems = modalOverlay.querySelectorAll('.accommodation-item');
-        accommodationItems.forEach(item => {
-            const checkbox = item.querySelector('.accommodation-checkbox');
-            
-            checkbox.addEventListener('change', () => {
-                if (checkbox.checked) {
-                    item.classList.add('checked');
-                } else {
-                    item.classList.remove('checked');
+        // Form submission with enhanced skills handling
+        if (form) {
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                if (submitBtn.disabled) return;
+                
+                const btnText = submitBtn.querySelector('.btn-text');
+                const originalText = btnText.textContent;
+                
+                // Disable submit button and show loading
+                submitBtn.disabled = true;
+                btnText.textContent = isEditing ? 'Updating...' : 'Posting...';
+                
+                try {
+                    // Get selected skills using the new function
+                    const selectedSkills = getSelectedSkills(form);
+                    
+                    // Get form values with enhanced skills data
+                    const formData = {
+                        job_title: form.querySelector('#job-title').value.trim(),
+                        department: form.querySelector('#department').value,
+                        location: form.querySelector('#job-location').value.trim(),
+                        employment_type: form.querySelector('#employment-type').value,
+                        salary_range: form.querySelector('#salary-range').value.trim(),
+                        application_deadline: form.querySelector('#application-deadline').value,
+                        job_description: form.querySelector('#job-description').value.trim(),
+                        job_requirements: form.querySelector('#job-requirements').value.trim(),
+                        remote_work_available: form.querySelector('#remote-work').checked,
+                        flexible_schedule: form.querySelector('#flexible-schedule').checked,
+                        
+                        accommodations: {
+                            wheelchair_accessible: form.querySelector('#wheelchair-accessible').checked,
+                            assistive_technology: form.querySelector('#assistive-technology').checked,
+                            remote_work_option: form.querySelector('#remote-work-option').checked,
+                            screen_reader_compatible: form.querySelector('#screen-reader-compatible').checked,
+                            sign_language_interpreter: form.querySelector('#sign-language-interpreter').checked,
+                            modified_workspace: form.querySelector('#modified-workspace').checked,
+                            transportation_support: form.querySelector('#transportation-support').checked,
+                            additional_accommodations: form.querySelector('#additional-accommodations').value.trim()
+                        },
+                        
+                        // Enhanced: Include selected skills
+                        required_skills: selectedSkills,
+                        job_status: 'active'
+                    };
+                    
+                    console.log('📋 Form Data with Skills:', formData);
+                    console.log('🎯 Selected Skills:', selectedSkills);
+                    
+                    let result;
+                    
+                    if (isEditing) {
+                        // Add job_id for update
+                        formData.job_id = jobData.job_id;
+                        
+                        // Update the job
+                        result = await updateJob(formData);
+                        
+                        // Update the job card in the DOM
+                        updateJobCardInDOM(result);
+                        
+                        showSuccessMessage(`Job updated successfully! ${selectedSkills.length} skills selected.`);
+                    } else {
+                        // Create new job
+                        result = await createJob(formData);
+                        
+                        // Reload job listings to show the new job
+                        await loadJobListings();
+                        
+                        showSuccessMessage(`Job posted successfully! ${selectedSkills.length} skills selected.`);
+                    }
+                    
+                    // Close modal
+                    closeModal(modalOverlay);
+                    
+                } catch (error) {
+                    console.error('Error submitting job:', error);
+                    showErrorMessage('Failed to ' + (isEditing ? 'update' : 'post') + ' job: ' + error.message);
+                } finally {
+                    // Re-enable submit button
+                    submitBtn.disabled = false;
+                    btnText.textContent = originalText;
                 }
             });
-        });
-        
-        // Form submission
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            // Disable submit button and show loading
-            submitBtn.disabled = true;
-            const btnText = submitBtn.querySelector('.btn-text');
-            const originalText = btnText.textContent;
-            btnText.textContent = isEditing ? 'Updating...' : 'Posting...';
-            
-            try {
-                // Get form values
-                const formData = {
-                    job_title: form.querySelector('#job-title').value.trim(),
-                    department: form.querySelector('#department').value,
-                    location: form.querySelector('#job-location').value.trim(),
-                    employment_type: form.querySelector('#employment-type').value,
-                    salary_range: form.querySelector('#salary-range').value.trim(),
-                    application_deadline: form.querySelector('#application-deadline').value,
-                    job_description: form.querySelector('#job-description').value.trim(),
-                    job_requirements: form.querySelector('#job-requirements').value.trim(),
-                    remote_work_available: form.querySelector('#remote-work').checked,
-                    flexible_schedule: form.querySelector('#flexible-schedule').checked,
-                    
-                    accommodations: {
-                        wheelchair_accessible: form.querySelector('#wheelchair-accessible').checked,
-                        assistive_technology: form.querySelector('#assistive-technology').checked,
-                        remote_work_option: form.querySelector('#remote-work-option').checked,
-                        screen_reader_compatible: form.querySelector('#screen-reader-compatible').checked,
-                        sign_language_interpreter: form.querySelector('#sign-language-interpreter').checked,
-                        modified_workspace: form.querySelector('#modified-workspace').checked,
-                        transportation_support: form.querySelector('#transportation-support').checked,
-                        additional_accommodations: form.querySelector('#additional-accommodations').value.trim()
-                    },
-                    
-                    required_skills: [], // To be implemented later
-                    job_status: 'active' // Default to active
-                };
-
-                // Create the job
-                const newJob = await createJob(formData);
-                
-                // Close modal
-                closeModal(modalOverlay);
-                
-                // Show success message
-                showSuccessMessage(isEditing ? 'Job updated successfully!' : 'Job posted successfully!');
-                
-                // Reload job listings to show the new job
-                await loadJobListings();
-                
-            } catch (error) {
-                console.error('Error submitting job:', error);
-                showErrorMessage('Failed to ' + (isEditing ? 'update' : 'post') + ' job: ' + error.message);
-            } finally {
-                // Re-enable submit button
-                submitBtn.disabled = false;
-                btnText.textContent = originalText;
-            }
-        });
+        }
     }
 
     // Close a modal
@@ -1282,28 +1339,40 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update existing job via API
     async function updateJob(jobData) {
         try {
+            console.log('🔄 Updating job with data:', jobData);
+            
             const response = await fetch('../../backend/employer/update_job.php', {
-                method: 'PUT',
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(jobData)
             });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || 'Failed to update job');
+            
+            const responseText = await response.text();
+            console.log('📥 Raw response:', responseText);
+            
+            let data;
+            try {
+                data = JSON.parse(responseText);
+            } catch (parseError) {
+                console.error('JSON parse error:', parseError);
+                throw new Error('Invalid response from server: ' + responseText.substring(0, 100));
             }
-
+            
+            if (!response.ok) {
+                throw new Error(data.message || `HTTP error! status: ${response.status}`);
+            }
+            
             if (data.success) {
-                return data.data.job;
+                console.log('✅ Job updated successfully:', data);
+                return data.data;
             } else {
                 throw new Error(data.message || 'Failed to update job');
             }
-
+            
         } catch (error) {
-            console.error('Error updating job:', error);
+            console.error('Update job error:', error);
             throw error;
         }
     }
@@ -1547,7 +1616,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-
+/*
     function setupJobFormEventListeners(modalOverlay, isEditing, jobData = null) {
         const closeBtn = modalOverlay.querySelector('#close-job-form');
         const cancelBtn = modalOverlay.querySelector('#cancel-job-form');
@@ -1578,7 +1647,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Setup form submission with new handler
         updateFormSubmissionHandler(modalOverlay, isEditing, jobData);
     }
-
+*/
     // Delete job via API
     async function deleteJob(jobId) {
         try {
@@ -2232,4 +2301,292 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         document.head.appendChild(style);
     }
+
+    // Function to load available skills
+    async function loadAvailableSkills() {
+        try {
+            const response = await fetch('../../backend/employer/get_skills.php');
+            const data = await response.json();
+            
+            if (data.success) {
+                availableSkills = data.data.categories;
+                console.log('✅ Loaded skills:', availableSkills.length, 'categories');
+            } else {
+                console.error('Failed to load skills:', data.message);
+            }
+        } catch (error) {
+            console.error('Error loading skills:', error);
+        }
+    }
+
+    // Generate skills selection HTML
+    function generateSkillsSelectionHTML() {
+        if (!availableSkills || availableSkills.length === 0) {
+            return `
+                <div class="skills-loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading available skills...</p>
+                </div>
+            `;
+        }
+        
+        let html = '<div class="skills-categories">';
+        
+        availableSkills.forEach(category => {
+            html += `
+                <div class="skill-category">
+                    <div class="skill-category-header">
+                        <i class="${category.category_icon}"></i>
+                        <h5>${category.category_name}</h5>
+                        <span class="skill-count">(${category.skills.length} skills)</span>
+                    </div>
+                    
+                    <div class="skill-category-items">
+            `;
+            
+            category.skills.forEach(skill => {
+                html += `
+                    <div class="skill-item">
+                        <div class="skill-checkbox-group">
+                            <input type="checkbox" 
+                                id="skill-${skill.skill_id}" 
+                                class="skill-checkbox" 
+                                data-skill-id="${skill.skill_id}"
+                                data-skill-name="${skill.skill_name}">
+                            <label for="skill-${skill.skill_id}" class="skill-label">
+                                ${skill.skill_name}
+                            </label>
+                        </div>
+                        
+                        <div class="skill-priority-group" style="display: none;">
+                            <select class="skill-priority" data-skill-id="${skill.skill_id}">
+                                <option value="important">Required</option>
+                                <option value="preferred">Preferred</option>
+                                <option value="critical">Critical</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+        
+        return html;
+    }
+
+    // Setup skills selection event listeners
+    function setupSkillsSelectionListeners(modalOverlay) {
+        // Handle skill checkbox changes
+        modalOverlay.addEventListener('change', function(e) {
+            if (e.target.classList.contains('skill-checkbox')) {
+                const skillItem = e.target.closest('.skill-item');
+                const priorityGroup = skillItem.querySelector('.skill-priority-group');
+                
+                if (e.target.checked) {
+                    priorityGroup.style.display = 'block';
+                } else {
+                    priorityGroup.style.display = 'none';
+                }
+            }
+        });
+        
+        // Select all skills
+        const selectAllBtn = modalOverlay.querySelector('#select-all-skills');
+        if (selectAllBtn) {
+            selectAllBtn.addEventListener('click', function() {
+                const checkboxes = modalOverlay.querySelectorAll('.skill-checkbox');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = true;
+                    const skillItem = checkbox.closest('.skill-item');
+                    const priorityGroup = skillItem.querySelector('.skill-priority-group');
+                    priorityGroup.style.display = 'block';
+                });
+            });
+        }
+        
+        // Clear all skills
+        const clearAllBtn = modalOverlay.querySelector('#clear-all-skills');
+        if (clearAllBtn) {
+            clearAllBtn.addEventListener('click', function() {
+                const checkboxes = modalOverlay.querySelectorAll('.skill-checkbox');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                    const skillItem = checkbox.closest('.skill-item');
+                    const priorityGroup = skillItem.querySelector('.skill-priority-group');
+                    priorityGroup.style.display = 'none';
+                });
+            });
+        }
+    }
+
+    // Function to get selected skills from form
+    function getSelectedSkills(form) {
+        const selectedSkills = [];
+        const checkedSkills = form.querySelectorAll('.skill-checkbox:checked');
+        
+        checkedSkills.forEach(checkbox => {
+            const skillId = checkbox.dataset.skillId;
+            const skillName = checkbox.dataset.skillName;
+            const prioritySelect = form.querySelector(`.skill-priority[data-skill-id="${skillId}"]`);
+            const priority = prioritySelect ? prioritySelect.value : 'important';
+            
+            selectedSkills.push({
+                skill_id: parseInt(skillId),
+                skill_name: skillName,
+                priority: priority,
+                is_required: priority !== 'preferred'
+            });
+        });
+        
+        return selectedSkills;
+    }
+    // ADD STYLES FOR SKILLS SECTION
+    const skillsStyles = `
+    <style>
+    .skills-selection-container {
+        margin-top: 15px;
+    }
+
+    .skills-selection-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .skills-help-text {
+        margin: 0;
+        color: #666;
+        font-size: 14px;
+    }
+
+    .skills-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn-secondary {
+        padding: 6px 12px;
+        font-size: 12px;
+        border: 1px solid #ddd;
+        background: #f8f9fa;
+        color: #495057;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+        background: #e9ecef;
+        border-color: #adb5bd;
+    }
+
+    .skills-categories {
+        display: grid;
+        gap: 20px;
+    }
+
+    .skill-category {
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .skill-category-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        background: #f8f9fa;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .skill-category-header h5 {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .skill-count {
+        font-size: 12px;
+        color: #6c757d;
+        margin-left: auto;
+    }
+
+    .skill-category-items {
+        padding: 16px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 12px;
+    }
+
+    .skill-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 12px;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        background: #fff;
+        transition: all 0.2s;
+    }
+
+    .skill-item:hover {
+        background: #f8f9fa;
+        border-color: #adb5bd;
+    }
+
+    .skill-checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+    }
+
+    .skill-checkbox {
+        margin: 0;
+    }
+
+    .skill-label {
+        margin: 0;
+        font-size: 13px;
+        color: #495057;
+        cursor: pointer;
+    }
+
+    .skill-priority-group {
+        margin-left: 10px;
+    }
+
+    .skill-priority {
+        padding: 4px 8px;
+        font-size: 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background: #fff;
+    }
+
+    .skills-loading {
+        text-align: center;
+        padding: 40px;
+        color: #6c757d;
+    }
+
+    .skills-loading i {
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+    </style>
+    `;
+
+    document.head.insertAdjacentHTML('beforeend', skillsStyles);
 });

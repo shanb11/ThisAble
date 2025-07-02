@@ -100,15 +100,20 @@ function calculateJobMatch($conn, $job_id, $seeker_id) {
             return ['success' => false, 'error' => 'Candidate not found'];
         }
         
-        // Extract skills from job requirements text
-        $job_skills = extractSkillsFromJobText($conn, $job_data['job_requirements']);
+        // ENHANCED: Get job skills with structured data priority
+        $job_skills = getJobSkills($conn, $job_id, $job_data['job_requirements']);
         
         // DEBUG: Log what skills were found
-        error_log("Job {$job_id} extracted skills: " . json_encode(array_column($job_skills, 'skill_name')));
+        error_log("Job {$job_id} enhanced skills: " . json_encode([
+            'total_skills' => count($job_skills),
+            'structured' => count(array_filter($job_skills, function($s) { return $s['match_type'] === 'structured'; })),
+            'extracted' => count(array_filter($job_skills, function($s) { return $s['match_type'] !== 'structured'; })),
+            'skill_names' => array_column($job_skills, 'skill_name')
+        ]));
         error_log("Candidate {$seeker_id} has skills: " . json_encode(array_column($candidate_data['skills'], 'skill_name')));
         
-        // Calculate skills match
-        $skills_match = calculateSkillsMatch($job_skills, $candidate_data['skills']);
+        // ENHANCED: Calculate skills match with weighting
+        $skills_match = calculateEnhancedSkillsMatch($job_skills, $candidate_data['skills']);
         
         // Calculate accommodation compatibility
         $accommodation_match = calculateAccommodationMatch($job_data['accommodations'], $candidate_data['accommodations']);
@@ -116,24 +121,34 @@ function calculateJobMatch($conn, $job_id, $seeker_id) {
         // Calculate work preferences match
         $preferences_match = calculatePreferencesMatch($job_data, $candidate_data);
         
-        // Calculate overall match score with weights
-        $overall_score = (
+        // Enhanced overall scoring with critical skills penalty
+        $base_score = (
             $skills_match['score'] * 0.50 +           // 50% skills
             $accommodation_match['score'] * 0.20 +    // 20% accommodations
             $preferences_match['score'] * 0.20 +      // 20% work preferences
             calculateExperienceMatch($job_data, $candidate_data) * 0.10  // 10% experience
         );
         
+        // Apply critical skills penalty
+        $critical_penalty = 0;
+        if (!empty($skills_match['critical_missing'])) {
+            $critical_penalty = count($skills_match['critical_missing']) * 15; // 15% penalty per critical skill
+        }
+        
+        $overall_score = max(0, $base_score - $critical_penalty);
+        
         $match_result = [
             'overall_score' => round($overall_score, 2),
             'skills_match' => $skills_match,
             'accommodation_match' => $accommodation_match,
             'preferences_match' => $preferences_match,
+            'critical_penalty' => $critical_penalty,
             'breakdown' => [
                 'skills_weight' => '50%',
                 'accommodations_weight' => '20%',
                 'preferences_weight' => '20%',
-                'experience_weight' => '10%'
+                'experience_weight' => '10%',
+                'critical_penalty' => $critical_penalty . '%'
             ]
         ];
         
@@ -143,7 +158,7 @@ function calculateJobMatch($conn, $job_id, $seeker_id) {
         return ['success' => true, 'data' => $match_result];
         
     } catch (Exception $e) {
-        error_log("Match calculation error: " . $e->getMessage());
+        error_log("Enhanced match calculation error: " . $e->getMessage());
         return ['success' => false, 'error' => 'Match calculation failed'];
     }
 }
@@ -420,4 +435,170 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode(['success' => false, 'error' => 'Missing required parameters']);
     }
 }
+
+// ADD THIS TO YOUR calculate_match_score.php file
+// Enhanced calculateJobMatch function that prioritizes structured skills
+
+/**
+ * Enhanced Get job skills with structured data priority
+ */
+function getJobSkills($conn, $job_id, $job_requirements_text) {
+    $job_skills = [];
+    
+    // PRIORITY 1: Get structured skills from job_requirements table
+    $structured_skills_sql = "
+        SELECT 
+            jr.skill_id,
+            jr.is_required,
+            jr.priority,
+            jr.weight,
+            s.skill_name,
+            sc.category_name
+        FROM job_requirements jr
+        JOIN skills s ON jr.skill_id = s.skill_id
+        JOIN skill_categories sc ON s.category_id = sc.category_id
+        WHERE jr.job_id = :job_id
+        ORDER BY 
+            CASE jr.priority 
+                WHEN 'critical' THEN 1 
+                WHEN 'important' THEN 2 
+                WHEN 'preferred' THEN 3 
+                ELSE 4 
+            END,
+            sc.category_name, 
+            s.skill_name
+    ";
+    
+    $structured_stmt = $conn->prepare($structured_skills_sql);
+    $structured_stmt->execute(['job_id' => $job_id]);
+    $structured_skills = $structured_stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Convert structured skills to standard format
+    foreach ($structured_skills as $skill) {
+        $job_skills[] = [
+            'skill_id' => $skill['skill_id'],
+            'skill_name' => $skill['skill_name'],
+            'category_name' => $skill['category_name'],
+            'is_required' => (bool)$skill['is_required'],
+            'priority' => $skill['priority'],
+            'weight' => (float)($skill['weight'] ?? 1.0),
+            'match_type' => 'structured'
+        ];
+    }
+    
+    // PRIORITY 2: Extract additional skills from job_requirements text (fallback)
+    if (!empty($job_requirements_text)) {
+        $extracted_skills = extractSkillsFromJobText($conn, $job_requirements_text);
+        $structured_skill_ids = array_column($job_skills, 'skill_id');
+        
+        // Add extracted skills that aren't already in structured skills
+        foreach ($extracted_skills as $extracted_skill) {
+            if (!in_array($extracted_skill['skill_id'], $structured_skill_ids)) {
+                $job_skills[] = [
+                    'skill_id' => $extracted_skill['skill_id'],
+                    'skill_name' => $extracted_skill['skill_name'],
+                    'category_name' => null,
+                    'is_required' => true, // Default for text-extracted skills
+                    'priority' => 'important',
+                    'weight' => 0.8, // Lower weight for text-extracted skills
+                    'match_type' => $extracted_skill['match_type']
+                ];
+            }
+        }
+    }
+    
+    return $job_skills;
+}
+
+/**
+ * Enhanced Calculate skills match with weighted scoring
+ */
+function calculateEnhancedSkillsMatch($job_skills, $candidate_skills) {
+    if (empty($job_skills)) {
+        return [
+            'score' => 100, // If no specific skills required, everyone matches
+            'matched_skills' => [],
+            'missing_skills' => [],
+            'critical_missing' => [],
+            'total_job_skills' => 0,
+            'matched_count' => 0,
+            'structured_skills_count' => 0,
+            'text_extracted_count' => 0,
+            'weighted_score' => 100
+        ];
+    }
+    
+    $candidate_skill_names = array_column($candidate_skills, 'skill_name');
+    
+    $matched_skills = [];
+    $missing_skills = [];
+    $critical_missing = [];
+    $total_weight = 0;
+    $matched_weight = 0;
+    $structured_count = 0;
+    $extracted_count = 0;
+    
+    foreach ($job_skills as $job_skill) {
+        $skill_name = $job_skill['skill_name'];
+        $weight = $job_skill['weight'] ?? 1.0;
+        $priority = $job_skill['priority'] ?? 'important';
+        $is_structured = $job_skill['match_type'] === 'structured';
+        
+        if ($is_structured) {
+            $structured_count++;
+        } else {
+            $extracted_count++;
+        }
+        
+        $total_weight += $weight;
+        
+        if (in_array($skill_name, $candidate_skill_names)) {
+            $matched_skills[] = [
+                'skill_name' => $skill_name,
+                'priority' => $priority,
+                'weight' => $weight,
+                'match_type' => $job_skill['match_type']
+            ];
+            $matched_weight += $weight;
+        } else {
+            $missing_skill = [
+                'skill_name' => $skill_name,
+                'priority' => $priority,
+                'weight' => $weight,
+                'match_type' => $job_skill['match_type']
+            ];
+            
+            $missing_skills[] = $missing_skill;
+            
+            // Track critical missing skills separately
+            if ($priority === 'critical') {
+                $critical_missing[] = $missing_skill;
+            }
+        }
+    }
+    
+    // Calculate weighted score
+    $weighted_score = $total_weight > 0 ? ($matched_weight / $total_weight) * 100 : 100;
+    
+    // Calculate simple percentage
+    $simple_percentage = (count($matched_skills) / count($job_skills)) * 100;
+    
+    // Use weighted score if we have structured skills, otherwise use simple percentage
+    $final_score = $structured_count > 0 ? $weighted_score : $simple_percentage;
+    
+    return [
+        'score' => round($final_score, 2),
+        'matched_skills' => array_column($matched_skills, 'skill_name'),
+        'missing_skills' => array_column($missing_skills, 'skill_name'),
+        'critical_missing' => array_column($critical_missing, 'skill_name'),
+        'total_job_skills' => count($job_skills),
+        'matched_count' => count($matched_skills),
+        'structured_skills_count' => $structured_count,
+        'text_extracted_count' => $extracted_count,
+        'weighted_score' => round($weighted_score, 2),
+        'detailed_matches' => $matched_skills,
+        'detailed_missing' => $missing_skills
+    ];
+}
+
 ?>
