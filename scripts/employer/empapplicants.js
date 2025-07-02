@@ -3034,14 +3034,49 @@ document.addEventListener('DOMContentLoaded', function() {
         // Set resume preview
         const resumePreview = card.querySelector('.resume-preview');
         if (resumePreview && applicant.resume_content) {
-            const preview = applicant.resume_content.substring(0, 200) + '...';
-            resumePreview.innerHTML = `<div class="resume-text">${preview}</div>`;
+            const resumeContent = applicant.resume_content;
+            
+            if (resumeContent.includes('Resume file available')) {
+                // File-based resume
+                resumePreview.innerHTML = `
+                    <div class="resume-file-info">
+                        <div class="file-icon">📄</div>
+                        <div class="file-details">
+                            <div class="file-name">${applicant.resume_file || 'Resume File'}</div>
+                            <div class="file-type">${applicant.resume_type || 'PDF Document'}</div>
+                            <button class="view-full-resume-btn" onclick="viewFullResume('${applicant.application_id}')">
+                                <i class="fas fa-external-link-alt"></i> View Full Resume
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Text content preview
+                resumePreview.innerHTML = `
+                    <div class="resume-text-preview">
+                        <div class="preview-text">${resumeContent}</div>
+                        <button class="view-full-resume-btn" onclick="viewFullResume('${applicant.application_id}')">
+                            <i class="fas fa-expand"></i> View Full Resume
+                        </button>
+                    </div>
+                `;
+            }
+        } else {
+            resumePreview.innerHTML = `
+                <div class="no-resume">
+                    <i class="fas fa-file-slash"></i>
+                    <span>No resume available</span>
+                </div>
+            `;
         }
-        
-        // Add action button listeners
-        addCategoryApplicantActions(card, applicant);
-        
-        return cardEl;
+
+        function viewFullResume(applicationId) {
+            if (window.openResumeViewer) {
+                window.openResumeViewer(applicationId);
+            } else {
+                window.open(`../../backend/employer/view_resume.php?application_id=${applicationId}`, '_blank');
+            }
+        }
     }
 
     // Add action button listeners for category applicant cards
@@ -3115,49 +3150,73 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Add category tab switching functionality
+    // Enhanced tab switching functionality - Add this to empapplicants.js
     document.addEventListener('DOMContentLoaded', function() {
-        // Category tab switching
+        // Category tab switching - ENHANCED VERSION
         const categoryTabs = document.querySelectorAll('.category-tab');
         categoryTabs.forEach(tab => {
-            tab.addEventListener('click', () => {
+            tab.addEventListener('click', async function() {
                 const category = tab.dataset.category;
                 const count = parseInt(tab.querySelector('.tab-count').textContent);
                 
-                if (count > 0) {
-                    // Update active tab
-                    categoryTabs.forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    
-                    // Load new category content
-                    loadCategoryContent(category);
-                    window.currentCategory = category;
+                console.log('🔄 Tab clicked:', category, 'Count:', count);
+                
+                // Always allow tab switching, even if count is 0
+                // Update active tab immediately for better UX
+                categoryTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Update modal title
+                const titleEl = document.getElementById('categoryModalTitle');
+                if (titleEl) {
+                    const categoryLabels = {
+                        'excellent': '🔥 Excellent Matches',
+                        'good': '🟢 Good Matches', 
+                        'fair': '🟡 Fair Matches',
+                        'needs-review': '⚠️ Needs Review'
+                    };
+                    titleEl.innerHTML = `<i class="fas fa-users"></i> ${categoryLabels[category] || 'Match Results'}`;
                 }
+                
+                // Load new category content
+                await loadCategoryContent(category);
+                window.currentCategory = category;
             });
         });
         
-        // Category modal close handlers
+        // Enhanced modal close handlers
         const categoryModal = document.getElementById('categoryModal');
         if (categoryModal) {
-            // Close button
-            const closeBtn = categoryModal.querySelector('.close-modal');
+            // Close button handler
+            const closeBtn = categoryModal.querySelector('[data-modal="categoryModal"]');
             if (closeBtn) {
-                closeBtn.addEventListener('click', () => {
+                closeBtn.addEventListener('click', function() {
+                    console.log('🔄 Closing modal via X button');
                     categoryModal.style.display = 'none';
                 });
             }
             
-            // Back button
+            // Back button handler
             const backBtn = categoryModal.querySelector('.secondary-btn');
             if (backBtn) {
-                backBtn.addEventListener('click', () => {
+                backBtn.addEventListener('click', function() {
+                    console.log('🔄 Closing modal via Back button');
                     categoryModal.style.display = 'none';
                 });
             }
             
             // Click outside to close
-            categoryModal.addEventListener('click', (e) => {
+            categoryModal.addEventListener('click', function(e) {
                 if (e.target === categoryModal) {
+                    console.log('🔄 Closing modal via outside click');
+                    categoryModal.style.display = 'none';
+                }
+            });
+            
+            // Escape key to close
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && categoryModal.style.display === 'flex') {
+                    console.log('🔄 Closing modal via Escape key');
                     categoryModal.style.display = 'none';
                 }
             });
