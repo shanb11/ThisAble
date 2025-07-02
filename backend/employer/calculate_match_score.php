@@ -1,11 +1,87 @@
 <?php
 // backend/employer/calculate_match_score.php
-// Core job matching algorithm with PWD-specific enhancements
+// UPDATED VERSION - Enhanced skill extraction for better matching
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 require_once '../db.php';
+
+/**
+ * ENHANCED Extract skills from job requirements text
+ */
+function extractSkillsFromJobText($conn, $job_requirements_text) {
+    // Get all skills from database
+    $skills_sql = "SELECT skill_id, skill_name FROM skills";
+    $skills_stmt = $conn->query($skills_sql);
+    $all_skills = $skills_stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    $found_skills = [];
+    $job_text_lower = strtolower($job_requirements_text);
+    
+    // Enhanced skill matching with variations
+    foreach ($all_skills as $skill) {
+        $skill_name_lower = strtolower($skill['skill_name']);
+        
+        // Direct exact match
+        if (strpos($job_text_lower, $skill_name_lower) !== false) {
+            $found_skills[] = [
+                'skill_id' => $skill['skill_id'],
+                'skill_name' => $skill['skill_name'],
+                'match_type' => 'exact'
+            ];
+            continue;
+        }
+        
+        // Enhanced variations matching
+        $variations = getEnhancedSkillVariations($skill['skill_name']);
+        foreach ($variations as $variation) {
+            if (strpos($job_text_lower, strtolower($variation)) !== false) {
+                $found_skills[] = [
+                    'skill_id' => $skill['skill_id'],
+                    'skill_name' => $skill['skill_name'],
+                    'match_type' => 'variation'
+                ];
+                break; // Avoid duplicates
+            }
+        }
+    }
+    
+    // Remove duplicates based on skill_id
+    $unique_skills = [];
+    foreach ($found_skills as $skill) {
+        $unique_skills[$skill['skill_id']] = $skill;
+    }
+    
+    return array_values($unique_skills);
+}
+
+/**
+ * ENHANCED Get comprehensive skill variations
+ */
+function getEnhancedSkillVariations($skill_name) {
+    $variations = [
+        'Digital Literacy' => ['digital skills', 'computer literacy', 'digital competency', 'computer skills', 'it skills', 'technology skills'],
+        'Data Entry' => ['data input', 'data processing', 'typing', 'data encoding', 'keyboard skills', 'data capture'],
+        'Microsoft Office' => ['ms office', 'office suite', 'word', 'excel', 'powerpoint', 'outlook', 'office applications'],
+        'Customer Service' => ['customer support', 'client service', 'customer care', 'customer relations', 'client support'],
+        'Problem Resolution' => ['problem solving', 'troubleshooting', 'issue resolution', 'analytical thinking'],
+        'Basic Coding' => ['programming', 'coding', 'software development', 'web development', 'development'],
+        'Web Development' => ['web dev', 'website development', 'web programming', 'frontend', 'backend'],
+        'Database Management' => ['database', 'sql', 'mysql', 'data management', 'database admin'],
+        'Call Handling' => ['phone skills', 'telephone', 'call center', 'voice support'],
+        'Client Communication' => ['communication', 'client relations', 'interpersonal skills']
+    ];
+    
+    // Return variations or split skill name as fallback
+    if (isset($variations[$skill_name])) {
+        return $variations[$skill_name];
+    }
+    
+    // Fallback: split skill name into words for partial matching
+    $words = explode(' ', strtolower($skill_name));
+    return count($words) > 1 ? $words : [];
+}
 
 /**
  * Calculate comprehensive match score between job and candidate
@@ -26,6 +102,10 @@ function calculateJobMatch($conn, $job_id, $seeker_id) {
         
         // Extract skills from job requirements text
         $job_skills = extractSkillsFromJobText($conn, $job_data['job_requirements']);
+        
+        // DEBUG: Log what skills were found
+        error_log("Job {$job_id} extracted skills: " . json_encode(array_column($job_skills, 'skill_name')));
+        error_log("Candidate {$seeker_id} has skills: " . json_encode(array_column($candidate_data['skills'], 'skill_name')));
         
         // Calculate skills match
         $skills_match = calculateSkillsMatch($job_skills, $candidate_data['skills']);
@@ -66,69 +146,6 @@ function calculateJobMatch($conn, $job_id, $seeker_id) {
         error_log("Match calculation error: " . $e->getMessage());
         return ['success' => false, 'error' => 'Match calculation failed'];
     }
-}
-
-/**
- * Extract skills from job requirements text using NLP-like approach
- */
-function extractSkillsFromJobText($conn, $job_requirements_text) {
-    // Get all skills from database
-    $skills_sql = "SELECT skill_id, skill_name FROM skills";
-    $skills_stmt = $conn->query($skills_sql);
-    $all_skills = $skills_stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    $found_skills = [];
-    $job_text_lower = strtolower($job_requirements_text);
-    
-    foreach ($all_skills as $skill) {
-        $skill_name_lower = strtolower($skill['skill_name']);
-        
-        // Check for exact match or partial match
-        if (strpos($job_text_lower, $skill_name_lower) !== false) {
-            $found_skills[] = [
-                'skill_id' => $skill['skill_id'],
-                'skill_name' => $skill['skill_name'],
-                'match_type' => 'text_extraction'
-            ];
-        }
-        
-        // Check for common variations
-        $variations = getSkillVariations($skill['skill_name']);
-        foreach ($variations as $variation) {
-            if (strpos($job_text_lower, strtolower($variation)) !== false) {
-                $found_skills[] = [
-                    'skill_id' => $skill['skill_id'],
-                    'skill_name' => $skill['skill_name'],
-                    'match_type' => 'variation_match'
-                ];
-                break; // Avoid duplicates
-            }
-        }
-    }
-    
-    // Remove duplicates based on skill_id
-    $unique_skills = [];
-    foreach ($found_skills as $skill) {
-        $unique_skills[$skill['skill_id']] = $skill;
-    }
-    
-    return array_values($unique_skills);
-}
-
-/**
- * Get common variations for skill names
- */
-function getSkillVariations($skill_name) {
-    $variations = [
-        'Digital Literacy' => ['digital skills', 'computer literacy', 'digital competency'],
-        'Data Entry' => ['data input', 'data processing', 'typing'],
-        'Microsoft Office' => ['ms office', 'office suite', 'word', 'excel', 'powerpoint'],
-        'Customer Service' => ['customer support', 'client service', 'customer care'],
-        'Problem Resolution' => ['problem solving', 'troubleshooting', 'issue resolution'],
-        'Basic Coding' => ['programming', 'coding', 'software development', 'web development']
-    ];
-    
-    return $variations[$skill_name] ?? [];
 }
 
 /**
