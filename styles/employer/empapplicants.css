@@ -3060,3 +3060,874 @@ body {
     font-style: italic;
     font-size: 0.8rem;
 }
+
+/* ===================================
+   PHASE 3: ENHANCED PDF VIEWER MODAL STYLES
+   =================================== */
+
+/* Resume Viewer Modal */
+.resume-viewer-modal {
+    max-width: 95vw;
+    width: 95vw;
+    max-height: 95vh;
+    height: 95vh;
+    margin: 0;
+}
+
+.resume-viewer-modal .modal-body {
+    padding: 0;
+    height: calc(95vh - 80px);
+    overflow: hidden;
+}
+
+/* Resume Viewer Header */
+.resume-viewer-header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--sidebar) 100%);
+    color: white;
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 12px 12px 0 0;
+}
+
+.resume-info {
+    flex: 1;
+}
+
+.resume-info .modal-title {
+    margin: 0 0 5px 0;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.resume-meta {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.resume-meta .separator {
+    opacity: 0.6;
+}
+
+.resume-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.resume-actions .action-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.resume-actions .action-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+.resume-actions .close-modal {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.resume-actions .close-modal:hover {
+    background: rgba(255, 0, 0, 0.3);
+}
+
+/* Resume Search Panel */
+.resume-search-panel {
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    padding: 15px 25px;
+    display: none;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 500px;
+}
+
+.search-container input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.search-container input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 113, 128, 0.1);
+}
+
+.search-execute-btn,
+.search-close-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.search-execute-btn {
+    background: var(--primary);
+    color: white;
+}
+
+.search-execute-btn:hover {
+    background: var(--sidebar);
+}
+
+.search-close-btn {
+    background: #dc3545;
+    color: white;
+}
+
+.search-close-btn:hover {
+    background: #c82333;
+}
+
+.search-results {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+/* Resume Content Wrapper */
+.resume-content-wrapper {
+    display: grid;
+    grid-template-columns: 300px 1fr 320px;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Left Panel: Resume Analysis */
+.resume-analysis-panel {
+    background: #f8f9fa;
+    border-right: 1px solid #dee2e6;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.analysis-section {
+    flex: 1;
+}
+
+.analysis-section h3 {
+    margin: 0 0 20px 0;
+    color: var(--primary);
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.match-overview {
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.match-score-display {
+    display: inline-block;
+}
+
+.score-circle {
+    width: 80px;
+    height: 80px;
+    border: 4px solid var(--primary);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.score-number {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1;
+}
+
+.score-label {
+    font-size: 0.7rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+}
+
+.skills-analysis {
+    margin-bottom: 25px;
+}
+
+.skills-analysis h4 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.skills-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.skills-title {
+    margin: 0 0 8px 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #555;
+}
+
+.skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.skills-list .skill-tag {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border: 1px solid;
+}
+
+.skills-list .skill-tag.matched {
+    background: #d1fae5;
+    border-color: #10b981;
+    color: #065f46;
+}
+
+.skills-list .skill-tag.missing {
+    background: #fee2e2;
+    border-color: #ef4444;
+    color: #991b1b;
+}
+
+.skills-list .skill-tag.bonus {
+    background: #dbeafe;
+    border-color: #3b82f6;
+    color: #1e40af;
+}
+
+.resume-insights h4 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.insights-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.insight-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px;
+    background: white;
+    border-radius: 6px;
+    border-left: 3px solid var(--accent);
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.insight-item i {
+    color: var(--accent);
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+/* Quick Actions */
+.quick-actions {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #dee2e6;
+}
+
+.quick-action-btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.quick-action-btn.interview-action {
+    background: var(--accent);
+    color: white;
+}
+
+.quick-action-btn.interview-action:hover {
+    background: var(--cb6040);
+}
+
+.quick-action-btn.hire-action {
+    background: #10b981;
+    color: white;
+}
+
+.quick-action-btn.hire-action:hover {
+    background: #059669;
+}
+
+.quick-action-btn.reject-action {
+    background: #ef4444;
+    color: white;
+}
+
+.quick-action-btn.reject-action:hover {
+    background: #dc2626;
+}
+
+/* Center Panel: PDF Viewer */
+.resume-viewer-container {
+    position: relative;
+    background: #f5f5f5;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.resume-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #666;
+}
+
+.resume-loading .loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+.resume-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    padding: 40px;
+    color: #666;
+}
+
+.resume-error i {
+    font-size: 3rem;
+    color: #dc3545;
+    margin-bottom: 20px;
+}
+
+.resume-error h3 {
+    margin: 0 0 10px 0;
+    color: #333;
+}
+
+.download-anyway-btn {
+    margin-top: 20px;
+    padding: 12px 24px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.download-anyway-btn:hover {
+    background: var(--sidebar);
+}
+
+.resume-pdf-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: white;
+}
+
+.resume-text-viewer {
+    height: 100%;
+    overflow-y: auto;
+    background: white;
+    padding: 20px;
+}
+
+.text-resume-content h3 {
+    margin: 0 0 20px 0;
+    color: var(--primary);
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 10px;
+}
+
+.text-resume-content pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+/* Viewer Controls */
+.resume-viewer-controls {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 25px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    font-size: 0.85rem;
+    z-index: 100;
+}
+
+.control-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 4px;
+    transition: background 0.3s ease;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.control-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.zoom-level {
+    padding: 0 10px;
+    font-weight: 500;
+}
+
+.control-separator {
+    width: 1px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.3);
+    margin: 0 5px;
+}
+
+/* Right Panel: Resume Details */
+.resume-details-panel {
+    background: white;
+    border-left: 1px solid #dee2e6;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.applicant-summary {
+    margin-bottom: 25px;
+    text-align: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.applicant-avatar-large {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--sidebar) 100%);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.applicant-avatar-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-fallback-large {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+}
+
+.applicant-info-detailed h3 {
+    margin: 0 0 5px 0;
+    color: #333;
+    font-size: 1.2rem;
+}
+
+.applicant-headline {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0 0 15px 0;
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85rem;
+    color: #555;
+}
+
+.contact-item i {
+    width: 16px;
+    color: var(--primary);
+}
+
+.application-details,
+.resume-file-info {
+    margin-bottom: 25px;
+}
+
+.application-details h4,
+.resume-file-info h4 {
+    margin: 0 0 15px 0;
+    color: var(--primary);
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 0.85rem;
+}
+
+.detail-label {
+    color: #666;
+    font-weight: 500;
+}
+
+.detail-value {
+    color: #333;
+    font-weight: 500;
+    text-align: right;
+}
+
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.status-submitted {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.status-badge.status-under_review {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+.status-badge.status-hired {
+    background: #e8f5e8;
+    color: #2e7d32;
+}
+
+.status-badge.status-rejected {
+    background: #ffebee;
+    color: #d32f2f;
+}
+
+.file-details {
+    margin-bottom: 15px;
+}
+
+.file-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.file-action-btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.file-action-btn.primary {
+    background: var(--primary);
+    color: white;
+}
+
+.file-action-btn.primary:hover {
+    background: var(--sidebar);
+}
+
+.file-action-btn.secondary {
+    background: #f8f9fa;
+    color: #333;
+    border: 1px solid #dee2e6;
+}
+
+.file-action-btn.secondary:hover {
+    background: #e9ecef;
+}
+
+/* ===================================
+   RESPONSIVE DESIGN FOR RESUME VIEWER
+   =================================== */
+
+@media (max-width: 1200px) {
+    .resume-content-wrapper {
+        grid-template-columns: 280px 1fr 300px;
+    }
+}
+
+@media (max-width: 992px) {
+    .resume-viewer-modal {
+        width: 98vw;
+        height: 98vh;
+    }
+    
+    .resume-content-wrapper {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr auto;
+    }
+    
+    .resume-analysis-panel,
+    .resume-details-panel {
+        max-height: 200px;
+        overflow-y: auto;
+    }
+    
+    .resume-analysis-panel {
+        border-right: none;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .resume-details-panel {
+        border-left: none;
+        border-top: 1px solid #dee2e6;
+    }
+}
+
+@media (max-width: 768px) {
+    .resume-viewer-header {
+        padding: 12px 15px;
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+    
+    .resume-actions {
+        align-self: flex-end;
+    }
+    
+    .resume-search-panel {
+        padding: 10px 15px;
+    }
+    
+    .search-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+    
+    .contact-info {
+        text-align: center;
+    }
+    
+    .detail-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+    }
+    
+    .detail-value {
+        text-align: left;
+    }
+}
+
+/* ===================================
+   FULLSCREEN MODE
+   =================================== */
+
+.resume-viewer-modal.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    max-height: 100vh;
+    border-radius: 0;
+    z-index: 10000;
+}
+
+.resume-viewer-modal.fullscreen .modal-body {
+    height: calc(100vh - 80px);
+}
+
+/* ===================================
+   ANIMATION ENHANCEMENTS
+   =================================== */
+
+@keyframes slideInFromRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInFromLeft {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.resume-analysis-panel {
+    animation: slideInFromLeft 0.3s ease-out;
+}
+
+.resume-details-panel {
+    animation: slideInFromRight 0.3s ease-out;
+}
+
+/* ===================================
+   ACCESSIBILITY ENHANCEMENTS
+   =================================== */
+
+.resume-viewer-modal *:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+.resume-viewer-modal button:focus {
+    outline-color: white;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .skill-tag {
+        border-width: 2px;
+    }
+    
+    .score-circle {
+        border-width: 3px;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .resume-analysis-panel,
+    .resume-details-panel {
+        animation: none;
+    }
+    
+    .resume-loading .loading-spinner {
+        animation: none;
+    }
+    
+    * {
+        transition: none !important;
+    }
+}

@@ -338,6 +338,248 @@ requireEmployerLogin('emplogin.php');
             </div>
         </template>
 
+        <!-- Enhanced PDF/Resume Viewer Modal -->
+        <div class="modal" id="resumeViewerModal" style="display: none;">
+            <div class="modal-content resume-viewer-modal">
+                <div class="modal-header resume-viewer-header">
+                    <div class="resume-info">
+                        <h2 class="modal-title" id="resumeViewerTitle">
+                            <i class="fas fa-file-pdf"></i>
+                            <span id="resumeApplicantName">Resume Viewer</span>
+                        </h2>
+                        <div class="resume-meta">
+                            <span id="resumeJobTitle">Job Position</span>
+                            <span class="separator">•</span>
+                            <span id="resumeMatchScore">95% Match</span>
+                        </div>
+                    </div>
+                    
+                    <div class="resume-actions">
+                        <button class="action-btn search-btn" id="resumeSearchBtn" title="Search in Resume">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        <button class="action-btn download-btn" id="resumeDownloadBtn" title="Download Resume">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="action-btn fullscreen-btn" id="resumeFullscreenBtn" title="Toggle Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                        <button class="close-modal" data-modal="resumeViewerModal" aria-label="Close">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="modal-body resume-viewer-body">
+                    <!-- Search Panel (Hidden by default) -->
+                    <div class="resume-search-panel" id="resumeSearchPanel" style="display: none;">
+                        <div class="search-container">
+                            <input type="text" id="resumeSearchInput" placeholder="Search in resume content..." />
+                            <button class="search-execute-btn" id="resumeSearchExecute">
+                                <i class="fas fa-search"></i>
+                            </button>
+                            <button class="search-close-btn" id="resumeSearchClose">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="search-results" id="resumeSearchResults"></div>
+                    </div>
+                    
+                    <!-- Resume Content Area -->
+                    <div class="resume-content-wrapper">
+                        <!-- Left Panel: Resume Analysis -->
+                        <div class="resume-analysis-panel" id="resumeAnalysisPanel">
+                            <div class="analysis-section">
+                                <h3><i class="fas fa-chart-line"></i> Resume Analysis</h3>
+                                
+                                <div class="match-overview">
+                                    <div class="match-score-display">
+                                        <div class="score-circle" id="resumeScoreCircle">
+                                            <span class="score-number" id="resumeScoreNumber">95%</span>
+                                            <span class="score-label">Match</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="skills-analysis">
+                                    <h4><i class="fas fa-cogs"></i> Skills Analysis</h4>
+                                    <div class="skills-section">
+                                        <div class="skills-matched">
+                                            <h5 class="skills-title">✅ Matched Skills</h5>
+                                            <div class="skills-list" id="resumeMatchedSkills"></div>
+                                        </div>
+                                        <div class="skills-missing">
+                                            <h5 class="skills-title">❌ Missing Skills</h5>
+                                            <div class="skills-list" id="resumeMissingSkills"></div>
+                                        </div>
+                                        <div class="skills-bonus">
+                                            <h5 class="skills-title">🎯 Bonus Skills</h5>
+                                            <div class="skills-list" id="resumeBonusSkills"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="resume-insights">
+                                    <h4><i class="fas fa-lightbulb"></i> Key Insights</h4>
+                                    <div class="insights-list" id="resumeInsightsList">
+                                        <div class="insight-item">
+                                            <i class="fas fa-graduation-cap"></i>
+                                            <span>Education background matches job requirements</span>
+                                        </div>
+                                        <div class="insight-item">
+                                            <i class="fas fa-briefcase"></i>
+                                            <span>5+ years relevant work experience</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="quick-actions">
+                                <button class="quick-action-btn interview-action" id="resumeScheduleInterview">
+                                    <i class="fas fa-calendar"></i>
+                                    Schedule Interview
+                                </button>
+                                <button class="quick-action-btn hire-action" id="resumeHireApplicant">
+                                    <i class="fas fa-check"></i>
+                                    Hire Applicant
+                                </button>
+                                <button class="quick-action-btn reject-action" id="resumeRejectApplicant">
+                                    <i class="fas fa-times"></i>
+                                    Reject
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Center Panel: PDF Viewer -->
+                        <div class="resume-viewer-container">
+                            <div class="resume-loading" id="resumeLoading">
+                                <div class="loading-spinner"></div>
+                                <p>Loading resume...</p>
+                            </div>
+                            
+                            <div class="resume-error" id="resumeError" style="display: none;">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <h3>Unable to Load Resume</h3>
+                                <p id="resumeErrorMessage">The resume file could not be displayed.</p>
+                                <button class="download-anyway-btn" id="resumeDownloadAnyway">
+                                    <i class="fas fa-download"></i>
+                                    Download File Instead
+                                </button>
+                            </div>
+                            
+                            <!-- PDF Viewer -->
+                            <iframe 
+                                id="resumePdfViewer" 
+                                class="resume-pdf-frame"
+                                style="display: none;"
+                                title="Resume PDF Viewer">
+                            </iframe>
+                            
+                            <!-- Text Content Viewer (for non-PDF resumes) -->
+                            <div class="resume-text-viewer" id="resumeTextViewer" style="display: none;">
+                                <div class="text-content" id="resumeTextContent"></div>
+                            </div>
+                            
+                            <!-- Viewer Controls -->
+                            <div class="resume-viewer-controls" id="resumeViewerControls" style="display: none;">
+                                <button class="control-btn zoom-out" id="resumeZoomOut">
+                                    <i class="fas fa-search-minus"></i>
+                                </button>
+                                <span class="zoom-level" id="resumeZoomLevel">100%</span>
+                                <button class="control-btn zoom-in" id="resumeZoomIn">
+                                    <i class="fas fa-search-plus"></i>
+                                </button>
+                                <div class="control-separator"></div>
+                                <button class="control-btn fit-width" id="resumeFitWidth">
+                                    <i class="fas fa-arrows-alt-h"></i>
+                                    Fit Width
+                                </button>
+                                <button class="control-btn fit-page" id="resumeFitPage">
+                                    <i class="fas fa-expand-arrows-alt"></i>
+                                    Fit Page
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Right Panel: Resume Details -->
+                        <div class="resume-details-panel" id="resumeDetailsPanel">
+                            <div class="applicant-summary">
+                                <div class="applicant-avatar-large">
+                                    <img id="resumeApplicantAvatar" src="" alt="Applicant">
+                                    <div class="avatar-fallback-large">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                </div>
+                                <div class="applicant-info-detailed">
+                                    <h3 id="resumeApplicantFullName">Applicant Name</h3>
+                                    <p class="applicant-headline" id="resumeApplicantHeadline">Professional Title</p>
+                                    <div class="contact-info">
+                                        <div class="contact-item">
+                                            <i class="fas fa-envelope"></i>
+                                            <span id="resumeApplicantEmail">email@example.com</span>
+                                        </div>
+                                        <div class="contact-item">
+                                            <i class="fas fa-phone"></i>
+                                            <span id="resumeApplicantPhone">+1234567890</span>
+                                        </div>
+                                        <div class="contact-item">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            <span id="resumeApplicantLocation">Location</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="application-details">
+                                <h4><i class="fas fa-briefcase"></i> Application Details</h4>
+                                <div class="detail-item">
+                                    <span class="detail-label">Applied For:</span>
+                                    <span class="detail-value" id="resumeJobPosition">Job Title</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Application Date:</span>
+                                    <span class="detail-value" id="resumeApplicationDate">Date</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Current Status:</span>
+                                    <span class="detail-value status-badge" id="resumeApplicationStatus">Submitted</span>
+                                </div>
+                            </div>
+                            
+                            <div class="resume-file-info">
+                                <h4><i class="fas fa-file"></i> File Information</h4>
+                                <div class="file-details">
+                                    <div class="detail-item">
+                                        <span class="detail-label">File Name:</span>
+                                        <span class="detail-value" id="resumeFileName">resume.pdf</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">File Size:</span>
+                                        <span class="detail-value" id="resumeFileSize">2.5 MB</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">File Type:</span>
+                                        <span class="detail-value" id="resumeFileType">PDF</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="file-actions">
+                                    <button class="file-action-btn primary" id="resumeDownloadPrimary">
+                                        <i class="fas fa-download"></i>
+                                        Download Resume
+                                    </button>
+                                    <button class="file-action-btn secondary" id="resumeOpenNew">
+                                        <i class="fas fa-external-link-alt"></i>
+                                        Open in New Tab
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Load the JavaScript -->
         <script src="../../scripts/employer/empapplicants.js"></script>
         

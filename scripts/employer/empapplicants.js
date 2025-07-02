@@ -3394,4 +3394,893 @@ document.addEventListener('DOMContentLoaded', function() {
             window.open(`../../backend/employer/view_resume.php?application_id=${applicationId}`, '_blank');
         }
     }
+
+    // ===================================
+// PHASE 3: ENHANCED PDF VIEWER SYSTEM
+// ===================================
+
+// Global variables for resume viewer
+let currentResumeData = null;
+let currentZoomLevel = 100;
+let isFullscreen = false;
+
+// Enhanced function to open PDF viewer modal
+async function openEnhancedResumeViewer(applicationId) {
+    const modal = document.getElementById('resumeViewerModal');
+    if (!modal) {
+        console.error('❌ Resume viewer modal not found');
+        return;
+    }
+    
+    try {
+        // Show modal immediately with loading state
+        modal.style.display = 'flex';
+        showResumeLoading();
+        
+        // Fetch detailed applicant data
+        const applicantData = await fetchApplicantDetailsForResume(applicationId);
+        if (!applicantData) {
+            throw new Error('Failed to fetch applicant details');
+        }
+        
+        currentResumeData = applicantData;
+        
+        // Populate modal with applicant data
+        populateResumeViewerModal(applicantData);
+        
+        // Load the resume content
+        await loadResumeContent(applicantData);
+        
+        // Setup modal event listeners
+        setupResumeViewerEventListeners();
+        
+        console.log('✅ Resume viewer opened successfully');
+        
+    } catch (error) {
+        console.error('❌ Error opening resume viewer:', error);
+        showResumeError('Failed to load resume: ' + error.message);
+    }
+}
+
+// Fetch detailed applicant data for resume viewing
+async function fetchApplicantDetailsForResume(applicationId) {
+    try {
+        const response = await fetch(`../../backend/employer/get_applicant_details.php?application_id=${applicationId}`);
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.message || 'Failed to fetch applicant details');
+        }
+        
+        if (data.success) {
+            return data;
+        } else {
+            throw new Error(data.message || 'Failed to load applicant details');
+        }
+        
+    } catch (error) {
+        console.error('Error fetching applicant details:', error);
+        throw error;
+    }
+}
+
+// Populate resume viewer modal with applicant data
+function populateResumeViewerModal(data) {
+    const applicant = data.applicant;
+    
+    // Header information
+    document.getElementById('resumeApplicantName').textContent = applicant.full_name || 'Unknown Applicant';
+    document.getElementById('resumeJobTitle').textContent = applicant.job_title || 'Job Position';
+    document.getElementById('resumeMatchScore').textContent = `${applicant.match_score || 0}% Match`;
+    
+    // Score circle
+    const scoreCircle = document.getElementById('resumeScoreCircle');
+    const scoreNumber = document.getElementById('resumeScoreNumber');
+    if (scoreCircle && scoreNumber) {
+        const score = applicant.match_score || 0;
+        scoreNumber.textContent = `${score}%`;
+        
+        // Color based on score
+        let scoreColor = '#ef4444'; // Red for low scores
+        if (score >= 90) scoreColor = '#10b981'; // Green for excellent
+        else if (score >= 75) scoreColor = '#f59e0b'; // Orange for good
+        else if (score >= 60) scoreColor = '#3b82f6'; // Blue for fair
+        
+        scoreCircle.style.borderColor = scoreColor;
+        scoreNumber.style.color = scoreColor;
+    }
+    
+    // Skills analysis
+    if (data.skills_analysis) {
+        populateSkillsAnalysis(data.skills_analysis);
+    }
+    
+    // Applicant details (right panel)
+    document.getElementById('resumeApplicantFullName').textContent = applicant.full_name;
+    document.getElementById('resumeApplicantHeadline').textContent = applicant.headline || 'Job Seeker';
+    document.getElementById('resumeApplicantEmail').textContent = applicant.email || 'No email available';
+    document.getElementById('resumeApplicantPhone').textContent = applicant.contact_number || 'No phone available';
+    document.getElementById('resumeApplicantLocation').textContent = getLocationText(applicant) || 'Location not specified';
+    
+    // Application details
+    document.getElementById('resumeJobPosition').textContent = applicant.job_title || 'Job Position';
+    document.getElementById('resumeApplicationDate').textContent = formatDate(applicant.applied_at);
+    
+    const statusBadge = document.getElementById('resumeApplicationStatus');
+    if (statusBadge) {
+        statusBadge.textContent = formatApplicationStatus(applicant.application_status);
+        statusBadge.className = `detail-value status-badge status-${applicant.application_status}`;
+    }
+    
+    // Avatar handling
+    const avatar = document.getElementById('resumeApplicantAvatar');
+    const avatarFallback = document.querySelector('.avatar-fallback-large');
+    
+    if (applicant.profile_picture) {
+        avatar.src = applicant.profile_picture;
+        avatar.style.display = 'block';
+        avatarFallback.style.display = 'none';
+    } else {
+        avatar.style.display = 'none';
+        avatarFallback.style.display = 'flex';
+    }
+}
+
+// Populate skills analysis section
+function populateSkillsAnalysis(skillsData) {
+    const matchedSkills = document.getElementById('resumeMatchedSkills');
+    const missingSkills = document.getElementById('resumeMissingSkills');
+    const bonusSkills = document.getElementById('resumeBonusSkills');
+    
+    if (matchedSkills && skillsData.matched_skills) {
+        matchedSkills.innerHTML = skillsData.matched_skills
+            .map(skill => `<span class="skill-tag matched">${skill}</span>`)
+            .join('') || '<span class="no-skills">No matched skills</span>';
+    }
+    
+    if (missingSkills && skillsData.missing_skills) {
+        missingSkills.innerHTML = skillsData.missing_skills
+            .map(skill => `<span class="skill-tag missing">${skill}</span>`)
+            .join('') || '<span class="no-skills">No missing skills</span>';
+    }
+    
+    if (bonusSkills && skillsData.bonus_skills) {
+        bonusSkills.innerHTML = skillsData.bonus_skills
+            .map(skill => `<span class="skill-tag bonus">${skill}</span>`)
+            .join('') || '<span class="no-skills">No bonus skills</span>';
+    }
+}
+
+// Load resume content (PDF or text)
+async function loadResumeContent(applicantData) {
+    const applicant = applicantData.applicant;
+    const pdfViewer = document.getElementById('resumePdfViewer');
+    const textViewer = document.getElementById('resumeTextViewer');
+    const controls = document.getElementById('resumeViewerControls');
+    
+    try {
+        // Update file information
+        updateResumeFileInfo(applicant);
+        
+        // Determine file type and load accordingly
+        const fileType = applicant.resume_type || '';
+        const fileName = applicant.resume_file || '';
+        const fileExtension = fileName.split('.').pop()?.toLowerCase();
+        
+        hideResumeLoading();
+        
+        if (fileExtension === 'pdf' || fileType.includes('pdf')) {
+            // Load PDF
+            const resumeUrl = `../../backend/employer/view_resume.php?application_id=${applicant.application_id}`;
+            pdfViewer.src = resumeUrl;
+            pdfViewer.style.display = 'block';
+            textViewer.style.display = 'none';
+            controls.style.display = 'flex';
+            
+            // Handle PDF load events
+            pdfViewer.onload = () => {
+                console.log('✅ PDF loaded successfully');
+            };
+            
+            pdfViewer.onerror = () => {
+                console.error('❌ Failed to load PDF');
+                showResumeError('Failed to load PDF file. The file may be corrupted or incompatible.');
+            };
+            
+        } else {
+            // Handle non-PDF files (show text content or download option)
+            if (applicant.resume_content && !applicant.resume_content.includes('Resume file available')) {
+                // Show text content
+                textViewer.style.display = 'block';
+                pdfViewer.style.display = 'none';
+                controls.style.display = 'none';
+                
+                document.getElementById('resumeTextContent').innerHTML = `
+                    <div class="text-resume-content">
+                        <h3>Resume Content</h3>
+                        <pre>${applicant.resume_content}</pre>
+                    </div>
+                `;
+            } else {
+                // Show download option for unsupported files
+                showResumeError(
+                    `This file type (${fileExtension.toUpperCase()}) cannot be previewed directly. ` +
+                    'Please download the file to view it.',
+                    true
+                );
+            }
+        }
+        
+    } catch (error) {
+        console.error('Error loading resume content:', error);
+        showResumeError('Failed to load resume content: ' + error.message);
+    }
+}
+
+// Update file information in the details panel
+function updateResumeFileInfo(applicant) {
+    document.getElementById('resumeFileName').textContent = applicant.resume_file || 'Unknown file';
+    document.getElementById('resumeFileType').textContent = (applicant.resume_type || 'Unknown type').toUpperCase();
+    
+    // Calculate and display file size if available
+    const fileSize = applicant.file_size;
+    if (fileSize) {
+        const sizeInMB = (fileSize / (1024 * 1024)).toFixed(2);
+        document.getElementById('resumeFileSize').textContent = `${sizeInMB} MB`;
+    } else {
+        document.getElementById('resumeFileSize').textContent = 'Unknown size';
+    }
+}
+
+// Show resume loading state
+function showResumeLoading() {
+    document.getElementById('resumeLoading').style.display = 'flex';
+    document.getElementById('resumeError').style.display = 'none';
+    document.getElementById('resumePdfViewer').style.display = 'none';
+    document.getElementById('resumeTextViewer').style.display = 'none';
+    document.getElementById('resumeViewerControls').style.display = 'none';
+}
+
+// Hide resume loading state
+function hideResumeLoading() {
+    document.getElementById('resumeLoading').style.display = 'none';
+}
+
+// Show resume error state
+function showResumeError(message, showDownload = false) {
+    const errorEl = document.getElementById('resumeError');
+    const messageEl = document.getElementById('resumeErrorMessage');
+    const downloadBtn = document.getElementById('resumeDownloadAnyway');
+    
+    hideResumeLoading();
+    
+    if (errorEl && messageEl) {
+        messageEl.textContent = message;
+        errorEl.style.display = 'flex';
+        
+        if (downloadBtn) {
+            downloadBtn.style.display = showDownload ? 'block' : 'none';
+        }
+    }
+    
+    // Hide other content
+    document.getElementById('resumePdfViewer').style.display = 'none';
+    document.getElementById('resumeTextViewer').style.display = 'none';
+    document.getElementById('resumeViewerControls').style.display = 'none';
+}
+
+// Setup resume viewer event listeners
+function setupResumeViewerEventListeners() {
+    const modal = document.getElementById('resumeViewerModal');
+    if (!modal) return;
+    
+    // Close modal handlers
+    const closeBtn = modal.querySelector('[data-modal="resumeViewerModal"]');
+    if (closeBtn) {
+        closeBtn.onclick = () => closeResumeViewer();
+    }
+    
+    // Download handlers
+    const downloadBtn = document.getElementById('resumeDownloadBtn');
+    const downloadPrimary = document.getElementById('resumeDownloadPrimary');
+    const downloadAnyway = document.getElementById('resumeDownloadAnyway');
+    
+    [downloadBtn, downloadPrimary, downloadAnyway].forEach(btn => {
+        if (btn) {
+            btn.onclick = () => downloadCurrentResume();
+        }
+    });
+    
+    // Open in new tab
+    const openNewBtn = document.getElementById('resumeOpenNew');
+    if (openNewBtn) {
+        openNewBtn.onclick = () => openResumeInNewTab();
+    }
+    
+    // Search functionality
+    const searchBtn = document.getElementById('resumeSearchBtn');
+    const searchClose = document.getElementById('resumeSearchClose');
+    const searchExecute = document.getElementById('resumeSearchExecute');
+    const searchInput = document.getElementById('resumeSearchInput');
+    
+    if (searchBtn) {
+        searchBtn.onclick = () => toggleResumeSearch();
+    }
+    
+    if (searchClose) {
+        searchClose.onclick = () => hideResumeSearch();
+    }
+    
+    if (searchExecute) {
+        searchExecute.onclick = () => executeResumeSearch();
+    }
+    
+    if (searchInput) {
+        searchInput.onkeypress = (e) => {
+            if (e.key === 'Enter') {
+                executeResumeSearch();
+            }
+        };
+    }
+    
+    // Zoom controls
+    setupZoomControls();
+    
+    // Quick actions
+    setupQuickActions();
+    
+    // Fullscreen toggle
+    const fullscreenBtn = document.getElementById('resumeFullscreenBtn');
+    if (fullscreenBtn) {
+        fullscreenBtn.onclick = () => toggleResumeFullscreen();
+    }
+    
+    // ESC key to close
+    document.addEventListener('keydown', handleResumeViewerKeydown);
+}
+
+// Close resume viewer
+function closeResumeViewer() {
+    const modal = document.getElementById('resumeViewerModal');
+    if (modal) {
+        modal.style.display = 'none';
+        currentResumeData = null;
+        currentZoomLevel = 100;
+        isFullscreen = false;
+        
+        // Clean up event listeners
+        document.removeEventListener('keydown', handleResumeViewerKeydown);
+    }
+}
+
+// Handle keyboard shortcuts
+function handleResumeViewerKeydown(event) {
+    const modal = document.getElementById('resumeViewerModal');
+    if (!modal || modal.style.display === 'none') return;
+    
+    switch (event.key) {
+        case 'Escape':
+            closeResumeViewer();
+            break;
+        case 'f':
+        case 'F':
+            if (event.ctrlKey || event.metaKey) {
+                event.preventDefault();
+                toggleResumeSearch();
+            }
+            break;
+        case 'F11':
+            event.preventDefault();
+            toggleResumeFullscreen();
+            break;
+    }
+}
+
+// Download current resume
+function downloadCurrentResume() {
+    if (!currentResumeData) return;
+    
+    const applicationId = currentResumeData.applicant.application_id;
+    const downloadUrl = `../../backend/employer/download_resume.php?application_id=${applicationId}`;
+    
+    // Create temporary download link
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = currentResumeData.applicant.resume_file || 'resume.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showNotification('Resume download started', 'success');
+}
+
+// Open resume in new tab
+function openResumeInNewTab() {
+    if (!currentResumeData) return;
+    
+    const applicationId = currentResumeData.applicant.application_id;
+    const viewUrl = `../../backend/employer/view_resume.php?application_id=${applicationId}`;
+    
+    window.open(viewUrl, '_blank');
+}
+
+// Update viewFullResume function to use enhanced viewer
+function viewFullResume(applicationId) {
+    openEnhancedResumeViewer(applicationId);
+}
+
+// Utility functions
+function formatApplicationStatus(status) {
+    const statusMap = {
+        'submitted': 'Submitted',
+        'under_review': 'Under Review',
+        'shortlisted': 'Shortlisted',
+        'interview_scheduled': 'Interview Scheduled',
+        'interviewed': 'Interviewed',
+        'hired': 'Hired',
+        'rejected': 'Rejected',
+        'withdrawn': 'Withdrawn'
+    };
+    
+    return statusMap[status] || status;
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'Date not available';
+    
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+}
+
+// ===================================
+// PHASE 3 PART 3: ADVANCED SEARCH & ANALYSIS
+// ===================================
+
+// Resume Search Functionality
+function toggleResumeSearch() {
+    const searchPanel = document.getElementById('resumeSearchPanel');
+    const searchInput = document.getElementById('resumeSearchInput');
+    
+    if (searchPanel.style.display === 'none' || !searchPanel.style.display) {
+        searchPanel.style.display = 'block';
+        searchInput.focus();
+    } else {
+        hideResumeSearch();
+    }
+}
+
+function hideResumeSearch() {
+    const searchPanel = document.getElementById('resumeSearchPanel');
+    const searchResults = document.getElementById('resumeSearchResults');
+    const searchInput = document.getElementById('resumeSearchInput');
+    
+    searchPanel.style.display = 'none';
+    searchResults.innerHTML = '';
+    searchInput.value = '';
+}
+
+function executeResumeSearch() {
+    const searchInput = document.getElementById('resumeSearchInput');
+    const searchResults = document.getElementById('resumeSearchResults');
+    const query = searchInput.value.trim();
+    
+    if (!query) {
+        searchResults.innerHTML = '<div class="search-error">Please enter a search term</div>';
+        return;
+    }
+    
+    if (!currentResumeData) {
+        searchResults.innerHTML = '<div class="search-error">No resume data available</div>';
+        return;
+    }
+    
+    // Search in resume content
+    const resumeContent = currentResumeData.applicant.resume_content || '';
+    const matches = searchInText(resumeContent, query);
+    
+    if (matches.length > 0) {
+        displaySearchResults(matches, query);
+        highlightSearchResults(query);
+    } else {
+        searchResults.innerHTML = `
+            <div class="search-no-results">
+                <i class="fas fa-search"></i>
+                No results found for "${query}"
+            </div>
+        `;
+    }
+}
+
+function searchInText(text, query) {
+    const regex = new RegExp(query, 'gi');
+    const matches = [];
+    let match;
+    
+    while ((match = regex.exec(text)) !== null) {
+        const start = Math.max(0, match.index - 50);
+        const end = Math.min(text.length, match.index + query.length + 50);
+        const context = text.substring(start, end);
+        
+        matches.push({
+            index: match.index,
+            context: context,
+            query: query
+        });
+    }
+    
+    return matches;
+}
+
+function displaySearchResults(matches, query) {
+    const searchResults = document.getElementById('resumeSearchResults');
+    
+    const resultsHTML = `
+        <div class="search-summary">
+            Found ${matches.length} occurrence${matches.length !== 1 ? 's' : ''} of "${query}"
+        </div>
+        <div class="search-matches">
+            ${matches.map((match, index) => `
+                <div class="search-match" onclick="scrollToMatch(${index})">
+                    <div class="match-context">
+                        ${highlightQueryInContext(match.context, query)}
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+    
+    searchResults.innerHTML = resultsHTML;
+}
+
+function highlightQueryInContext(context, query) {
+    const regex = new RegExp(`(${query})`, 'gi');
+    return context.replace(regex, '<mark>$1</mark>');
+}
+
+function highlightSearchResults(query) {
+    // Highlight results in PDF viewer (limited functionality)
+    const textViewer = document.getElementById('resumeTextViewer');
+    if (textViewer && textViewer.style.display !== 'none') {
+        const content = textViewer.innerHTML;
+        const regex = new RegExp(`(${query})`, 'gi');
+        const highlighted = content.replace(regex, '<mark class="search-highlight">$1</mark>');
+        textViewer.innerHTML = highlighted;
+    }
+}
+
+// Zoom Controls Implementation
+function setupZoomControls() {
+    const zoomInBtn = document.getElementById('resumeZoomIn');
+    const zoomOutBtn = document.getElementById('resumeZoomOut');
+    const fitWidthBtn = document.getElementById('resumeFitWidth');
+    const fitPageBtn = document.getElementById('resumeFitPage');
+    const zoomLevelDisplay = document.getElementById('resumeZoomLevel');
+    
+    if (zoomInBtn) {
+        zoomInBtn.onclick = () => {
+            currentZoomLevel = Math.min(200, currentZoomLevel + 25);
+            updateZoom();
+        };
+    }
+    
+    if (zoomOutBtn) {
+        zoomOutBtn.onclick = () => {
+            currentZoomLevel = Math.max(25, currentZoomLevel - 25);
+            updateZoom();
+        };
+    }
+    
+    if (fitWidthBtn) {
+        fitWidthBtn.onclick = () => {
+            currentZoomLevel = 100;
+            updateZoom();
+        };
+    }
+    
+    if (fitPageBtn) {
+        fitPageBtn.onclick = () => {
+            currentZoomLevel = 75;
+            updateZoom();
+        };
+    }
+}
+
+function updateZoom() {
+    const pdfViewer = document.getElementById('resumePdfViewer');
+    const textViewer = document.getElementById('resumeTextViewer');
+    const zoomLevelDisplay = document.getElementById('resumeZoomLevel');
+    
+    if (zoomLevelDisplay) {
+        zoomLevelDisplay.textContent = `${currentZoomLevel}%`;
+    }
+    
+    if (pdfViewer && pdfViewer.style.display !== 'none') {
+        pdfViewer.style.transform = `scale(${currentZoomLevel / 100})`;
+        pdfViewer.style.transformOrigin = 'top left';
+    }
+    
+    if (textViewer && textViewer.style.display !== 'none') {
+        textViewer.style.fontSize = `${currentZoomLevel}%`;
+    }
+}
+
+// Quick Actions Implementation
+function setupQuickActions() {
+    const scheduleBtn = document.getElementById('resumeScheduleInterview');
+    const hireBtn = document.getElementById('resumeHireApplicant');
+    const rejectBtn = document.getElementById('resumeRejectApplicant');
+    
+    if (scheduleBtn) {
+        scheduleBtn.onclick = () => {
+            if (currentResumeData) {
+                scheduleInterviewFromResume(currentResumeData.applicant.application_id);
+            }
+        };
+    }
+    
+    if (hireBtn) {
+        hireBtn.onclick = () => {
+            if (currentResumeData) {
+                hireApplicantFromResume(currentResumeData.applicant.application_id);
+            }
+        };
+    }
+    
+    if (rejectBtn) {
+        rejectBtn.onclick = () => {
+            if (currentResumeData) {
+                rejectApplicantFromResume(currentResumeData.applicant.application_id);
+            }
+        };
+    }
+}
+
+async function scheduleInterviewFromResume(applicationId) {
+    closeResumeViewer();
+    
+    // Open existing interview scheduling modal
+    if (window.openInterviewModal) {
+        window.openInterviewModal(applicationId);
+    } else {
+        showNotification('Interview scheduling feature coming soon!', 'info');
+    }
+}
+
+async function hireApplicantFromResume(applicationId) {
+    const confirmed = confirm('Are you sure you want to hire this applicant?');
+    if (!confirmed) return;
+    
+    try {
+        const success = await updateApplicantStatusInCategory(applicationId, 'hired');
+        if (success) {
+            showNotification('Applicant hired successfully!', 'success');
+            closeResumeViewer();
+            
+            // Refresh the main applicants view
+            if (window.fetchApplicants) {
+                window.fetchApplicants(window.currentFilters);
+            }
+        }
+    } catch (error) {
+        showError('Failed to hire applicant: ' + error.message);
+    }
+}
+
+async function rejectApplicantFromResume(applicationId) {
+    const reason = prompt('Please provide a reason for rejection (optional):');
+    if (reason === null) return; // User cancelled
+    
+    try {
+        const success = await updateApplicantStatusInCategory(applicationId, 'rejected');
+        if (success) {
+            showNotification('Applicant rejected', 'success');
+            closeResumeViewer();
+            
+            // Refresh the main applicants view
+            if (window.fetchApplicants) {
+                window.fetchApplicants(window.currentFilters);
+            }
+        }
+    } catch (error) {
+        showError('Failed to reject applicant: ' + error.message);
+    }
+}
+
+// Fullscreen Implementation
+function toggleResumeFullscreen() {
+    const modal = document.getElementById('resumeViewerModal');
+    const fullscreenBtn = document.getElementById('resumeFullscreenBtn');
+    const fullscreenIcon = fullscreenBtn.querySelector('i');
+    
+    if (!isFullscreen) {
+        // Enter fullscreen
+        modal.classList.add('fullscreen');
+        fullscreenIcon.className = 'fas fa-compress';
+        fullscreenBtn.title = 'Exit Fullscreen';
+        isFullscreen = true;
+        
+        // Try to use browser fullscreen API
+        if (modal.requestFullscreen) {
+            modal.requestFullscreen().catch(console.error);
+        } else if (modal.webkitRequestFullscreen) {
+            modal.webkitRequestFullscreen();
+        } else if (modal.msRequestFullscreen) {
+            modal.msRequestFullscreen();
+        }
+    } else {
+        // Exit fullscreen
+        modal.classList.remove('fullscreen');
+        fullscreenIcon.className = 'fas fa-expand';
+        fullscreenBtn.title = 'Toggle Fullscreen';
+        isFullscreen = false;
+        
+        // Exit browser fullscreen
+        if (document.exitFullscreen) {
+            document.exitFullscreen().catch(console.error);
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
+    }
+}
+
+// Enhanced Resume Analysis
+function generateResumeInsights(applicantData) {
+    const insights = [];
+    const applicant = applicantData.applicant;
+    const skills = applicantData.skills_analysis;
+    
+    // Experience analysis
+    if (applicant.resume_content && applicant.resume_content.toLowerCase().includes('years')) {
+        insights.push({
+            icon: 'fas fa-briefcase',
+            text: 'Relevant work experience mentioned in resume'
+        });
+    }
+    
+    // Education analysis
+    if (applicant.resume_content && 
+        (applicant.resume_content.toLowerCase().includes('degree') || 
+         applicant.resume_content.toLowerCase().includes('university'))) {
+        insights.push({
+            icon: 'fas fa-graduation-cap',
+            text: 'Educational background present'
+        });
+    }
+    
+    // Skills analysis
+    if (skills && skills.matched_skills && skills.matched_skills.length > 0) {
+        insights.push({
+            icon: 'fas fa-cogs',
+            text: `${skills.matched_skills.length} required skills matched`
+        });
+    }
+    
+    if (skills && skills.bonus_skills && skills.bonus_skills.length > 0) {
+        insights.push({
+            icon: 'fas fa-star',
+            text: `${skills.bonus_skills.length} additional skills found`
+        });
+    }
+    
+    // Match score analysis
+    const score = applicant.match_score || 0;
+    if (score >= 90) {
+        insights.push({
+            icon: 'fas fa-trophy',
+            text: 'Excellent match - highly recommended candidate'
+        });
+    } else if (score >= 75) {
+        insights.push({
+            icon: 'fas fa-thumbs-up',
+            text: 'Good match - consider for interview'
+        });
+    } else if (score >= 60) {
+        insights.push({
+            icon: 'fas fa-info-circle',
+            text: 'Fair match - may need additional training'
+        });
+    }
+    
+    return insights;
+}
+
+// Update populateResumeViewerModal to include generated insights
+function populateResumeViewerModalEnhanced(data) {
+    // Call the existing function
+    populateResumeViewerModal(data);
+    
+    // Add generated insights
+    const insights = generateResumeInsights(data);
+    const insightsList = document.getElementById('resumeInsightsList');
+    
+    if (insightsList && insights.length > 0) {
+        insightsList.innerHTML = insights.map(insight => `
+            <div class="insight-item">
+                <i class="${insight.icon}"></i>
+                <span>${insight.text}</span>
+            </div>
+        `).join('');
+    }
+}
+
+// Additional CSS for search functionality
+const searchStyles = `
+<style>
+.search-summary {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.search-matches {
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.search-match {
+    padding: 8px 12px;
+    margin-bottom: 5px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.search-match:hover {
+    background: #f8f9fa;
+}
+
+.match-context {
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+
+.search-match mark {
+    background: #ffd54f;
+    padding: 1px 2px;
+    border-radius: 2px;
+}
+
+.search-highlight {
+    background: #ffd54f !important;
+    padding: 2px 4px;
+    border-radius: 3px;
+    animation: highlight-pulse 2s ease-in-out;
+}
+
+@keyframes highlight-pulse {
+    0% { background: #ffd54f; }
+    50% { background: #ffeb3b; }
+    100% { background: #ffd54f; }
+}
+
+.search-error,
+.search-no-results {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+    font-style: italic;
+}
+
+.search-no-results i {
+    display: block;
+    font-size: 2rem;
+    margin-bottom: 10px;
+    opacity: 0.5;
+}
+</style>
+`;
+
+// Inject search styles
+document.head.insertAdjacentHTML('beforeend', searchStyles);
+
+console.log('✅ Phase 3: Advanced Search & Analysis Features loaded');
 });
