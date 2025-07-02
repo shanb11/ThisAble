@@ -2970,3 +2970,93 @@ body {
 .no-resume i {
     color: #ccc;
 }
+
+/* Enhanced Resume Preview Styles - Add to empapplicants.css */
+
+.resume-file-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+.file-icon {
+    font-size: 2rem;
+    color: #e74c3c;
+}
+
+.file-details {
+    flex: 1;
+}
+
+.file-name {
+    font-weight: 600;
+    color: #333;
+    font-size: 0.9rem;
+    margin-bottom: 3px;
+}
+
+.file-type {
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.view-full-resume-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.view-full-resume-btn:hover {
+    background: var(--sidebar);
+}
+
+.resume-text-preview {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+.preview-text {
+    padding: 10px;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: #333;
+    max-height: 80px;
+    overflow-y: auto;
+    border-bottom: 1px solid #eee;
+}
+
+.no-resume {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 20px;
+    color: #666;
+    font-style: italic;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.no-resume i {
+    color: #ccc;
+}
+
+.no-skills {
+    color: #999;
+    font-style: italic;
+    font-size: 0.8rem;
+}

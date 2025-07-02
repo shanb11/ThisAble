@@ -2907,18 +2907,28 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Create individual job accordion
+    // FIXED: Create individual job accordion
     function createJobAccordion(group, index) {
         const template = document.getElementById('jobAccordionTemplate');
-        if (!template) return document.createElement('div');
+        if (!template) {
+            console.error('❌ Job accordion template not found');
+            return document.createElement('div');
+        }
         
-        const accordion = template.content.cloneNode(true);
-        const accordionEl = accordion.querySelector('.job-accordion');
+        // Clone the template content properly
+        const accordionFragment = template.content.cloneNode(true);
+        
+        // Get the main accordion element BEFORE doing any manipulations
+        const accordionEl = accordionFragment.querySelector('.job-accordion');
+        if (!accordionEl) {
+            console.error('❌ Job accordion element not found in template');
+            return document.createElement('div');
+        }
         
         // Set job info
-        const titleEl = accordion.querySelector('.job-title');
-        const countEl = accordion.querySelector('.job-applicant-count');
-        const scoreEl = accordion.querySelector('.job-average-score');
+        const titleEl = accordionFragment.querySelector('.job-title');
+        const countEl = accordionFragment.querySelector('.job-applicant-count');
+        const scoreEl = accordionFragment.querySelector('.job-average-score');
         
         if (titleEl) titleEl.textContent = group.job_info.job_title;
         if (countEl) countEl.textContent = `${group.stats.count} applicant${group.stats.count !== 1 ? 's' : ''}`;
@@ -2929,9 +2939,8 @@ document.addEventListener('DOMContentLoaded', function() {
         accordionEl.setAttribute('id', accordionId);
         
         // Add toggle functionality
-        const header = accordion.querySelector('.job-accordion-header');
-        const content = accordion.querySelector('.job-accordion-content');
-        const toggle = accordion.querySelector('.accordion-toggle');
+        const header = accordionFragment.querySelector('.job-accordion-header');
+        const content = accordionFragment.querySelector('.job-accordion-content');
         
         if (header && content) {
             header.addEventListener('click', () => {
@@ -2970,6 +2979,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
+        // Return the actual DOM element, not the fragment
         return accordionEl;
     }
 
@@ -2986,53 +2996,73 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Create individual applicant card for category modal
+    // FIXED: Create individual applicant card for category modal
     function createCategoryApplicantCard(applicant) {
         const template = document.getElementById('categoryApplicantTemplate');
-        if (!template) return document.createElement('div');
+        if (!template) {
+            console.error('❌ Category applicant template not found');
+            return document.createElement('div');
+        }
         
-        const card = template.content.cloneNode(true);
-        const cardEl = card.querySelector('.category-applicant-card');
+        // Clone the template content properly
+        const cardFragment = template.content.cloneNode(true);
+        
+        // Get the main card element BEFORE doing any manipulations
+        const cardEl = cardFragment.querySelector('.category-applicant-card');
+        if (!cardEl) {
+            console.error('❌ Category applicant card element not found in template');
+            return document.createElement('div');
+        }
         
         // Set applicant info
-        const nameEl = card.querySelector('.applicant-name');
-        const scoreEl = card.querySelector('.applicant-score');
-        const avatarImg = card.querySelector('.applicant-avatar img');
-        const avatarFallback = card.querySelector('.avatar-fallback');
+        const nameEl = cardFragment.querySelector('.applicant-name');
+        const scoreEl = cardFragment.querySelector('.applicant-score');
+        const avatarImg = cardFragment.querySelector('.applicant-avatar img');
+        const avatarFallback = cardFragment.querySelector('.avatar-fallback');
         
         if (nameEl) nameEl.textContent = applicant.full_name;
         if (scoreEl) scoreEl.textContent = `${applicant.match_score}%`;
         
         // Handle avatar
         if (applicant.profile_picture) {
-            avatarImg.src = applicant.profile_picture;
-            avatarImg.style.display = 'block';
-            avatarFallback.style.display = 'none';
+            if (avatarImg) {
+                avatarImg.src = applicant.profile_picture;
+                avatarImg.style.display = 'block';
+            }
+            if (avatarFallback) avatarFallback.style.display = 'none';
         } else {
-            avatarImg.style.display = 'none';
-            avatarFallback.style.display = 'flex';
+            if (avatarImg) avatarImg.style.display = 'none';
+            if (avatarFallback) avatarFallback.style.display = 'flex';
         }
         
         // Set skills analysis
-        const matchedSkillsEl = card.querySelector('.skills-list.matched');
-        const missingSkillsEl = card.querySelector('.skills-list.missing');
+        const matchedSkillsEl = cardFragment.querySelector('.skills-list.matched');
+        const missingSkillsEl = cardFragment.querySelector('.skills-list.missing');
         
         if (applicant.skills_analysis) {
             if (matchedSkillsEl) {
-                matchedSkillsEl.innerHTML = applicant.skills_analysis.matched_skills
-                    .map(skill => `<span class="skill-tag">${skill}</span>`)
-                    .join('');
+                if (applicant.skills_analysis.matched_skills.length > 0) {
+                    matchedSkillsEl.innerHTML = applicant.skills_analysis.matched_skills
+                        .map(skill => `<span class="skill-tag">${skill}</span>`)
+                        .join('');
+                } else {
+                    matchedSkillsEl.innerHTML = '<span class="no-skills">No matched skills</span>';
+                }
             }
             
             if (missingSkillsEl) {
-                missingSkillsEl.innerHTML = applicant.skills_analysis.missing_skills
-                    .map(skill => `<span class="skill-tag">${skill}</span>`)
-                    .join('');
+                if (applicant.skills_analysis.missing_skills.length > 0) {
+                    missingSkillsEl.innerHTML = applicant.skills_analysis.missing_skills
+                        .map(skill => `<span class="skill-tag">${skill}</span>`)
+                        .join('');
+                } else {
+                    missingSkillsEl.innerHTML = '<span class="no-skills">No missing skills</span>';
+                }
             }
         }
         
-        // Set resume preview
-        const resumePreview = card.querySelector('.resume-preview');
+        // Set resume preview with enhanced design
+        const resumePreview = cardFragment.querySelector('.resume-preview');
         if (resumePreview && applicant.resume_content) {
             const resumeContent = applicant.resume_content;
             
@@ -3061,7 +3091,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 `;
             }
-        } else {
+        } else if (resumePreview) {
             resumePreview.innerHTML = `
                 <div class="no-resume">
                     <i class="fas fa-file-slash"></i>
@@ -3069,14 +3099,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             `;
         }
-
-        function viewFullResume(applicationId) {
-            if (window.openResumeViewer) {
-                window.openResumeViewer(applicationId);
-            } else {
-                window.open(`../../backend/employer/view_resume.php?application_id=${applicationId}`, '_blank');
-            }
-        }
+        
+        // Add action button listeners
+        addCategoryApplicantActions(cardFragment, applicant);
+        
+        // Return the actual DOM element, not the fragment
+        return cardEl;
     }
 
     // Add action button listeners for category applicant cards
@@ -3246,5 +3274,124 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.body.removeChild(notification);
             }
         }, 5000);
+    }
+
+    function setupCategoryModalEvents() {
+        // Category tab switching
+        const categoryTabs = document.querySelectorAll('.category-tab');
+        console.log('📊 Found category tabs:', categoryTabs.length);
+        
+        categoryTabs.forEach(tab => {
+            // Remove any existing listeners to prevent duplicates
+            tab.removeEventListener('click', handleTabClick);
+            tab.addEventListener('click', handleTabClick);
+        });
+        
+        // Enhanced modal close handlers
+        const categoryModal = document.getElementById('categoryModal');
+        if (categoryModal) {
+            console.log('✅ Category modal found, setting up close handlers');
+            
+            // Close button handler (X button)
+            const closeBtn = categoryModal.querySelector('[data-modal="categoryModal"]');
+            if (closeBtn) {
+                closeBtn.removeEventListener('click', handleModalClose);
+                closeBtn.addEventListener('click', handleModalClose);
+                console.log('✅ Close button handler set');
+            } else {
+                console.log('❌ Close button not found');
+            }
+            
+            // Back button handler - FIXED SELECTOR
+            const backBtn = categoryModal.querySelector('.modal-footer .secondary-btn');
+            if (backBtn) {
+                backBtn.removeEventListener('click', handleModalClose);
+                backBtn.addEventListener('click', handleModalClose);
+                console.log('✅ Back button handler set');
+            } else {
+                console.log('❌ Back button not found');
+                // Try alternative selector
+                const altBackBtn = categoryModal.querySelector('.footer-btn.secondary-btn');
+                if (altBackBtn) {
+                    altBackBtn.removeEventListener('click', handleModalClose);
+                    altBackBtn.addEventListener('click', handleModalClose);
+                    console.log('✅ Back button handler set (alternative)');
+                }
+            }
+            
+            // Click outside to close
+            categoryModal.removeEventListener('click', handleOutsideClick);
+            categoryModal.addEventListener('click', handleOutsideClick);
+            
+            // Escape key to close
+            document.removeEventListener('keydown', handleEscapeKey);
+            document.addEventListener('keydown', handleEscapeKey);
+        } else {
+            console.log('❌ Category modal not found');
+        }
+    }
+
+    async function handleTabClick(event) {
+        const tab = event.currentTarget;
+        const category = tab.dataset.category;
+        
+        console.log('🔄 Tab clicked:', category);
+        
+        // Update active tab immediately for better UX
+        document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        
+        // Update modal title
+        const titleEl = document.getElementById('categoryModalTitle');
+        if (titleEl) {
+            const categoryLabels = {
+                'excellent': '🔥 Excellent Matches',
+                'good': '🟢 Good Matches', 
+                'fair': '🟡 Fair Matches',
+                'needs-review': '⚠️ Needs Review'
+            };
+            titleEl.innerHTML = `<i class="fas fa-users"></i> ${categoryLabels[category] || 'Match Results'}`;
+        }
+        
+        // Load new category content
+        try {
+            await loadCategoryContent(category);
+            window.currentCategory = category;
+        } catch (error) {
+            console.error('Error loading category:', error);
+        }
+    }
+
+    function handleModalClose(event) {
+        console.log('🔄 Closing modal via button click');
+        const categoryModal = document.getElementById('categoryModal');
+        if (categoryModal) {
+            categoryModal.style.display = 'none';
+        }
+    }
+
+    function handleOutsideClick(event) {
+        if (event.target === event.currentTarget) {
+            console.log('🔄 Closing modal via outside click');
+            event.currentTarget.style.display = 'none';
+        }
+    }
+
+    function handleEscapeKey(event) {
+        if (event.key === 'Escape') {
+            const categoryModal = document.getElementById('categoryModal');
+            if (categoryModal && categoryModal.style.display === 'flex') {
+                console.log('🔄 Closing modal via Escape key');
+                categoryModal.style.display = 'none';
+            }
+        }
+    }
+
+    function viewFullResume(applicationId) {
+        if (window.openResumeViewer) {
+            window.openResumeViewer(applicationId);
+        } else {
+            window.open(`../../backend/employer/view_resume.php?application_id=${applicationId}`, '_blank');
+        }
     }
 });
