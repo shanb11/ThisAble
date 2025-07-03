@@ -2822,9 +2822,10 @@ body {
     border-radius: 4px;
     padding: 10px;
     max-height: 100px;
-    overflow-y: auto;
+    overflow-y: hidden !important;  /* FIXED: Changed from 'auto' to 'hidden' */
     font-size: 0.85rem;
     line-height: 1.4;
+    position: relative;
 }
 
 .applicant-status-actions {
@@ -2951,7 +2952,7 @@ body {
     line-height: 1.4;
     color: #333;
     max-height: 80px;
-    overflow-y: auto;
+    overflow-y: hidden !important;  /* FIXED: Changed from 'auto' to 'hidden' */
     border-bottom: 1px solid #eee;
 }
 
@@ -2969,6 +2970,18 @@ body {
 
 .no-resume i {
     color: #ccc;
+}
+
+/* Add fade effect to show there's more content */
+.resume-preview::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: linear-gradient(transparent, white);
+    pointer-events: none;
 }
 
 /* Enhanced Resume Preview Styles - Add to empapplicants.css */
@@ -3027,16 +3040,6 @@ body {
     background: white;
     border: 1px solid #ddd;
     border-radius: 6px;
-}
-
-.preview-text {
-    padding: 10px;
-    font-size: 0.85rem;
-    line-height: 1.4;
-    color: #333;
-    max-height: 80px;
-    overflow-y: auto;
-    border-bottom: 1px solid #eee;
 }
 
 .no-resume {

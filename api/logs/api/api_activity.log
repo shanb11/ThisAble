@@ -162,3 +162,5 @@
 {"timestamp":"2025-06-29 01:01:57","action":"google_login","ip":"192.168.1.2","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":4,"email":"baccayshan@gmail.com","setup_complete":true}}
 {"timestamp":"2025-06-29 16:44:13","action":"google_login","ip":"192.168.1.2","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":4,"email":"baccayshan@gmail.com","setup_complete":true}}
 {"timestamp":"2025-06-29 18:00:04","action":"google_login","ip":"192.168.1.2","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":4,"email":"baccayshan@gmail.com","setup_complete":true}}
+{"timestamp":"2025-07-03 12:13:02","action":"google_login","ip":"192.168.1.2","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":4,"email":"baccayshan@gmail.com","setup_complete":true}}
+{"timestamp":"2025-07-03 12:14:30","action":"profile_update","ip":"192.168.1.2","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":4,"section":"personal_info","updated_fields":["first_name","last_name","email","phone","location","bio"]}}

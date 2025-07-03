@@ -3109,12 +3109,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Add action button listeners for category applicant cards
     function addCategoryApplicantActions(card, applicant) {
-        // View resume button
-        const viewResumeBtn = card.querySelector('.view-resume-btn');
+        // View resume button - FIXED to use enhanced viewer
+        const viewResumeBtn = card.querySelector('.view-full-resume-btn');
         if (viewResumeBtn) {
-            viewResumeBtn.addEventListener('click', () => {
-                if (applicant.resume_file) {
-                    window.open(`../../backend/employer/view_resume.php?application_id=${applicant.application_id}`, '_blank');
+            viewResumeBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🔄 View Full Resume clicked for:', applicant.application_id);
+                
+                if (applicant.resume_file || applicant.application_id) {
+                    // Use enhanced viewer instead of opening new tab
+                    openEnhancedResumeViewer(applicant.application_id);
                 } else {
                     showNotification('No resume file available', 'warning');
                 }
@@ -3125,7 +3130,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const viewProfileBtn = card.querySelector('.view-profile-btn');
         if (viewProfileBtn) {
             viewProfileBtn.addEventListener('click', () => {
-                // Reuse existing applicant modal
                 if (window.openApplicantModal) {
                     window.openApplicantModal(applicant.application_id);
                 }
@@ -3135,15 +3139,18 @@ document.addEventListener('DOMContentLoaded', function() {
         // Status action buttons
         const statusBtns = card.querySelectorAll('.status-btn');
         statusBtns.forEach(btn => {
-            btn.addEventListener('click', async () => {
+            btn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
                 const status = btn.dataset.status;
                 const success = await updateApplicantStatusInCategory(applicant.application_id, status);
                 
                 if (success) {
-                    // Update button states or reload category
                     showNotification(`Status updated to: ${status.replace('_', ' ')}`, 'success');
-                    // Optionally reload the category content
-                    // loadCategoryContent(window.currentCategory);
+                    if (window.currentCategory) {
+                        loadCategoryContent(window.currentCategory);
+                    }
                 }
             });
         });
@@ -3277,57 +3284,49 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function setupCategoryModalEvents() {
-        // Category tab switching
-        const categoryTabs = document.querySelectorAll('.category-tab');
-        console.log('📊 Found category tabs:', categoryTabs.length);
+        console.log('🔄 Setting up category modal events with delegation');
         
-        categoryTabs.forEach(tab => {
-            // Remove any existing listeners to prevent duplicates
-            tab.removeEventListener('click', handleTabClick);
-            tab.addEventListener('click', handleTabClick);
+        // Use event delegation for tab navigation
+        document.addEventListener('click', function(e) {
+            // Handle category tab clicks
+            if (e.target.closest('.category-tab')) {
+                const tab = e.target.closest('.category-tab');
+                const category = tab.dataset.category;
+                
+                console.log('🔄 Tab clicked via delegation:', category);
+                handleTabClick(e, tab, category);
+            }
+            
+            // Handle modal close buttons
+            if (e.target.matches('[data-modal="categoryModal"]') || 
+                e.target.closest('[data-modal="categoryModal"]')) {
+                console.log('🔄 Closing category modal');
+                handleModalClose();
+            }
         });
         
-        // Enhanced modal close handlers
+        // Enhanced modal setup
         const categoryModal = document.getElementById('categoryModal');
         if (categoryModal) {
-            console.log('✅ Category modal found, setting up close handlers');
-            
-            // Close button handler (X button)
-            const closeBtn = categoryModal.querySelector('[data-modal="categoryModal"]');
-            if (closeBtn) {
-                closeBtn.removeEventListener('click', handleModalClose);
-                closeBtn.addEventListener('click', handleModalClose);
-                console.log('✅ Close button handler set');
-            } else {
-                console.log('❌ Close button not found');
-            }
-            
-            // Back button handler - FIXED SELECTOR
-            const backBtn = categoryModal.querySelector('.modal-footer .secondary-btn');
-            if (backBtn) {
-                backBtn.removeEventListener('click', handleModalClose);
-                backBtn.addEventListener('click', handleModalClose);
-                console.log('✅ Back button handler set');
-            } else {
-                console.log('❌ Back button not found');
-                // Try alternative selector
-                const altBackBtn = categoryModal.querySelector('.footer-btn.secondary-btn');
-                if (altBackBtn) {
-                    altBackBtn.removeEventListener('click', handleModalClose);
-                    altBackBtn.addEventListener('click', handleModalClose);
-                    console.log('✅ Back button handler set (alternative)');
-                }
-            }
+            console.log('✅ Category modal found, setting up handlers');
             
             // Click outside to close
-            categoryModal.removeEventListener('click', handleOutsideClick);
-            categoryModal.addEventListener('click', handleOutsideClick);
+            categoryModal.addEventListener('click', function(e) {
+                if (e.target === categoryModal) {
+                    console.log('🔄 Closing modal via outside click');
+                    handleModalClose();
+                }
+            });
             
             // Escape key to close
-            document.removeEventListener('keydown', handleEscapeKey);
-            document.addEventListener('keydown', handleEscapeKey);
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && categoryModal.style.display === 'flex') {
+                    console.log('🔄 Closing modal via Escape key');
+                    handleModalClose();
+                }
+            });
         } else {
-            console.log('❌ Category modal not found');
+            console.log('❌ Category modal not found during setup');
         }
     }
 
@@ -3388,11 +3387,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function viewFullResume(applicationId) {
-        if (window.openResumeViewer) {
-            window.openResumeViewer(applicationId);
-        } else {
-            window.open(`../../backend/employer/view_resume.php?application_id=${applicationId}`, '_blank');
-        }
+        console.log('🔄 Opening enhanced resume viewer for application:', applicationId);
+        openEnhancedResumeViewer(applicationId);
     }
 
     // ===================================
@@ -3802,11 +3798,6 @@ function openResumeInNewTab() {
     const viewUrl = `../../backend/employer/view_resume.php?application_id=${applicationId}`;
     
     window.open(viewUrl, '_blank');
-}
-
-// Update viewFullResume function to use enhanced viewer
-function viewFullResume(applicationId) {
-    openEnhancedResumeViewer(applicationId);
 }
 
 // Utility functions
@@ -4283,4 +4274,32 @@ const searchStyles = `
 document.head.insertAdjacentHTML('beforeend', searchStyles);
 
 console.log('✅ Phase 3: Advanced Search & Analysis Features loaded');
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Initializing Fixed ThisAble System');
+    
+    // Set up category modal events
+    setupCategoryModalEvents();
+    
+    // Global event delegation for resume buttons
+    document.addEventListener('click', function(e) {
+        if (e.target.matches('.view-full-resume-btn') || 
+            e.target.closest('.view-full-resume-btn')) {
+            
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const button = e.target.matches('.view-full-resume-btn') ? 
+                          e.target : e.target.closest('.view-full-resume-btn');
+            
+            const card = button.closest('.category-applicant-card');
+            if (card && card.dataset.applicationId) {
+                console.log('🔄 Opening resume for application:', card.dataset.applicationId);
+                openEnhancedResumeViewer(card.dataset.applicationId);
+            }
+        }
+    });
+    
+    console.log('✅ Fixed system initialized');
 });
