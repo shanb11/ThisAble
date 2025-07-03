@@ -437,13 +437,13 @@ body {
 .applicant-details {
     margin-bottom: 15px;
 }
-
+/*
 .detail-item {
     display: flex;
     margin-bottom: 8px;
     align-items: center;
 }
-
+*/
 .detail-item i {
     width: 20px;
     color: var(--text-medium);
@@ -2809,8 +2809,8 @@ body {
 }
 
 .resume-section {
-    margin-bottom: 20px;
-    padding: 15px;
+    margin-bottom: 30px;
+    padding: 25px;
     background: #f8f9fa;
     border-radius: 6px;
     border-left: 3px solid var(--accent);
@@ -2820,8 +2820,8 @@ body {
     background: white;
     border: 1px solid #ddd;
     border-radius: 4px;
-    padding: 10px;
-    max-height: 100px;
+    padding: 5px;
+    max-height: 125px;
     overflow-y: hidden !important;  /* FIXED: Changed from 'auto' to 'hidden' */
     font-size: 0.85rem;
     line-height: 1.4;
@@ -2889,16 +2889,6 @@ body {
 }
 
 /* Enhanced Resume Preview Styles - Add to empapplicants.css */
-
-.resume-file-info {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px;
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-}
 
 .file-icon {
     font-size: 2rem;
