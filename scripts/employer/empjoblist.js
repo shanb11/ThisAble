@@ -365,13 +365,29 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="form-section">
                             <h4 class="form-section-title">
                                 <i class="fas fa-graduation-cap"></i>
-                                Job Requirements & Qualifications
+                                Requirements & Qualifications
                             </h4>
+                            
+                            <!-- NEW: Experience Requirements Field -->
+                            <div class="form-row">
+                                <label class="form-label" for="experience-requirements">Experience Requirements*</label>
+                                <select id="experience-requirements" class="form-control" required>
+                                    <option value="">Select experience level</option>
+                                    <option value="Fresh graduate welcome">Fresh Graduate Welcome</option>
+                                    <option value="1+ years experience">1+ Years Experience</option>
+                                    <option value="2+ years experience">2+ Years Experience</option>
+                                    <option value="3+ years experience">3+ Years Experience</option>
+                                    <option value="5+ years experience">5+ Years Experience</option>
+                                    <option value="Senior level (5+ years)">Senior Level (5+ years)</option>
+                                    <option value="No specific requirement">No Specific Requirement</option>
+                                </select>
+                                <small class="form-help">This will be used for matching candidates with appropriate experience levels.</small>
+                            </div>
                             
                             <div class="form-row">
                                 <label class="form-label" for="job-requirements">Additional Requirements & Qualifications</label>
-                                <textarea id="job-requirements" class="form-control" rows="4" placeholder="List education requirements, experience levels, certifications, and other qualifications not covered by skills below...">${jobData.job_requirements || ''}</textarea>
-                                <small class="form-help">Use this field for education requirements, years of experience, certifications, and other non-skill qualifications.</small>
+                                <textarea id="job-requirements" class="form-control" rows="4" placeholder="List education requirements, certifications, and other qualifications...">${jobData.job_requirements || ''}</textarea>
+                                <small class="form-help">Use this field for education, certifications, and other non-experience qualifications.</small>
                             </div>
                         </div>
                         
@@ -548,6 +564,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         salary_range: form.querySelector('#salary-range').value.trim(),
                         application_deadline: form.querySelector('#application-deadline').value,
                         job_description: form.querySelector('#job-description').value.trim(),
+                        experience_requirements: form.querySelector('#experience-requirements').value,
                         job_requirements: form.querySelector('#job-requirements').value.trim(),
                         remote_work_available: form.querySelector('#remote-work').checked,
                         flexible_schedule: form.querySelector('#flexible-schedule').checked,

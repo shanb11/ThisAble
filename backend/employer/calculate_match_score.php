@@ -5,8 +5,16 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-require_once '../db.php';
 
+if (!isset($conn)) {
+    if (file_exists('../db.php')) {
+        require_once '../db.php';
+    } elseif (file_exists('backend/db.php')) {
+        require_once 'backend/db.php';
+    } else {
+        require_once __DIR__ . '/../db.php';
+    }
+}
 /**
  * ENHANCED Extract skills from job requirements text
  */
@@ -278,9 +286,211 @@ function calculatePreferencesMatch($job_data, $candidate_data) {
 /**
  * Calculate experience level match (simplified)
  */
+/**
+ * Calculate experience level match - SIMPLE VERSION
+ * Replace this function in your calculate_match_score.php
+ */
 function calculateExperienceMatch($job_data, $candidate_data) {
-    // This is a simplified version - can be enhanced later
-    return 75; // Default neutral score
+    global $conn;
+    
+    try {
+        // Get candidate's total years of experience
+        $total_years = getTotalExperienceYears($conn, $candidate_data['seeker_id']);
+        
+        // Extract required years from job posting
+        $required_years = extractRequiredYears($job_data);
+        
+        // Calculate score based on years comparison
+        $score = calculateYearsScore($total_years, $required_years);
+        
+        // Return score with simple analysis
+        return $score;
+        
+    } catch (Exception $e) {
+        // Fallback to neutral score if error
+        error_log("Experience calculation error: " . $e->getMessage());
+        return [
+            'score' => 60,
+            'candidate_years' => 0,
+            'required_years' => 0,
+            'analysis' => 'Experience data unavailable'
+        ];
+    }
+}
+
+/**
+ * Get total years of experience from database
+ */
+function getTotalExperienceYears($conn, $seeker_id) {
+    $sql = "SELECT 
+                start_date,
+                end_date,
+                is_current
+            FROM experience 
+            WHERE seeker_id = :seeker_id 
+            ORDER BY start_date";
+    
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':seeker_id', $seeker_id);
+    $stmt->execute();
+    $experiences = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    if (empty($experiences)) {
+        return 0; // No experience found
+    }
+    
+    $total_months = 0;
+    
+    foreach ($experiences as $exp) {
+        // Calculate duration for each job
+        $start_date = new DateTime($exp['start_date']);
+        
+        // Use current date if job is ongoing, otherwise use end_date
+        if ($exp['is_current']) {
+            $end_date = new DateTime(); // Current date
+        } else {
+            $end_date = new DateTime($exp['end_date']);
+        }
+        
+        // Calculate months between start and end
+        $interval = $start_date->diff($end_date);
+        $months = ($interval->y * 12) + $interval->m;
+        
+        $total_months += $months;
+    }
+    
+    // Convert to years (rounded to 1 decimal place)
+    return round($total_months / 12, 1);
+}
+
+/**
+ * Extract required years from job posting text
+ */
+function extractRequiredYears($job_data) {
+    // Combine job requirements and description for analysis
+    $text = strtolower($job_data['job_requirements'] . ' ' . $job_data['job_description']);
+    
+    // Common patterns for experience requirements
+    $patterns = [
+        // "2+ years", "3+ years experience", "5+ years of experience"
+        '/(\d+)\+?\s*years?\s*(of\s*)?(experience|exp)/i',
+        
+        // "minimum 2 years", "at least 3 years"
+        '/(?:minimum|at least)\s*(\d+)\s*years?/i',
+        
+        // "2-5 years", "3 to 5 years"
+        '/(\d+)\s*(?:to|-)\s*(\d+)\s*years?/i',
+        
+        // "entry level" = 0 years, "senior" = 5+ years
+        '/entry\s*level|fresh\s*graduate/i' => 0,
+        '/senior|lead/i' => 5
+    ];
+    
+    foreach ($patterns as $pattern => $default) {
+        if (is_string($pattern)) {
+            if (preg_match($pattern, $text, $matches)) {
+                if (isset($matches[2]) && is_numeric($matches[2])) {
+                    // For range patterns like "2-5 years", use the minimum
+                    return (int)$matches[1];
+                } else {
+                    return (int)$matches[1];
+                }
+            }
+        } else {
+            // For keyword patterns
+            if (preg_match($pattern, $text)) {
+                return $default;
+            }
+        }
+    }
+    
+    return 0; // No specific requirement found
+}
+
+/**
+ * Calculate score based on years comparison
+ */
+function calculateYearsScore($candidate_years, $required_years) {
+    // If no requirement specified, score based on general experience value
+    if ($required_years == 0) {
+        if ($candidate_years >= 5) return 90;      // Excellent experience
+        if ($candidate_years >= 3) return 85;      // Good experience
+        if ($candidate_years >= 2) return 80;      // Decent experience
+        if ($candidate_years >= 1) return 75;      // Some experience
+        if ($candidate_years >= 0.5) return 65;    // Limited experience
+        return 50;                                  // No experience
+    }
+    
+    // Calculate based on requirement comparison
+    if ($candidate_years >= $required_years) {
+        // Meets or exceeds requirement
+        $excess = $candidate_years - $required_years;
+        
+        if ($excess >= 3) {
+            return 100; // Significantly exceeds requirement
+        } elseif ($excess >= 1) {
+            return 95;  // Exceeds requirement
+        } else {
+            return 90;  // Meets requirement exactly
+        }
+    } else {
+        // Below requirement
+        $deficit = $required_years - $candidate_years;
+        
+        if ($deficit <= 0.5) {
+            return 85;  // Very close to requirement
+        } elseif ($deficit <= 1) {
+            return 75;  // Somewhat below requirement
+        } elseif ($deficit <= 2) {
+            return 65;  // Below requirement
+        } else {
+            return 45;  // Significantly below requirement
+        }
+    }
+}
+
+/**
+ * Generate simple human-readable analysis
+ */
+function generateSimpleAnalysis($candidate_years, $required_years, $score) {
+    if ($required_years == 0) {
+        // No specific requirement
+        if ($candidate_years >= 5) {
+            return "Excellent: {$candidate_years} years of experience";
+        } elseif ($candidate_years >= 2) {
+            return "Good: {$candidate_years} years of experience";
+        } elseif ($candidate_years >= 1) {
+            return "Moderate: {$candidate_years} years of experience";
+        } else {
+            return "Limited: {$candidate_years} years of experience";
+        }
+    } else {
+        // Specific requirement exists
+        if ($candidate_years >= $required_years) {
+            $excess = $candidate_years - $required_years;
+            if ($excess >= 1) {
+                return "Exceeds requirement: {$candidate_years} years (Required: {$required_years})";
+            } else {
+                return "Meets requirement: {$candidate_years} years (Required: {$required_years})";
+            }
+        } else {
+            return "Below requirement: {$candidate_years} years (Required: {$required_years})";
+        }
+    }
+}
+
+// OPTIONAL: Helper function for debugging/testing
+function testExperienceCalculation($conn, $seeker_id, $job_data) {
+    $result = calculateExperienceMatch($job_data, ['seeker_id' => $seeker_id]);
+    
+    echo "=== Experience Match Test ===\n";
+    echo "Candidate Years: {$result['candidate_years']}\n";
+    echo "Required Years: {$result['required_years']}\n";
+    echo "Score: {$result['score']}%\n";
+    echo "Analysis: {$result['analysis']}\n";
+    echo "============================\n";
+    
+    return $result;
 }
 
 /**

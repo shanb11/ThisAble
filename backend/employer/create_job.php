@@ -34,6 +34,20 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once('../db.php');
 require_once('session_check.php');
 
+function combineRequirements($experience_requirements, $other_requirements) {
+    $combined = [];
+    
+    if (!empty($experience_requirements) && $experience_requirements !== 'No specific requirement') {
+        $combined[] = "Experience: " . $experience_requirements;
+    }
+    
+    if (!empty($other_requirements)) {
+        $combined[] = trim($other_requirements);
+    }
+    
+    return implode("\n", $combined);
+}
+
 try {
     // Validate session and get employer ID
     $employer_data = getValidatedEmployerData();
@@ -63,7 +77,10 @@ try {
         'salary_range' => !empty($input['salary_range']) ? trim($input['salary_range']) : null,
         'application_deadline' => !empty($input['application_deadline']) ? $input['application_deadline'] : null,
         'job_description' => trim($input['job_description']),
-        'job_requirements' => !empty($input['job_requirements']) ? trim($input['job_requirements']) : '',
+        'job_requirements' => combineRequirements(
+            isset($input['experience_requirements']) ? trim($input['experience_requirements']) : '',
+            isset($input['job_requirements']) ? trim($input['job_requirements']) : ''
+        ),
         'remote_work_available' => isset($input['remote_work_available']) ? (bool)$input['remote_work_available'] : false,
         'flexible_schedule' => isset($input['flexible_schedule']) ? (bool)$input['flexible_schedule'] : false,
         'job_status' => isset($input['job_status']) ? $input['job_status'] : 'active'
