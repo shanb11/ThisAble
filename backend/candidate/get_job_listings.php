@@ -38,7 +38,8 @@ try {
             e.company_name,
             e.industry,
             e.verification_status,
-            SUBSTRING(jp.job_description, 1, 200) as job_description";
+            SUBSTRING(jp.job_description, 1, 200) as job_description,
+            jp.job_requirements";
     
     // Add applied status check if user is logged in
     if ($current_seeker_id) {

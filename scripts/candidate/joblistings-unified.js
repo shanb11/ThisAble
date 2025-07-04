@@ -904,6 +904,13 @@ function showJobDetailsModal(job) {
                         <p><strong>Posted:</strong> ${escapeHtml(job.posted_date)}</p>
                     </div>
                 </div>
+
+                <div class="job-details-section">
+                    <h3><i class="fas fa-list"></i> Requirements</h3>
+                    <div class="job-details-content">
+                        <p>${job.job_requirements || 'No specific requirements listed'}</p>
+                    </div>
+                </div>
                 
                 <div class="job-details-section">
                     <h3><i class="fas fa-align-left"></i> Job Description</h3>
