@@ -138,24 +138,6 @@ if ($stmt->rowCount() > 0) {
 
                 </div>
 
-                <!-- Resume Section -->
-                <div class="profile-section">
-
-                    <div class="section-header">
-                        <h2><i class="fas fa-file-alt"></i> Resume</h2>
-
-                        <button class="edit-section-btn" data-section="resume">
-                            <i class="fas fa-upload"></i> Upload
-                        </button>
-                    </div>
-
-                    <?php include('../../includes/candidate/profile_resume.php'); ?>
-
-                    <!-- Resume Upload Form (hidden by default) -->
-                    <?php include('../../includes/candidate/profile_resume_edit.php'); ?>
-
-                </div>
-
                 <!-- Education Section -->
                 <div class="profile-section">
 
@@ -189,6 +171,42 @@ if ($stmt->rowCount() > 0) {
                     <?php include('../../includes/candidate/profile_experience_edit.php'); ?>
 
                 </div>
+
+                <!-- Resume Section -->
+                <div class="profile-section">
+
+                    <div class="section-header">
+                        <h2><i class="fas fa-file-alt"></i> Resume</h2>
+
+                        <button class="edit-section-btn" data-section="resume">
+                            <i class="fas fa-upload"></i> Upload
+                        </button>
+                    </div>
+
+                    <?php include('../../includes/candidate/profile_resume.php'); ?>
+
+                    <!-- Resume Upload Form (hidden by default) -->
+                    <?php include('../../includes/candidate/profile_resume_edit.php'); ?>
+
+                </div>
+
+                <!-- NEW: Documents & Credentials Section -->
+                <div class="profile-section">
+
+                    <div class="section-header">
+                        <h2><i class="fas fa-folder-open"></i> Documents & Credentials</h2>
+                        <button class="add-item-btn" id="add-document-btn">
+                            <i class="fas fa-plus"></i> Upload Document
+                        </button>
+                    </div>
+
+                    <?php include('../../includes/candidate/profile_documents.php'); ?>
+                    
+                    <!-- Document Upload Form (hidden by default) -->
+                    <?php include('../../includes/candidate/profile_documents_edit.php'); ?>
+
+                </div>
+
             </div>           
         </div>
 
@@ -197,6 +215,7 @@ if ($stmt->rowCount() > 0) {
 
         <script src="../../scripts/candidate/profile.js"></script>
         <script src="../../scripts/candidate/profile-ajax.js"></script>
+        <script src="../../scripts/candidate/profile-documents.js"></script>
        
     </body>
 </html>

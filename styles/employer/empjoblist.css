@@ -1557,3 +1557,189 @@ select.form-control {
 .filters-bar .filter-select option[value="paused"] {
     background-color: #fff3cd;
 }
+
+/* ===================================================================
+   SAFE CSS FOR REQUIREMENTS SECTION ONLY
+   Add this to empjoblist.css - Won't conflict with existing modal
+   =================================================================== */
+
+/* Requirements Section Styles Only */
+.requirement-group {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    border: 1px solid #e9ecef;
+}
+
+.requirement-group h5 {
+    margin: 0 0 12px 0;
+    color: #257180;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Enhanced Checkbox Styling for Requirements */
+.requirement-group .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+    padding: 6px 0;
+}
+
+.requirement-group .checkbox-label input[type="checkbox"] {
+    display: none;
+}
+
+.requirement-group .checkmark {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #ddd;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    background-color: white;
+}
+
+.requirement-group .checkbox-label input[type="checkbox"]:checked + .checkmark {
+    background-color: #257180;
+    border-color: #257180;
+}
+
+.requirement-group .checkbox-label input[type="checkbox"]:checked + .checkmark::after {
+    content: "\f00c";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    color: white;
+    font-size: 10px;
+}
+
+/* Conditional Fields */
+.conditional-field {
+    margin-top: 10px;
+    padding-left: 16px;
+    border-left: 3px solid #257180;
+    margin-left: 8px;
+}
+
+.conditional-field .form-label {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.conditional-field .form-control {
+    padding: 6px 10px;
+    font-size: 13px;
+}
+
+/* Requirements Preview */
+.requirements-preview {
+    background-color: white;
+    border-radius: 6px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    margin-top: 16px;
+}
+
+.requirements-preview h5 {
+    margin: 0 0 8px 0;
+    color: #257180;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.preview-content ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.preview-content li {
+    padding: 4px 0;
+    font-size: 13px;
+    color: #333;
+}
+
+.no-requirements {
+    color: #999;
+    font-style: italic;
+    margin: 0;
+    text-align: center;
+    padding: 12px 0;
+    font-size: 13px;
+}
+
+/* Section Description */
+.section-description {
+    color: #666;
+    font-size: 13px;
+    margin-bottom: 16px;
+    font-style: italic;
+}
+
+/* Requirements Tags for Job Cards */
+.job-requirements-summary {
+    background-color: rgba(37, 113, 128, 0.05);
+    border-radius: 6px;
+    padding: 12px;
+    margin: 12px 0;
+    border-left: 3px solid #257180;
+}
+
+.job-requirements-summary h4 {
+    margin: 0 0 8px 0;
+    color: #257180;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.requirements-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.requirement-tag {
+    background-color: #257180;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .requirement-group {
+        padding: 12px;
+    }
+    
+    .conditional-field {
+        margin-left: 0;
+        padding-left: 10px;
+    }
+    
+    .requirements-tags {
+        gap: 4px;
+    }
+    
+    .requirement-tag {
+        font-size: 10px;
+        padding: 2px 6px;
+    }
+}

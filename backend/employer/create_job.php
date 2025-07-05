@@ -83,8 +83,19 @@ try {
         ),
         'remote_work_available' => isset($input['remote_work_available']) ? (bool)$input['remote_work_available'] : false,
         'flexible_schedule' => isset($input['flexible_schedule']) ? (bool)$input['flexible_schedule'] : false,
-        'job_status' => isset($input['job_status']) ? $input['job_status'] : 'active'
+        'job_status' => isset($input['job_status']) ? $input['job_status'] : 'active',
+
+        // ✅ ADD THESE NEW REQUIREMENT FIELDS:
+        'requires_degree' => isset($input['requires_degree']) ? (bool)$input['requires_degree'] : false,
+        'degree_field' => trim($input['degree_field']) ?: null,
+        'requires_certification' => isset($input['requires_certification']) ? (bool)$input['requires_certification'] : false,
+        'certification_type' => trim($input['certification_type']) ?: null,
+        'requires_license' => isset($input['requires_license']) ? (bool)$input['requires_license'] : false,
+        'license_type' => trim($input['license_type']) ?: null,
+        'min_experience_years' => isset($input['min_experience_years']) ? (int)$input['min_experience_years'] : 0,
+        'specific_industry_exp' => isset($input['specific_industry_exp']) ? (bool)$input['specific_industry_exp'] : false
     ];
+    
     
     // Get selected skills (new feature)
     $selected_skills = isset($input['required_skills']) ? $input['required_skills'] : [];
@@ -111,6 +122,10 @@ try {
             throw new Exception('Application deadline must be a future date');
         }
     }
+
+    if (isset($job_data['min_experience_years']) && $job_data['min_experience_years'] < 0) {
+        throw new Exception('Minimum experience years cannot be negative');
+    }
     
     // Start transaction
     $conn->beginTransaction();
@@ -121,12 +136,16 @@ try {
             employer_id, job_title, department, location, employment_type,
             salary_range, application_deadline, job_description, job_requirements,
             remote_work_available, flexible_schedule, job_status, posted_at,
+            requires_degree, degree_field, requires_certification, certification_type,
+            requires_license, license_type, min_experience_years, specific_industry_exp,
             created_at, updated_at
         ) VALUES (
             :employer_id, :job_title, :department, :location, :employment_type,
             :salary_range, :application_deadline, :job_description, :job_requirements,
-            :remote_work_available, :flexible_schedule, :job_status, 
-            :posted_at, NOW(), NOW()
+            :remote_work_available, :flexible_schedule, :job_status, :posted_at,
+            :requires_degree, :degree_field, :requires_certification, :certification_type,
+            :requires_license, :license_type, :min_experience_years, :specific_industry_exp,
+            NOW(), NOW()
         )
     ";
     

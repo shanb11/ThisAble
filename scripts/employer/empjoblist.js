@@ -25,6 +25,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let availableSkills = [];
     loadAvailableSkills();
 
+    initializeRequirementsForm();
+
+
     // Add notification redirection functionality
     if (notificationIcon) {
         notificationIcon.addEventListener('click', function() {
@@ -361,35 +364,142 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>
                         </div>
                         
-                        <!-- 3. Requirements & Qualifications -->
-                        <div class="form-section">
-                            <h4 class="form-section-title">
-                                <i class="fas fa-graduation-cap"></i>
-                                Requirements & Qualifications
-                            </h4>
-                            
-                            <!-- NEW: Experience Requirements Field -->
+                        <!-- ✅ ADD THIS NEW SECTION HERE (AFTER Job Description, BEFORE Skills) -->
+                <!-- 3. Enhanced Requirements Section -->
+                <div class="form-section">
+                    <h4 class="form-section-title">
+                        <i class="fas fa-graduation-cap"></i>
+                        Detailed Requirements
+                    </h4>
+                    <p class="section-description">Specify credentials and experience requirements for better candidate matching</p>
+                    
+                    <!-- Education Requirements -->
+                    <div class="requirement-group">
+                        <h5><i class="fas fa-university"></i> Education Requirements</h5>
+                        <div class="form-row">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="requires-degree" name="requires_degree" ${jobData.requires_degree ? 'checked' : ''}>
+                                <span class="checkmark"></span>
+                                Requires College Degree
+                            </label>
+                        </div>
+                        
+                        <div class="conditional-field" id="degree-field-container" style="display: ${jobData.requires_degree ? 'block' : 'none'};">
                             <div class="form-row">
-                                <label class="form-label" for="experience-requirements">Experience Requirements*</label>
-                                <select id="experience-requirements" class="form-control" required>
-                                    <option value="">Select experience level</option>
-                                    <option value="Fresh graduate welcome">Fresh Graduate Welcome</option>
-                                    <option value="1+ years experience">1+ Years Experience</option>
-                                    <option value="2+ years experience">2+ Years Experience</option>
-                                    <option value="3+ years experience">3+ Years Experience</option>
-                                    <option value="5+ years experience">5+ Years Experience</option>
-                                    <option value="Senior level (5+ years)">Senior Level (5+ years)</option>
-                                    <option value="No specific requirement">No Specific Requirement</option>
+                                <label class="form-label" for="degree-field">Specific Field of Study</label>
+                                <select id="degree-field" name="degree_field" class="form-control">
+                                    <option value="">Any field (no specific requirement)</option>
+                                    <option value="Computer Science" ${jobData.degree_field === 'Computer Science' ? 'selected' : ''}>Computer Science</option>
+                                    <option value="Information Technology" ${jobData.degree_field === 'Information Technology' ? 'selected' : ''}>Information Technology</option>
+                                    <option value="Engineering" ${jobData.degree_field === 'Engineering' ? 'selected' : ''}>Engineering</option>
+                                    <option value="Business Administration" ${jobData.degree_field === 'Business Administration' ? 'selected' : ''}>Business Administration</option>
+                                    <option value="Accounting" ${jobData.degree_field === 'Accounting' ? 'selected' : ''}>Accounting</option>
+                                    <option value="Marketing" ${jobData.degree_field === 'Marketing' ? 'selected' : ''}>Marketing</option>
+                                    <option value="Education" ${jobData.degree_field === 'Education' ? 'selected' : ''}>Education</option>
+                                    <option value="Nursing" ${jobData.degree_field === 'Nursing' ? 'selected' : ''}>Nursing</option>
+                                    <option value="Psychology" ${jobData.degree_field === 'Psychology' ? 'selected' : ''}>Psychology</option>
+                                    <option value="Other" ${jobData.degree_field === 'Other' ? 'selected' : ''}>Other</option>
                                 </select>
-                                <small class="form-help">This will be used for matching candidates with appropriate experience levels.</small>
-                            </div>
-                            
-                            <div class="form-row">
-                                <label class="form-label" for="job-requirements">Additional Requirements & Qualifications</label>
-                                <textarea id="job-requirements" class="form-control" rows="4" placeholder="List education requirements, certifications, and other qualifications...">${jobData.job_requirements || ''}</textarea>
-                                <small class="form-help">Use this field for education, certifications, and other non-experience qualifications.</small>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- Certification Requirements -->
+                    <div class="requirement-group">
+                        <h5><i class="fas fa-certificate"></i> Certification Requirements</h5>
+                        <div class="form-row">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="requires-certification" name="requires_certification" ${jobData.requires_certification ? 'checked' : ''}>
+                                <span class="checkmark"></span>
+                                Requires Professional Certification
+                            </label>
+                        </div>
+                        
+                        <div class="conditional-field" id="certification-type-container" style="display: ${jobData.requires_certification ? 'block' : 'none'};">
+                            <div class="form-row">
+                                <label class="form-label" for="certification-type">Certification Type</label>
+                                <select id="certification-type" name="certification_type" class="form-control">
+                                    <option value="">Any certification</option>
+                                    <option value="AWS Certification" ${jobData.certification_type === 'AWS Certification' ? 'selected' : ''}>AWS Certification</option>
+                                    <option value="Microsoft Certification" ${jobData.certification_type === 'Microsoft Certification' ? 'selected' : ''}>Microsoft Certification</option>
+                                    <option value="Google Certification" ${jobData.certification_type === 'Google Certification' ? 'selected' : ''}>Google Certification</option>
+                                    <option value="Cisco Certification" ${jobData.certification_type === 'Cisco Certification' ? 'selected' : ''}>Cisco Certification</option>
+                                    <option value="PMP Certification" ${jobData.certification_type === 'PMP Certification' ? 'selected' : ''}>PMP Certification</option>
+                                    <option value="Six Sigma" ${jobData.certification_type === 'Six Sigma' ? 'selected' : ''}>Six Sigma</option>
+                                    <option value="CompTIA" ${jobData.certification_type === 'CompTIA' ? 'selected' : ''}>CompTIA</option>
+                                    <option value="Adobe Certification" ${jobData.certification_type === 'Adobe Certification' ? 'selected' : ''}>Adobe Certification</option>
+                                    <option value="Salesforce Certification" ${jobData.certification_type === 'Salesforce Certification' ? 'selected' : ''}>Salesforce Certification</option>
+                                    <option value="Other" ${jobData.certification_type === 'Other' ? 'selected' : ''}>Other</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- License Requirements -->
+                    <div class="requirement-group">
+                        <h5><i class="fas fa-id-card"></i> License Requirements</h5>
+                        <div class="form-row">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="requires-license" name="requires_license" ${jobData.requires_license ? 'checked' : ''}>
+                                <span class="checkmark"></span>
+                                Requires Professional License
+                            </label>
+                        </div>
+                        
+                        <div class="conditional-field" id="license-type-container" style="display: ${jobData.requires_license ? 'block' : 'none'};">
+                            <div class="form-row">
+                                <label class="form-label" for="license-type">License Type</label>
+                                <select id="license-type" name="license_type" class="form-control">
+                                    <option value="">Any license</option>
+                                    <option value="Professional Engineer License" ${jobData.license_type === 'Professional Engineer License' ? 'selected' : ''}>Professional Engineer License</option>
+                                    <option value="CPA License" ${jobData.license_type === 'CPA License' ? 'selected' : ''}>CPA License</option>
+                                    <option value="Teaching License" ${jobData.license_type === 'Teaching License' ? 'selected' : ''}>Teaching License</option>
+                                    <option value="Nursing License" ${jobData.license_type === 'Nursing License' ? 'selected' : ''}>Nursing License</option>
+                                    <option value="Real Estate License" ${jobData.license_type === 'Real Estate License' ? 'selected' : ''}>Real Estate License</option>
+                                    <option value="Driver's License" ${jobData.license_type === "Driver's License" ? 'selected' : ''}>Driver's License</option>
+                                    <option value="Security License" ${jobData.license_type === 'Security License' ? 'selected' : ''}>Security License</option>
+                                    <option value="Trade License" ${jobData.license_type === 'Trade License' ? 'selected' : ''}>Trade License</option>
+                                    <option value="Other" ${jobData.license_type === 'Other' ? 'selected' : ''}>Other</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Experience Requirements -->
+                    <div class="requirement-group">
+                        <h5><i class="fas fa-briefcase"></i> Experience Requirements</h5>
+                        <div class="form-row">
+                            <label class="form-label" for="min-experience-years">Minimum Years of Experience</label>
+                            <select id="min-experience-years" name="min_experience_years" class="form-control">
+                                <option value="0" ${jobData.min_experience_years == 0 ? 'selected' : ''}>No experience required (Entry level)</option>
+                                <option value="1" ${jobData.min_experience_years == 1 ? 'selected' : ''}>1 year</option>
+                                <option value="2" ${jobData.min_experience_years == 2 ? 'selected' : ''}>2 years</option>
+                                <option value="3" ${jobData.min_experience_years == 3 ? 'selected' : ''}>3 years</option>
+                                <option value="4" ${jobData.min_experience_years == 4 ? 'selected' : ''}>4 years</option>
+                                <option value="5" ${jobData.min_experience_years == 5 ? 'selected' : ''}>5 years</option>
+                                <option value="7" ${jobData.min_experience_years == 7 ? 'selected' : ''}>7+ years</option>
+                                <option value="10" ${jobData.min_experience_years == 10 ? 'selected' : ''}>10+ years</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-row">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="specific-industry-exp" name="specific_industry_exp" ${jobData.specific_industry_exp ? 'checked' : ''}>
+                                <span class="checkmark"></span>
+                                Requires Specific Industry Experience
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Requirements Preview -->
+                    <div class="requirements-preview" id="requirements-preview">
+                        <h5><i class="fas fa-eye"></i> Requirements Summary</h5>
+                        <div class="preview-content" id="preview-content">
+                            <p class="no-requirements">No specific requirements set</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- END OF NEW REQUIREMENTS SECTION -->
                         
                         <!-- 4. SKILLS SELECTION SECTION -->
                         <div class="form-section">
@@ -1468,6 +1578,15 @@ document.addEventListener('DOMContentLoaded', function() {
         jobCard.dataset.title = jobData.job_title;
         jobCard.dataset.date = jobData.posted_at;
         jobCard.dataset.applicants = jobData.applications_count;
+
+        // ADD: Update requirements display in job card
+        const requirementsContainer = jobCard.querySelector('.job-requirements-summary');
+        if (requirementsContainer) {
+            const enhancedRequirements = createEnhancedJobCard(jobData);
+            if (enhancedRequirements) {
+                requirementsContainer.outerHTML = enhancedRequirements;
+            }
+        }
         
         // Format the date
         const datePosted = new Date(jobData.posted_at);
@@ -2607,3 +2726,191 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.head.insertAdjacentHTML('beforeend', skillsStyles);
 });
+
+/**
+ * SPECIFIC MODIFICATIONS FOR YOUR EXISTING empjoblist.js
+ * DO NOT REPLACE - Just add these parts to your existing file
+ */
+
+// ===================================================================
+// 1. ADD THESE FUNCTIONS TO YOUR EXISTING FILE (anywhere in the file)
+// ===================================================================
+
+/**
+ * Enhanced job card creation with requirements display
+ * ADD this function or MODIFY your existing createJobCard function
+ */
+function createEnhancedJobCard(job) {
+    // Build requirements summary
+    let requirementsSummary = '';
+    const requirements = [];
+    
+    if (job.requires_degree) {
+        requirements.push(job.degree_field ? `${job.degree_field} degree` : 'College degree');
+    }
+    if (job.requires_certification) {
+        requirements.push(job.certification_type ? job.certification_type : 'Professional certification');
+    }
+    if (job.requires_license) {
+        requirements.push(job.license_type ? job.license_type : 'Professional license');
+    }
+    if (job.min_experience_years > 0) {
+        requirements.push(`${job.min_experience_years}+ years experience`);
+    }
+
+    if (requirements.length > 0) {
+        requirementsSummary = `
+            <div class="job-requirements-summary">
+                <h4><i class="fas fa-clipboard-check"></i> Key Requirements</h4>
+                <div class="requirements-tags">
+                    ${requirements.map(req => `<span class="requirement-tag">${req}</span>`).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    // Return the enhanced job card HTML with requirements
+    // You can integrate this requirementsSummary into your existing job card template
+    return requirementsSummary;
+}
+
+/**
+ * Initialize requirements form functionality
+ * ADD this function to handle the requirements form
+ */
+function initializeRequirementsForm() {
+    // Conditional field handlers
+    const requiresDegree = document.getElementById('requires-degree');
+    const requiresCert = document.getElementById('requires-certification');
+    const requiresLicense = document.getElementById('requires-license');
+    
+    if (requiresDegree) {
+        requiresDegree.addEventListener('change', function() {
+            toggleConditionalField('degree-field-container', this.checked);
+            updateRequirementsPreview();
+        });
+    }
+    
+    if (requiresCert) {
+        requiresCert.addEventListener('change', function() {
+            toggleConditionalField('certification-type-container', this.checked);
+            updateRequirementsPreview();
+        });
+    }
+    
+    if (requiresLicense) {
+        requiresLicense.addEventListener('change', function() {
+            toggleConditionalField('license-type-container', this.checked);
+            updateRequirementsPreview();
+        });
+    }
+    
+    // Preview update handlers
+    const previewTriggers = ['degree-field', 'certification-type', 'license-type', 'min-experience-years', 'specific-industry-exp'];
+    previewTriggers.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.addEventListener('change', updateRequirementsPreview);
+        }
+    });
+}
+
+function toggleConditionalField(containerId, show) {
+    const container = document.getElementById(containerId);
+    if (container) {
+        container.style.display = show ? 'block' : 'none';
+    }
+}
+
+function updateRequirementsPreview() {
+    const preview = document.getElementById('preview-content');
+    if (!preview) return;
+    
+    const requirements = [];
+    
+    // Check degree requirement
+    const requiresDegree = document.getElementById('requires-degree')?.checked;
+    if (requiresDegree) {
+        const degreeField = document.getElementById('degree-field')?.value;
+        if (degreeField) {
+            requirements.push(`🎓 ${degreeField} degree required`);
+        } else {
+            requirements.push('🎓 College degree required');
+        }
+    }
+    
+    // Check certification requirement
+    const requiresCert = document.getElementById('requires-certification')?.checked;
+    if (requiresCert) {
+        const certType = document.getElementById('certification-type')?.value;
+        if (certType) {
+            requirements.push(`🏆 ${certType} required`);
+        } else {
+            requirements.push('🏆 Professional certification required');
+        }
+    }
+    
+    // Check license requirement
+    const requiresLicense = document.getElementById('requires-license')?.checked;
+    if (requiresLicense) {
+        const licenseType = document.getElementById('license-type')?.value;
+        if (licenseType) {
+            requirements.push(`📜 ${licenseType} required`);
+        } else {
+            requirements.push('📜 Professional license required');
+        }
+    }
+    
+    // Check experience requirement
+    const minYears = document.getElementById('min-experience-years')?.value;
+    if (minYears && minYears > 0) {
+        const industryExp = document.getElementById('specific-industry-exp')?.checked;
+        const expText = industryExp ? `${minYears} years of industry-specific experience` : `${minYears} years of experience`;
+        requirements.push(`💼 Minimum ${expText}`);
+    }
+    
+    // Update preview
+    if (requirements.length > 0) {
+        preview.innerHTML = '<ul>' + requirements.map(req => `<li>${req}</li>`).join('') + '</ul>';
+    } else {
+        preview.innerHTML = '<p class="no-requirements">No specific requirements set</p>';
+    }
+}
+
+// ===================================================================
+// 2. MODIFY YOUR EXISTING FORM SUBMISSION HANDLER
+// ===================================================================
+
+/**
+ * Enhanced form data collection
+ * ADD this to your existing form submission function
+ */
+function collectEnhancedFormData(form) {
+    const formData = new FormData(form);
+    const jobData = {};
+    
+    // Collect basic form data (your existing code)
+    for (const [key, value] of formData.entries()) {
+        if (key.endsWith('[]')) {
+            const arrayKey = key.slice(0, -2);
+            if (!jobData[arrayKey]) jobData[arrayKey] = [];
+            jobData[arrayKey].push(value);
+        } else if (form.elements[key]?.type === 'checkbox') {
+            jobData[key] = form.elements[key].checked;
+        } else {
+            jobData[key] = value;
+        }
+    }
+    
+    // ADD: Collect requirements data
+    jobData.requires_degree = document.getElementById('requires-degree')?.checked || false;
+    jobData.degree_field = document.getElementById('degree-field')?.value || null;
+    jobData.requires_certification = document.getElementById('requires-certification')?.checked || false;
+    jobData.certification_type = document.getElementById('certification-type')?.value || null;
+    jobData.requires_license = document.getElementById('requires-license')?.checked || false;
+    jobData.license_type = document.getElementById('license-type')?.value || null;
+    jobData.min_experience_years = parseInt(document.getElementById('min-experience-years')?.value) || 0;
+    jobData.specific_industry_exp = document.getElementById('specific-industry-exp')?.checked || false;
+    
+    return jobData;
+}
