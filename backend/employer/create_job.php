@@ -167,7 +167,17 @@ try {
         'remote_work_available' => $job_data['remote_work_available'],
         'flexible_schedule' => $job_data['flexible_schedule'],
         'job_status' => $job_data['job_status'],
-        'posted_at' => $posted_at
+        'posted_at' => $posted_at,
+        
+        // FIXED: Use $job_data instead of $job_requirements
+        'requires_degree' => $job_data['requires_degree'],
+        'degree_field' => $job_data['degree_field'],
+        'requires_certification' => $job_data['requires_certification'],
+        'certification_type' => $job_data['certification_type'],
+        'requires_license' => $job_data['requires_license'],
+        'license_type' => $job_data['license_type'],
+        'min_experience_years' => $job_data['min_experience_years'],
+        'specific_industry_exp' => $job_data['specific_industry_exp']
     ];
     
     $job_stmt->execute($job_params);

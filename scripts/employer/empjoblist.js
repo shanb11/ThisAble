@@ -662,41 +662,67 @@ document.addEventListener('DOMContentLoaded', function() {
                 btnText.textContent = isEditing ? 'Updating...' : 'Posting...';
                 
                 try {
-                    // Get selected skills using the new function
-                    const selectedSkills = getSelectedSkills(form);
+                    // Get selected skills using the new function (if it exists)
+                    let selectedSkills = [];
+                    if (typeof getSelectedSkills === 'function') {
+                        selectedSkills = getSelectedSkills(form);
+                    }
                     
-                    // Get form values with enhanced skills data
+                    // FIXED: Safe element access with fallbacks
                     const formData = {
-                        job_title: form.querySelector('#job-title').value.trim(),
-                        department: form.querySelector('#department').value,
-                        location: form.querySelector('#job-location').value.trim(),
-                        employment_type: form.querySelector('#employment-type').value,
-                        salary_range: form.querySelector('#salary-range').value.trim(),
-                        application_deadline: form.querySelector('#application-deadline').value,
-                        job_description: form.querySelector('#job-description').value.trim(),
-                        experience_requirements: form.querySelector('#experience-requirements').value,
-                        job_requirements: form.querySelector('#job-requirements').value.trim(),
-                        remote_work_available: form.querySelector('#remote-work').checked,
-                        flexible_schedule: form.querySelector('#flexible-schedule').checked,
+                        job_title: form.querySelector('#job-title')?.value?.trim() || '',
+                        department: form.querySelector('#department')?.value || '',
+                        location: form.querySelector('#job-location')?.value?.trim() || '',
+                        employment_type: form.querySelector('#employment-type')?.value || '',
+                        salary_range: form.querySelector('#salary-range')?.value?.trim() || '',
+                        application_deadline: form.querySelector('#application-deadline')?.value || '',
+                        job_description: form.querySelector('#job-description')?.value?.trim() || '',
                         
+                        // FIXED: Use job-requirements instead of experience-requirements
+                        job_requirements: form.querySelector('#job-requirements')?.value?.trim() || 
+                                        form.querySelector('#experience-requirements')?.value?.trim() || 
+                                        'Requirements will be discussed during the interview process.',
+                        
+                        // Work arrangements
+                        remote_work_available: form.querySelector('#remote-work')?.checked || false,
+                        flexible_schedule: form.querySelector('#flexible-schedule')?.checked || false,
+                        
+                        // Accommodations (with safe access)
                         accommodations: {
-                            wheelchair_accessible: form.querySelector('#wheelchair-accessible').checked,
-                            assistive_technology: form.querySelector('#assistive-technology').checked,
-                            remote_work_option: form.querySelector('#remote-work-option').checked,
-                            screen_reader_compatible: form.querySelector('#screen-reader-compatible').checked,
-                            sign_language_interpreter: form.querySelector('#sign-language-interpreter').checked,
-                            modified_workspace: form.querySelector('#modified-workspace').checked,
-                            transportation_support: form.querySelector('#transportation-support').checked,
-                            additional_accommodations: form.querySelector('#additional-accommodations').value.trim()
+                            wheelchair_accessible: form.querySelector('#wheelchair-accessible')?.checked || false,
+                            assistive_technology: form.querySelector('#assistive-technology')?.checked || false,
+                            remote_work_option: form.querySelector('#remote-work-option')?.checked || false,
+                            screen_reader_compatible: form.querySelector('#screen-reader-compatible')?.checked || false,
+                            sign_language_interpreter: form.querySelector('#sign-language-interpreter')?.checked || false,
+                            modified_workspace: form.querySelector('#modified-workspace')?.checked || false,
+                            transportation_support: form.querySelector('#transportation-support')?.checked || false,
+                            additional_accommodations: form.querySelector('#additional-accommodations')?.value?.trim() || ''
                         },
                         
-                        // Enhanced: Include selected skills
+                        // Enhanced requirements (optional - with safe access)
+                        requires_degree: form.querySelector('#requires-degree')?.checked || false,
+                        degree_field: form.querySelector('#degree-field')?.value?.trim() || null,
+                        requires_certification: form.querySelector('#requires-certification')?.checked || false,
+                        certification_type: form.querySelector('#certification-type')?.value?.trim() || null,
+                        requires_license: form.querySelector('#requires-license')?.checked || false,
+                        license_type: form.querySelector('#license-type')?.value || null,
+                        min_experience_years: parseInt(form.querySelector('#min-experience-years')?.value) || 0,
+                        specific_industry_exp: form.querySelector('#specific-industry-exp')?.checked || false,
+                        
+                        // Skills
                         required_skills: selectedSkills,
                         job_status: 'active'
                     };
                     
-                    console.log('📋 Form Data with Skills:', formData);
-                    console.log('🎯 Selected Skills:', selectedSkills);
+                    // Validate required fields
+                    const requiredFields = ['job_title', 'department', 'location', 'employment_type', 'job_description'];
+                    const missingFields = requiredFields.filter(field => !formData[field]);
+                    
+                    if (missingFields.length > 0) {
+                        throw new Error(`Please fill in all required fields: ${missingFields.join(', ')}`);
+                    }
+                    
+                    console.log('📋 Form Data:', formData);
                     
                     let result;
                     
