@@ -2914,4 +2914,3 @@ function collectEnhancedFormData(form) {
     
     return jobData;
 }
-

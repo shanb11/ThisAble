@@ -1,0 +1,311 @@
+/* ===================================================================
+   ThisAble - Employer Job Listings Styles
+   Extracted from JavaScript injection for better organization
+   ================================================================== */
+
+/* ===================================================================
+   SKILLS SECTION STYLES
+   ================================================================== */
+
+.skills-section {
+    margin-bottom: 20px;
+    padding: 20px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    background: #f8f9fa;
+}
+
+.skills-section h4 {
+    margin: 0 0 15px 0;
+    color: #495057;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.skills-container {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    background: white;
+    padding: 10px;
+}
+
+.skill-item {
+    padding: 12px;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s ease;
+}
+
+.skill-item:last-child {
+    margin-bottom: 0;
+}
+
+.skill-item:hover {
+    background: #f8f9fa;
+    border-color: #adb5bd;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.skill-checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.skill-checkbox {
+    margin: 0;
+    cursor: pointer;
+}
+
+.skill-label {
+    margin: 0;
+    font-size: 13px;
+    color: #495057;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.skill-priority-group {
+    margin-left: 10px;
+}
+
+.skill-priority {
+    padding: 4px 8px;
+    font-size: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+    color: #6c757d;
+    min-width: 100px;
+}
+
+.skill-priority:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+
+.skills-loading {
+    text-align: center;
+    padding: 40px;
+    color: #6c757d;
+}
+
+.skills-loading i {
+    font-size: 24px;
+    margin-bottom: 10px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ===================================================================
+   REQUIREMENTS SECTION STYLES
+   ================================================================== */
+
+.requirements-section {
+    margin-bottom: 20px;
+    padding: 20px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.requirements-section h4 {
+    margin: 0 0 15px 0;
+    color: #495057;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.requirements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.requirement-group {
+    padding: 15px;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    background: #f8f9fa;
+}
+
+.requirement-group h5 {
+    margin: 0 0 10px 0;
+    color: #495057;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.requirement-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.requirement-checkbox input[type="checkbox"] {
+    margin: 0;
+}
+
+.requirement-checkbox label {
+    margin: 0;
+    font-size: 13px;
+    color: #495057;
+    cursor: pointer;
+}
+
+.requirement-detail {
+    margin-left: 24px;
+    margin-top: 8px;
+    display: none;
+}
+
+.requirement-detail.active {
+    display: block;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.requirement-detail input,
+.requirement-detail select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.requirement-detail input:focus,
+.requirement-detail select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+
+/* ===================================================================
+   REQUIREMENTS PREVIEW
+   ================================================================== */
+
+.requirements-preview {
+    margin-top: 15px;
+    padding: 15px;
+    background: #e7f3ff;
+    border: 1px solid #b3d9ff;
+    border-radius: 6px;
+}
+
+.requirements-preview h5 {
+    margin: 0 0 10px 0;
+    color: #0056b3;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.requirements-preview ul {
+    margin: 0;
+    padding-left: 20px;
+    color: #495057;
+}
+
+.requirements-preview li {
+    margin-bottom: 5px;
+    font-size: 13px;
+}
+
+.requirements-preview .no-requirements {
+    margin: 0;
+    color: #6c757d;
+    font-style: italic;
+    font-size: 13px;
+}
+
+/* ===================================================================
+   JOB CARD ENHANCEMENTS
+   ================================================================== */
+
+.job-requirements {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e9ecef;
+}
+
+.job-requirements h4 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    color: #495057;
+    font-weight: 600;
+}
+
+.requirements-list {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+}
+
+.requirements-list li {
+    padding: 4px 0;
+    font-size: 12px;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.requirements-list li:before {
+    content: "•";
+    color: #007bff;
+    font-weight: bold;
+}
+
+/* ===================================================================
+   RESPONSIVE DESIGN
+   ================================================================== */
+
+@media (max-width: 768px) {
+    .requirements-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .skill-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .skill-priority-group {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .skill-priority {
+        width: 100%;
+    }
+}

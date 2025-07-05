@@ -3924,3 +3924,594 @@ body {
         transition: none !important;
     }
 }
+
+/**
+ * PHASE 4 ENHANCED APPLICANT VIEW STYLES
+ * ADD these styles to your existing styles/employer/empapplicants.css file
+ * These styles are designed for capstone presentation - clean and professional
+ */
+
+/* ===================================================================
+   PHASE 4: ENHANCED MODAL BASE STYLES
+   ================================================================== */
+
+.phase4-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: fadeIn 0.3s ease;
+}
+
+.phase4-modal .modal-content.enhanced-modal {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    width: 95%;
+    max-width: 1000px;
+    max-height: 90vh;
+    overflow: hidden;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { 
+        opacity: 0;
+        transform: translateY(30px); 
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0); 
+    }
+}
+
+/* ===================================================================
+   ENHANCED MODAL HEADER
+   ================================================================== */
+
+.enhanced-header {
+    background: linear-gradient(135deg, #257180 0%, #1e5f6f 100%);
+    color: white;
+    padding: 24px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.applicant-info-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.applicant-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.applicant-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #FD8B51 0%, #CB6040 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+}
+
+.applicant-details h2 {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: white;
+}
+
+.applicant-title {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+}
+
+.application-info {
+    margin: 0;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.close-phase4-modal {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background 0.3s ease;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-phase4-modal:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* ===================================================================
+   QUICK ASSESSMENT CARDS (Perfect for Capstone Demo)
+   ================================================================== */
+
+.quick-assessment {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 24px 30px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.assessment-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.assessment-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.card-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+}
+
+.score-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #257180;
+    margin-bottom: 4px;
+}
+
+.card-label {
+    font-size: 14px;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.overall-score .score-value { color: #28a745; }
+.documents-count .score-value { color: #007bff; }
+.status-card .score-value { color: #fd7e14; }
+
+/* ===================================================================
+   ENHANCED CONTENT AREA
+   ================================================================== */
+
+.enhanced-content {
+    max-height: 50vh;
+    overflow-y: auto;
+    padding: 30px;
+}
+
+.content-section {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.content-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.content-section h3 {
+    margin: 0 0 20px 0;
+    color: #257180;
+    font-size: 18px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ===================================================================
+   DOCUMENTS DISPLAY (Great for Capstone Demo)
+   ================================================================== */
+
+.documents-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+}
+
+.document-item {
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 16px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.document-item:hover {
+    border-color: #257180;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.document-item.verified {
+    border-color: #28a745;
+    background: rgba(40, 167, 69, 0.02);
+}
+
+.document-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.doc-icon {
+    font-size: 28px;
+    flex-shrink: 0;
+}
+
+.doc-info {
+    flex: 1;
+}
+
+.doc-name {
+    font-weight: 600;
+    color: #257180;
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+.doc-meta {
+    font-size: 12px;
+    color: #6c757d;
+    margin-bottom: 6px;
+}
+
+.doc-description {
+    font-size: 12px;
+    color: #495057;
+    font-style: italic;
+}
+
+.doc-actions {
+    flex-shrink: 0;
+}
+
+.view-doc-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+    background: #257180;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.view-doc-btn:hover {
+    background: #1e5f6f;
+}
+
+.verified-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #28a745;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.no-documents {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6c757d;
+}
+
+.no-docs-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+/* ===================================================================
+   REQUIREMENTS ASSESSMENT (Perfect for Capstone)
+   ================================================================== */
+
+.requirements-assessment {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.requirement-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    border-radius: 12px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.requirement-item.met {
+    border-color: #28a745;
+    background: rgba(40, 167, 69, 0.03);
+}
+
+.requirement-item.not-met {
+    border-color: #dc3545;
+    background: rgba(220, 53, 69, 0.03);
+}
+
+.req-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.req-content strong {
+    display: block;
+    margin-bottom: 4px;
+    color: #257180;
+    font-size: 14px;
+}
+
+.req-content p {
+    margin: 0;
+    color: #6c757d;
+    font-size: 13px;
+}
+
+.missing-docs-alert {
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid #ffc107;
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 16px;
+}
+
+.missing-docs-alert strong {
+    color: #856404;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.missing-docs-alert ul {
+    margin: 0;
+    padding-left: 20px;
+    color: #856404;
+}
+
+/* ===================================================================
+   CANDIDATE INFORMATION
+   ================================================================== */
+
+.candidate-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.info-item {
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #257180;
+}
+
+.info-item strong {
+    color: #257180;
+    margin-right: 8px;
+}
+
+.info-item.bio {
+    border-left-color: #28a745;
+}
+
+.info-item.bio p {
+    margin: 8px 0 0 0;
+    color: #495057;
+    line-height: 1.5;
+}
+
+/* ===================================================================
+   ENHANCED FOOTER
+   ================================================================== */
+
+.enhanced-footer {
+    background: #f8f9fa;
+    padding: 20px 30px;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-actions {
+    display: flex;
+    gap: 12px;
+    margin-left: auto;
+}
+
+.footer-actions .btn {
+    padding: 12px 20px;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn.btn-outline {
+    background: white;
+    color: #257180;
+    border: 2px solid #257180;
+}
+
+.btn.btn-success {
+    background: #28a745;
+    color: white;
+}
+
+.btn.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* ===================================================================
+   ENHANCED VIEW BUTTON (Adds to existing cards)
+   ================================================================== */
+
+.enhanced-view-btn {
+    background: linear-gradient(135deg, #257180 0%, #1e5f6f 100%);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.enhanced-view-btn:hover {
+    background: linear-gradient(135deg, #1e5f6f 0%, #257180 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 113, 128, 0.3);
+}
+
+/* ===================================================================
+   RESPONSIVE DESIGN
+   ================================================================== */
+
+@media (max-width: 768px) {
+    .phase4-modal .modal-content.enhanced-modal {
+        width: 100%;
+        height: 100%;
+        max-height: 100vh;
+        border-radius: 0;
+    }
+    
+    .enhanced-header {
+        padding: 20px;
+    }
+    
+    .applicant-info-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+    }
+    
+    .quick-assessment {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 16px 20px;
+    }
+    
+    .enhanced-content {
+        padding: 20px;
+        max-height: calc(100vh - 200px);
+    }
+    
+    .documents-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .footer-actions {
+        flex-direction: column;
+        width: 100%;
+        gap: 8px;
+    }
+    
+    .footer-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* ===================================================================
+   CAPSTONE DEMO ANIMATIONS
+   ================================================================== */
+
+.document-item,
+.requirement-item,
+.assessment-card {
+    animation: slideInUp 0.4s ease;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Stagger animation for professional presentation */
+.document-item:nth-child(1) { animation-delay: 0.1s; }
+.document-item:nth-child(2) { animation-delay: 0.15s; }
+.document-item:nth-child(3) { animation-delay: 0.2s; }
+
+.requirement-item:nth-child(1) { animation-delay: 0.1s; }
+.requirement-item:nth-child(2) { animation-delay: 0.15s; }
+.requirement-item:nth-child(3) { animation-delay: 0.2s; }
+
+/**
+ * CAPSTONE PRESENTATION READY! 🎓
+ * These styles create a professional, modern interface perfect for demo
+ */

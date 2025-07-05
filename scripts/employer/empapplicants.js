@@ -4303,3 +4303,506 @@ document.addEventListener('DOMContentLoaded', function() {
     
     console.log('✅ Fixed system initialized');
 });
+
+/**
+ * ===================================================================
+ * PHASE 4: COMPLETE ENHANCED APPLICANT VIEW - COPY PASTE THIS
+ * Add this entire block to the END of your empapplicants.js file
+ * ===================================================================
+ */
+
+// ===================================================================
+// PHASE 4: MAIN ENHANCED VIEW FUNCTION
+// ===================================================================
+
+/**
+ * Open enhanced applicant view with documents and requirements
+ */
+async function openEnhancedApplicantView(applicationId) {
+    try {
+        showLoading();
+        
+        // Use your existing fetchApplicantDetails function
+        const response = await fetch(`${API_BASE}get_applicant_details.php?application_id=${applicationId}`);
+        const data = await response.json();
+        
+        if (!response.ok) {
+            if (response.status === 401) {
+                window.location.href = 'emplogin.php';
+                return;
+            }
+            throw new Error(data.message || 'Failed to fetch applicant details');
+        }
+        
+        if (data.success) {
+            showPhase4Modal(data);
+        } else {
+            throw new Error(data.message || 'Failed to load applicant details');
+        }
+        
+    } catch (error) {
+        console.error('❌ Error opening enhanced view:', error);
+        showError('Failed to load enhanced applicant view: ' + error.message);
+    } finally {
+        hideLoading();
+    }
+}
+
+/**
+ * Create and display the Phase 4 enhanced modal
+ */
+function showPhase4Modal(data) {
+    const { applicant, documents, requirements_analysis } = data;
+    
+    // Create modal element
+    const modal = document.createElement('div');
+    modal.className = 'phase4-modal';
+    modal.innerHTML = createPhase4ModalHTML(applicant, documents || [], requirements_analysis || {});
+    
+    // Add to page
+    document.body.appendChild(modal);
+    
+    // Setup event listeners
+    setupPhase4Events(modal, data);
+    
+    // Show modal
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    
+    console.log('✅ Phase 4 enhanced view displayed');
+}
+
+/**
+ * Create the enhanced modal HTML - Perfect for capstone demo
+ */
+function createPhase4ModalHTML(applicant, documents, analysis) {
+    return `
+        <div class="modal-overlay">
+            <div class="modal-content enhanced-modal">
+                <!-- Header -->
+                <div class="modal-header enhanced-header">
+                    <div class="applicant-info-header">
+                        <div class="applicant-avatar">
+                            ${applicant.profile_photo_path ? 
+                                `<img src="../../${applicant.profile_photo_path}" alt="Profile">` :
+                                `<div class="avatar-placeholder">${(applicant.first_name || 'U').charAt(0)}${(applicant.last_name || 'U').charAt(0)}</div>`
+                            }
+                        </div>
+                        <div class="applicant-details">
+                            <h2>${applicant.full_name || 'Unknown Applicant'}</h2>
+                            <p class="applicant-title">${applicant.headline || 'Job Seeker'}</p>
+                            <p class="application-info">Applied: ${formatDate(applicant.applied_at)}</p>
+                        </div>
+                    </div>
+                    <button class="close-phase4-modal" aria-label="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <!-- Quick Assessment Cards -->
+                <div class="quick-assessment">
+                    <div class="assessment-card overall-score">
+                        <div class="card-icon">📊</div>
+                        <div class="card-content">
+                            <div class="score-value">${analysis.overall_score || 0}%</div>
+                            <div class="card-label">Document Score</div>
+                        </div>
+                    </div>
+                    <div class="assessment-card documents-count">
+                        <div class="card-icon">📁</div>
+                        <div class="card-content">
+                            <div class="score-value">${documents.length}</div>
+                            <div class="card-label">Documents</div>
+                        </div>
+                    </div>
+                    <div class="assessment-card status-card">
+                        <div class="card-icon">⭐</div>
+                        <div class="card-content">
+                            <div class="score-value">${getDocumentStatus(analysis)}</div>
+                            <div class="card-label">Status</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content Area -->
+                <div class="enhanced-content">
+                    <!-- Documents Section -->
+                    <div class="content-section">
+                        <h3><i class="fas fa-folder-open"></i> Submitted Documents</h3>
+                        ${createDocumentsDisplay(documents)}
+                    </div>
+
+                    <!-- Requirements Check -->
+                    <div class="content-section">
+                        <h3><i class="fas fa-check-circle"></i> Requirements Assessment</h3>
+                        ${createRequirementsDisplay(analysis)}
+                    </div>
+
+                    <!-- Contact & Bio -->
+                    <div class="content-section">
+                        <h3><i class="fas fa-user"></i> Candidate Information</h3>
+                        <div class="candidate-info">
+                            <div class="info-item">
+                                <strong>Email:</strong> ${applicant.email || 'Not provided'}
+                            </div>
+                            <div class="info-item">
+                                <strong>Phone:</strong> ${applicant.contact_number || 'Not provided'}
+                            </div>
+                            <div class="info-item">
+                                <strong>Location:</strong> ${applicant.location || 'Not specified'}
+                            </div>
+                            ${applicant.bio ? `
+                                <div class="info-item bio">
+                                    <strong>Bio:</strong>
+                                    <p>${applicant.bio}</p>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Footer -->
+                <div class="modal-footer enhanced-footer">
+                    <div class="footer-actions">
+                        <button class="btn btn-secondary close-phase4-modal">
+                            <i class="fas fa-times"></i> Close
+                        </button>
+                        <button class="btn btn-outline view-resume-btn" data-application-id="${applicant.application_id}">
+                            <i class="fas fa-file-pdf"></i> View Resume
+                        </button>
+                        <button class="btn btn-success approve-btn" data-application-id="${applicant.application_id}">
+                            <i class="fas fa-check"></i> Schedule Interview
+                        </button>
+                        <button class="btn btn-danger reject-btn" data-application-id="${applicant.application_id}">
+                            <i class="fas fa-times"></i> Reject
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Create documents display - FIXED for your database columns
+ */
+function createDocumentsDisplay(documents) {
+    if (!documents || documents.length === 0) {
+        return `
+            <div class="no-documents">
+                <div class="no-docs-icon">📂</div>
+                <p>No documents submitted yet</p>
+            </div>
+        `;
+    }
+
+    return `
+        <div class="documents-grid">
+            ${documents.map(doc => `
+                <div class="document-item ${doc.is_verified ? 'verified' : ''}">
+                    <div class="doc-icon">${getDocumentIcon(doc.document_type)}</div>
+                    <div class="doc-info">
+                        <div class="doc-name">${doc.document_name || doc.original_filename || 'Unknown Document'}</div>
+                        <div class="doc-meta">
+                            ${formatDocumentType(doc.document_type)} • 
+                            ${formatFileSize(doc.file_size)} • 
+                            ${formatDate(doc.upload_date)}
+                        </div>
+                        ${doc.verification_notes ? `<div class="doc-description">${doc.verification_notes}</div>` : ''}
+                    </div>
+                    <div class="doc-actions">
+                        <button class="btn btn-sm view-doc-btn" data-path="${doc.file_path}">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                    </div>
+                    ${doc.is_verified ? '<div class="verified-badge">✓</div>' : ''}
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+/**
+ * Create requirements display - FIXED for your document types
+ */
+function createRequirementsDisplay(analysis) {
+    if (!analysis) {
+        return `<div class="no-analysis"><p>Requirements analysis not available</p></div>`;
+    }
+
+    return `
+        <div class="requirements-assessment">
+            <div class="requirement-item ${analysis.has_education_docs ? 'met' : 'not-met'}">
+                <div class="req-icon">${analysis.has_education_docs ? '✅' : '❌'}</div>
+                <div class="req-content">
+                    <strong>Educational Credentials</strong>
+                    <p>${analysis.has_education_docs ? 'Diploma submitted' : 'No diploma found'}</p>
+                </div>
+            </div>
+            
+            <div class="requirement-item ${analysis.has_certification_docs ? 'met' : 'not-met'}">
+                <div class="req-icon">${analysis.has_certification_docs ? '✅' : '❌'}</div>
+                <div class="req-content">
+                    <strong>Professional Certifications</strong>
+                    <p>${analysis.has_certification_docs ? 'Certificates submitted' : 'No certifications found'}</p>
+                </div>
+            </div>
+
+            ${analysis.missing_documents && analysis.missing_documents.length > 0 ? `
+                <div class="missing-docs-alert">
+                    <strong>⚠️ Missing Documents:</strong>
+                    <ul>
+                        ${analysis.missing_documents.map(doc => `<li>${doc}</li>`).join('')}
+                    </ul>
+                </div>
+            ` : ''}
+        </div>
+    `;
+}
+
+/**
+ * Setup Phase 4 event listeners
+ */
+function setupPhase4Events(modal, data) {
+    // Close modal events
+    modal.querySelectorAll('.close-phase4-modal').forEach(btn => {
+        btn.addEventListener('click', () => closePhase4Modal(modal));
+    });
+
+    // Document viewing
+    modal.querySelectorAll('.view-doc-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const docPath = this.dataset.path;
+            viewDocument(docPath);
+        });
+    });
+
+    // Resume viewing (reuse existing function)
+    const resumeBtn = modal.querySelector('.view-resume-btn');
+    if (resumeBtn) {
+        resumeBtn.addEventListener('click', function() {
+            const applicationId = this.dataset.applicationId;
+            window.open(`${API_BASE}view_resume.php?application_id=${applicationId}`, '_blank');
+        });
+    }
+
+    // Action buttons
+    const approveBtn = modal.querySelector('.approve-btn');
+    const rejectBtn = modal.querySelector('.reject-btn');
+    
+    if (approveBtn) {
+        approveBtn.addEventListener('click', function() {
+            const applicationId = this.dataset.applicationId;
+            console.log('Approve application:', applicationId);
+            // You can connect this to your existing approval logic
+            showSuccessMessage('Application approved for interview!');
+            closePhase4Modal(modal);
+        });
+    }
+    
+    if (rejectBtn) {
+        rejectBtn.addEventListener('click', function() {
+            const applicationId = this.dataset.applicationId;
+            console.log('Reject application:', applicationId);
+            // You can connect this to your existing rejection logic
+            showSuccessMessage('Application rejected');
+            closePhase4Modal(modal);
+        });
+    }
+}
+
+// ===================================================================
+// PHASE 4: UTILITY FUNCTIONS - FIXED for your database
+// ===================================================================
+
+/**
+ * Get document icon - FIXED for your enum values
+ */
+function getDocumentIcon(docType) {
+    const icons = {
+        'diploma': '🎓',     // Education documents
+        'certificate': '📜', // Professional certifications
+        'license': '🆔',     // Professional licenses  
+        'other': '📁'        // Other documents
+    };
+    return icons[docType] || icons['other'];
+}
+
+/**
+ * Format document type - FIXED for your enum values
+ */
+function formatDocumentType(docType) {
+    const types = {
+        'diploma': 'Diploma',
+        'certificate': 'Certificate', 
+        'license': 'License',
+        'other': 'Other Document'
+    };
+    return types[docType] || 'Document';
+}
+
+/**
+ * Get document status based on analysis
+ */
+function getDocumentStatus(analysis) {
+    if (!analysis) return 'Unknown';
+    if (analysis.overall_score >= 80) return 'Complete';
+    if (analysis.overall_score >= 50) return 'Partial';
+    return 'Incomplete';
+}
+
+/**
+ * Format file size
+ */
+function formatFileSize(bytes) {
+    if (!bytes || bytes === 0) return 'Unknown size';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+/**
+ * Format date - FIXED for your upload_date column
+ */
+function formatDate(dateString) {
+    if (!dateString) return 'Unknown date';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short', 
+        day: 'numeric'
+    });
+}
+
+/**
+ * View document in new tab
+ */
+function viewDocument(docPath) {
+    if (!docPath) {
+        showError('Document path not found');
+        return;
+    }
+    const viewUrl = `../../backend/employer/view_document.php?path=${encodeURIComponent(docPath)}`;
+    window.open(viewUrl, '_blank', 'width=800,height=900,scrollbars=yes,resizable=yes');
+}
+
+/**
+ * Close Phase 4 modal
+ */
+function closePhase4Modal(modal) {
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+    modal.remove();
+}
+
+// ===================================================================
+// PHASE 4: AUTO-ADD ENHANCED VIEW BUTTONS
+// ===================================================================
+
+/**
+ * Add enhanced view buttons to existing applicant cards
+ */
+function addEnhancedViewButtons() {
+    // Find all existing applicant cards
+    const applicantCards = document.querySelectorAll('.applicant-card, .category-applicant-card, [data-application-id]');
+    
+    applicantCards.forEach(card => {
+        // Check if enhanced button already exists
+        if (card.querySelector('.enhanced-view-btn')) return;
+        
+        // Get application ID from various possible sources
+        const applicationId = card.dataset.applicationId || 
+                             card.getAttribute('data-application-id') ||
+                             card.querySelector('[data-application-id]')?.dataset.applicationId ||
+                             card.querySelector('.view-btn')?.dataset.applicationId;
+        
+        if (!applicationId) return;
+        
+        // Find existing action buttons area
+        const actionsArea = card.querySelector('.action-buttons, .applicant-actions, .card-actions, .action-buttons-container') ||
+                           card.querySelector('.view-btn')?.parentElement;
+        
+        if (actionsArea) {
+            // Create enhanced view button
+            const enhancedBtn = document.createElement('button');
+            enhancedBtn.className = 'action-btn enhanced-view-btn';
+            enhancedBtn.dataset.applicationId = applicationId;
+            enhancedBtn.innerHTML = '<i class="fas fa-search-plus"></i> Enhanced View';
+            enhancedBtn.title = 'View with documents and requirements';
+            
+            // Add click handler
+            enhancedBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Opening enhanced view for application:', applicationId);
+                openEnhancedApplicantView(applicationId);
+            });
+            
+            // Add to actions area
+            actionsArea.appendChild(enhancedBtn);
+            
+            console.log('✅ Added enhanced view button to card with application ID:', applicationId);
+        }
+    });
+}
+
+// ===================================================================
+// PHASE 4: AUTO-INITIALIZATION
+// ===================================================================
+
+// Auto-add enhanced view buttons after page loads
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Phase 4: Setting up enhanced view buttons...');
+    
+    // Add buttons immediately if cards exist
+    setTimeout(() => {
+        addEnhancedViewButtons();
+        console.log('✅ Phase 4: Enhanced view buttons added');
+    }, 1000);
+    
+    // Also add buttons when new content is loaded (for dynamic loading)
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                // Check if new applicant cards were added
+                const hasNewCards = Array.from(mutation.addedNodes).some(node => 
+                    node.nodeType === 1 && (
+                        node.classList?.contains('applicant-card') ||
+                        node.querySelector?.('.applicant-card') ||
+                        node.dataset?.applicationId
+                    )
+                );
+                
+                if (hasNewCards) {
+                    setTimeout(addEnhancedViewButtons, 500);
+                }
+            }
+        });
+    });
+    
+    // Observe the applicants container
+    const applicantsContainer = document.querySelector('.applicants-grid, .applicants-container, #applicants-grid');
+    if (applicantsContainer) {
+        observer.observe(applicantsContainer, { childList: true, subtree: true });
+    }
+});
+
+console.log('✅ Phase 4: Enhanced Applicant View loaded successfully');
+console.log('🎯 Ready for capstone demo!');
+
+/**
+ * ===================================================================
+ * END OF PHASE 4 CODE - COPY PASTE COMPLETE!
+ * ===================================================================
+ * 
+ * USAGE:
+ * 1. Copy this entire block
+ * 2. Paste at the END of your empapplicants.js file
+ * 3. Save the file
+ * 4. Refresh your empapplicants.php page
+ * 5. Look for "Enhanced View" buttons on applicant cards
+ * 6. Click to test the enhanced modal!
+ * 
+ * Perfect for capstone presentation! 🎓🚀
+ */

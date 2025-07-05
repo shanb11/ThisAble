@@ -240,6 +240,68 @@ try {
         $interview['scheduled_date_formatted'] = date('M j, Y', strtotime($interview['scheduled_date']));
         $interview['scheduled_time_formatted'] = date('g:i A', strtotime($interview['scheduled_time']));
     }
+
+    $documentsQuery = "
+    SELECT 
+        document_id,
+        document_type,
+        document_name,
+        original_filename,
+        file_path,
+        file_size,
+        mime_type,
+        upload_date,        -- FIXED: was 'uploaded_at'
+        is_verified,
+        verification_notes  -- FIXED: was 'description'
+    FROM candidate_documents 
+    WHERE seeker_id = :seeker_id 
+    ORDER BY 
+        CASE document_type 
+            WHEN 'diploma' THEN 1
+            WHEN 'certificate' THEN 2
+            WHEN 'license' THEN 3
+            WHEN 'other' THEN 4
+        END,
+        upload_date DESC    -- FIXED: was 'uploaded_at'
+";
+
+$docStmt = $conn->prepare($documentsQuery);
+$docStmt->bindParam(':seeker_id', $applicant['seeker_id'], PDO::PARAM_INT);
+$docStmt->execute();
+$documents = $docStmt->fetchAll(PDO::FETCH_ASSOC);
+
+// PHASE 4 ENHANCEMENT: Simple requirements analysis (CORRECTED)
+$requirementsAnalysis = [
+    'documents_submitted' => count($documents),
+    'required_documents' => ['diploma', 'certificate'], // Based on your enum
+    'missing_documents' => [],
+    'has_education_docs' => false,
+    'has_certification_docs' => false,
+    'overall_score' => 0
+];
+
+// Check for required document types
+$documentTypes = array_column($documents, 'document_type');
+$requirementsAnalysis['has_education_docs'] = in_array('diploma', $documentTypes);
+$requirementsAnalysis['has_certification_docs'] = in_array('certificate', $documentTypes);
+
+// Calculate missing documents
+foreach ($requirementsAnalysis['required_documents'] as $reqDoc) {
+    if (!in_array($reqDoc, $documentTypes)) {
+        $requirementsAnalysis['missing_documents'][] = ucfirst($reqDoc);
+    }
+}
+
+// Simple scoring based on your actual document types
+$score = 0;
+if (in_array('diploma', $documentTypes)) $score += 50;     // Education is important
+if (in_array('certificate', $documentTypes)) $score += 30; // Certifications add value  
+if (in_array('license', $documentTypes)) $score += 20;     // Licenses are bonus
+$requirementsAnalysis['overall_score'] = min($score, 100); // Cap at 100%
+
+// ADD to your existing response array:
+$response['documents'] = $documents;
+$response['requirements_analysis'] = $requirementsAnalysis;
     
     echo json_encode([
         'success' => true,
