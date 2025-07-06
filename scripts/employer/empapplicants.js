@@ -4318,6 +4318,185 @@ document.addEventListener('DOMContentLoaded', function() {
 /**
  * Open enhanced applicant view with documents and requirements
  */
+
+// ===================================================================
+// PHASE 4: API_BASE DEFINITION - ADD THIS FIRST!
+// Add this code BEFORE your loading functions fix
+// ===================================================================
+
+/**
+ * Global API Base URL for Phase 4 Enhanced View
+ * This ensures the Enhanced View can access backend endpoints
+ */
+const API_BASE = '../../backend/employer/';
+
+// ===================================================================
+// PHASE 4: LOADING FUNCTIONS FIX
+// ===================================================================
+
+/**
+ * Global loading functions for Phase 4 Enhanced View
+ * These don't depend on DOM elements that might not be available
+ */
+function showLoading() {
+    // Try to use the main loading overlay first
+    const loadingOverlay = document.getElementById('loading-overlay');
+    if (loadingOverlay) {
+        loadingOverlay.style.display = 'flex';
+        return;
+    }
+    
+    // Fallback: Create a simple loading indicator
+    if (!document.querySelector('.phase4-loading')) {
+        const loadingDiv = document.createElement('div');
+        loadingDiv.className = 'phase4-loading';
+        loadingDiv.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            flex-direction: column;
+            gap: 15px;
+        `;
+        loadingDiv.innerHTML = `
+            <div style="
+                width: 40px;
+                height: 40px;
+                border: 4px solid rgba(255,255,255,0.3);
+                border-top: 4px solid white;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            "></div>
+            <p>Loading enhanced view...</p>
+            <style>
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            </style>
+        `;
+        document.body.appendChild(loadingDiv);
+    }
+}
+
+function hideLoading() {
+    // Try to hide the main loading overlay first
+    const loadingOverlay = document.getElementById('loading-overlay');
+    if (loadingOverlay) {
+        loadingOverlay.style.display = 'none';
+    }
+    
+    // Remove fallback loading indicator
+    const phase4Loading = document.querySelector('.phase4-loading');
+    if (phase4Loading) {
+        phase4Loading.remove();
+    }
+}
+
+function showError(message) {
+    console.error('❌ Phase 4 Error:', message);
+    
+    // Create error notification
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'phase4-error';
+    errorDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #f44336;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        z-index: 10000;
+        max-width: 400px;
+        box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+        font-family: 'Inter', sans-serif;
+        animation: slideInRight 0.3s ease;
+    `;
+    errorDiv.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>${message}</span>
+        </div>
+        <style>
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        </style>
+    `;
+    
+    document.body.appendChild(errorDiv);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (document.body.contains(errorDiv)) {
+            errorDiv.style.animation = 'slideInRight 0.3s ease reverse';
+            setTimeout(() => {
+                if (document.body.contains(errorDiv)) {
+                    document.body.removeChild(errorDiv);
+                }
+            }, 300);
+        }
+    }, 5000);
+}
+
+function showSuccessMessage(message) {
+    console.log('✅ Phase 4 Success:', message);
+    
+    // Create success notification
+    const successDiv = document.createElement('div');
+    successDiv.className = 'phase4-success';
+    successDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #28a745;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        z-index: 10000;
+        max-width: 400px;
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        font-family: 'Inter', sans-serif;
+        animation: slideInRight 0.3s ease;
+    `;
+    successDiv.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-check-circle"></i>
+            <span>${message}</span>
+        </div>
+        <style>
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        </style>
+    `;
+    
+    document.body.appendChild(successDiv);
+    
+    // Auto-remove after 3 seconds
+    setTimeout(() => {
+        if (document.body.contains(successDiv)) {
+            successDiv.style.animation = 'slideInRight 0.3s ease reverse';
+            setTimeout(() => {
+                if (document.body.contains(successDiv)) {
+                    document.body.removeChild(successDiv);
+                }
+            }, 300);
+        }
+    }, 3000);
+}
+
 async function openEnhancedApplicantView(applicationId) {
     try {
         showLoading();

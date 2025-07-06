@@ -164,3 +164,11 @@
 {"timestamp":"2025-06-29 18:00:04","action":"google_login","ip":"192.168.1.2","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":4,"email":"baccayshan@gmail.com","setup_complete":true}}
 {"timestamp":"2025-07-03 12:13:02","action":"google_login","ip":"192.168.1.2","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":4,"email":"baccayshan@gmail.com","setup_complete":true}}
 {"timestamp":"2025-07-03 12:14:30","action":"profile_update","ip":"192.168.1.2","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":4,"section":"personal_info","updated_fields":["first_name","last_name","email","phone","location","bio"]}}
+{"timestamp":"2025-07-06 05:56:55","action":"google_login","ip":"192.168.1.2","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":4,"email":"baccayshan@gmail.com","setup_complete":true}}
+{"timestamp":"2025-07-06 06:07:14","action":"google_login","ip":"192.168.1.2","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":4,"email":"baccayshan@gmail.com","setup_complete":true}}
+{"timestamp":"2025-07-06 06:12:50","action":"google_login","ip":"192.168.1.2","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":4,"email":"baccayshan@gmail.com","setup_complete":true}}
+{"timestamp":"2025-07-06 06:21:30","action":"google_login","ip":"192.168.1.2","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":4,"email":"baccayshan@gmail.com","setup_complete":true}}
+{"timestamp":"2025-07-06 07:49:54","action":"google_login","ip":"192.168.1.2","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":4,"email":"baccayshan@gmail.com","setup_complete":true}}
+{"timestamp":"2025-07-06 12:07:30","action":"google_login","ip":"192.168.1.2","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":4,"email":"baccayshan@gmail.com","setup_complete":true}}
+{"timestamp":"2025-07-06 12:12:23","action":"google_login","ip":"192.168.1.2","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":4,"email":"baccayshan@gmail.com","setup_complete":true}}
+{"timestamp":"2025-07-06 22:14:33","action":"google_login","ip":"192.168.1.2","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":4,"email":"baccayshan@gmail.com","setup_complete":true}}
