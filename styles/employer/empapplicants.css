@@ -1981,7 +1981,7 @@ body {
 
 .applicant-details p {
     margin: 0 0 8px 0;
-    color: #666;
+    color: #ffffff;
     font-size: 0.9rem;
 }
 
@@ -4116,7 +4116,7 @@ body {
    ================================================================== */
 
 .enhanced-content {
-    max-height: 50vh;
+    max-height: 25vh;
     overflow-y: auto;
     padding: 30px;
 }
