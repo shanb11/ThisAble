@@ -4515,3 +4515,448 @@ body {
  * CAPSTONE PRESENTATION READY! 🎓
  * These styles create a professional, modern interface perfect for demo
  */
+
+ /* ===================================================================
+   ENHANCED BUTTON STYLING FOR APPLICANT MANAGEMENT
+   Add this to styles/employer/empapplicants.css
+   ================================================================== */
+
+/* ===================================
+   UNIFIED FOOTER BUTTON STYLES
+   =================================== */
+
+.footer-btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    position: relative;
+    overflow: hidden;
+}
+
+.footer-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Loading state for buttons */
+.footer-btn.loading {
+    pointer-events: none;
+}
+
+.footer-btn.loading::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Specific button variants */
+.footer-btn.secondary-btn {
+    background: var(--light-gray);
+    color: var(--text-medium);
+    border: 1px solid var(--border-color);
+}
+
+.footer-btn.secondary-btn:hover {
+    background: #e9ecef;
+    transform: translateY(-1px);
+}
+
+.footer-btn.primary-btn {
+    background: var(--primary);
+    color: white;
+}
+
+.footer-btn.primary-btn:hover {
+    background: var(--sidebar);
+    transform: translateY(-1px);
+}
+
+.footer-btn.interview-btn {
+    background: var(--accent);
+    color: white;
+}
+
+.footer-btn.interview-btn:hover {
+    background: var(--accent-secondary);
+    transform: translateY(-1px);
+}
+
+.footer-btn.success-btn {
+    background: var(--success);
+    color: white;
+}
+
+.footer-btn.success-btn:hover {
+    background: #27ae60;
+    transform: translateY(-1px);
+}
+
+.footer-btn.danger-btn {
+    background: var(--danger);
+    color: white;
+}
+
+.footer-btn.danger-btn:hover {
+    background: #c0392b;
+    transform: translateY(-1px);
+}
+
+/* ===================================
+   ENHANCED FOOTER BUTTON STYLES
+   =================================== */
+
+.enhanced-footer {
+    background: var(--bg-color);
+    padding: 20px 25px;
+    border-top: 1px solid var(--border-color);
+    border-radius: 0 0 12px 12px;
+}
+
+.footer-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.footer-actions .btn {
+    padding: 12px 20px;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+}
+
+.btn.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn.btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+}
+
+.btn.btn-outline {
+    background: white;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+}
+
+.btn.btn-outline:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-1px);
+}
+
+.btn.btn-success {
+    background: var(--success);
+    color: white;
+}
+
+.btn.btn-success:hover {
+    background: #27ae60;
+    transform: translateY(-1px);
+}
+
+.btn.btn-danger {
+    background: var(--danger);
+    color: white;
+}
+
+.btn.btn-danger:hover {
+    background: #c0392b;
+    transform: translateY(-1px);
+}
+
+/* ===================================
+   STATUS PILLS AND BADGES
+   =================================== */
+
+.status-pill {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.status-pill.status-new {
+    background: rgba(52, 152, 219, 0.1);
+    color: #3498db;
+    border: 1px solid rgba(52, 152, 219, 0.3);
+}
+
+.status-pill.status-reviewed {
+    background: rgba(241, 196, 15, 0.1);
+    color: #f1c40f;
+    border: 1px solid rgba(241, 196, 15, 0.3);
+}
+
+.status-pill.status-interview {
+    background: rgba(155, 89, 182, 0.1);
+    color: #9b59b6;
+    border: 1px solid rgba(155, 89, 182, 0.3);
+}
+
+.status-pill.status-hired {
+    background: rgba(39, 174, 96, 0.1);
+    color: #27ae60;
+    border: 1px solid rgba(39, 174, 96, 0.3);
+}
+
+.status-pill.status-rejected {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+    border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+/* ===================================
+   CONFIRMATION MODAL ENHANCEMENTS
+   =================================== */
+
+#confirmStatusModal .modal-content {
+    animation: modalSlideIn 0.3s ease;
+    transform-origin: center;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+#confirmStatusModal .modal-header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--sidebar) 100%);
+    color: white;
+    padding: 20px 25px;
+    border-radius: 12px 12px 0 0;
+}
+
+#confirmStatusModal .modal-body {
+    padding: 25px;
+    text-align: center;
+}
+
+#confirmStatusModal .modal-body p {
+    font-size: 16px;
+    color: var(--text-dark);
+    margin: 0;
+    line-height: 1.5;
+}
+
+#confirmStatusModal .modal-footer {
+    padding: 20px 25px;
+    background: var(--bg-color);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+#confirmStatusModal .footer-btn {
+    min-width: 120px;
+    justify-content: center;
+}
+
+/* ===================================
+   NOTIFICATION SYSTEM STYLES
+   =================================== */
+
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    padding: 15px 20px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 400px;
+    word-wrap: break-word;
+}
+
+.notification::before {
+    content: '';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: 18px;
+}
+
+.notification-success {
+    background: var(--success);
+}
+
+.notification-success::before {
+    content: '\f00c'; /* fa-check */
+}
+
+.notification-error {
+    background: var(--danger);
+}
+
+.notification-error::before {
+    content: '\f06a'; /* fa-exclamation-circle */
+}
+
+.notification-info {
+    background: var(--info);
+}
+
+.notification-info::before {
+    content: '\f129'; /* fa-info */
+}
+
+/* ===================================
+   LOADING OVERLAY
+   =================================== */
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9998;
+    backdrop-filter: blur(2px);
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* ===================================
+   RESPONSIVE DESIGN
+   =================================== */
+
+@media (max-width: 768px) {
+    .modal-footer {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .footer-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .footer-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .footer-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .notification {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+}
+
+/* ===================================
+   ACCESSIBILITY IMPROVEMENTS
+   =================================== */
+
+.footer-btn:focus,
+.btn:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+.footer-btn:focus-visible,
+.btn:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .footer-btn {
+        border: 2px solid currentColor;
+    }
+    
+    .status-pill {
+        border-width: 2px;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .footer-btn,
+    .btn,
+    .status-pill,
+    .notification,
+    .modal-content {
+        transition: none;
+    }
+    
+    .spinner {
+        animation: none;
+    }
+}
+
+/* ===================================
+   PRINT STYLES
+   =================================== */
+
+@media print {
+    .footer-btn,
+    .btn,
+    .notification,
+    .loading-overlay {
+        display: none !important;
+    }
+}

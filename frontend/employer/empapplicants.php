@@ -317,24 +317,13 @@ requireEmployerLogin('emplogin.php');
                     </div>
                 </div>
                 
-                <div class="applicant-status-actions">
-                    <button class="status-btn review-btn" data-status="under_review">
-                        <i class="fas fa-eye"></i>
-                        Review
-                    </button>
-                    <button class="status-btn interview-btn" data-status="interview_scheduled">
-                        <i class="fas fa-calendar"></i>
-                        Interview
-                    </button>
-                    <button class="status-btn hire-btn" data-status="hired">
-                        <i class="fas fa-check"></i>
-                        Hire
-                    </button>
-                    <button class="status-btn reject-btn" data-status="rejected">
-                        <i class="fas fa-times"></i>
-                        Reject
-                    </button>
-                </div>
+                <div class="modal-footer">
+    <button class="footer-btn secondary-btn close-modal">Close</button>
+    <button class="footer-btn primary-btn" data-status="reviewed" data-application-id="<?php echo $application_id; ?>">Mark as Reviewed</button>
+    <button class="footer-btn interview-btn" data-status="interview" data-application-id="<?php echo $application_id; ?>">Schedule Interview</button>
+    <button class="footer-btn success-btn" data-status="hired" data-application-id="<?php echo $application_id; ?>">Hire</button>
+    <button class="footer-btn danger-btn" data-status="rejected" data-application-id="<?php echo $application_id; ?>">Reject</button>
+</div>
             </div>
         </template>
 

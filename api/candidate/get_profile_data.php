@@ -1,7 +1,7 @@
 <?php
 /**
- * Get Profile Data API for ThisAble Mobile
- * Returns: complete profile information for profile management
+ * BULLETPROOF Get Profile Data API for ThisAble Mobile
+ * Simple queries that match your exact database structure
  */
 
 // Include required files
@@ -23,41 +23,82 @@ try {
     }
     
     $seekerId = $user['user_id'];
-    error_log("Profile Data API: seeker_id=$seekerId");
+    error_log("BULLETPROOF Profile API: seeker_id=$seekerId");
 
     // Get database connection
     $conn = ApiDatabase::getConnection();
     
-    // ===== PERSONAL INFORMATION =====
-    $stmt = $conn->prepare("
-        SELECT 
-            js.*,
-            ua.email,
-            pd.bio,
-            pd.location as preferred_location,
-            pd.profile_photo_path,
-            pd.cover_photo_path,
-            pd.headline,
-            dt.disability_name,
-            dc.category_name as disability_category,
-            pwd.pwd_id_number,
-            pwd.issued_at as pwd_issued_date
-        FROM job_seekers js
-        LEFT JOIN user_accounts ua ON js.seeker_id = ua.seeker_id
-        LEFT JOIN profile_details pd ON js.seeker_id = pd.seeker_id
-        LEFT JOIN disability_types dt ON js.disability_id = dt.disability_id
-        LEFT JOIN disability_categories dc ON dt.category_id = dc.category_id
-        LEFT JOIN pwd_ids pwd ON js.seeker_id = pwd.seeker_id
-        WHERE js.seeker_id = ?
-    ");
+    // ===== STEP 1: GET BASIC JOB SEEKER INFO (GUARANTEED TO EXIST) =====
+    $stmt = $conn->prepare("SELECT * FROM job_seekers WHERE seeker_id = ?");
     $stmt->execute([$seekerId]);
-    $personalInfo = $stmt->fetch(PDO::FETCH_ASSOC);
+    $basicInfo = $stmt->fetch(PDO::FETCH_ASSOC);
     
-    if (!$personalInfo) {
+    if (!$basicInfo) {
+        error_log("BULLETPROOF: Job seeker not found for seeker_id=$seekerId");
         ApiResponse::error("Profile not found", 404);
     }
     
-    // ===== SKILLS =====
+    error_log("BULLETPROOF: Basic info retrieved for: " . $basicInfo['first_name'] . " " . $basicInfo['last_name']);
+    
+    // ===== STEP 2: GET EMAIL (SEPARATE QUERY) =====
+    $stmt = $conn->prepare("SELECT email FROM user_accounts WHERE seeker_id = ?");
+    $stmt->execute([$seekerId]);
+    $emailData = $stmt->fetch(PDO::FETCH_ASSOC);
+    $email = $emailData['email'] ?? '';
+    
+    error_log("BULLETPROOF: Email found: " . ($email ? 'Yes' : 'No'));
+    
+    // ===== STEP 3: GET PROFILE DETAILS (SEPARATE QUERY - MAY NOT EXIST) =====
+    $stmt = $conn->prepare("SELECT * FROM profile_details WHERE seeker_id = ?");
+    $stmt->execute([$seekerId]);
+    $profileDetails = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    // Handle missing profile_details
+    if (!$profileDetails) {
+        error_log("BULLETPROOF: No profile_details found, using defaults");
+        $profileDetails = [
+            'bio' => '',
+            'location' => '',
+            'headline' => '',
+            'profile_photo_path' => null,
+            'cover_photo_path' => null
+        ];
+    } else {
+        error_log("BULLETPROOF: Profile details found");
+    }
+    
+    // ===== STEP 4: GET DISABILITY INFO (SEPARATE QUERY) =====
+    $disabilityInfo = ['disability_name' => '', 'disability_category' => ''];
+    if ($basicInfo['disability_id']) {
+        $stmt = $conn->prepare("SELECT disability_name FROM disability_types WHERE disability_id = ?");
+        $stmt->execute([$basicInfo['disability_id']]);
+        $disabilityResult = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($disabilityResult) {
+            $disabilityInfo['disability_name'] = $disabilityResult['disability_name'];
+            
+            // Get category separately
+            $stmt = $conn->prepare("
+                SELECT dc.category_name 
+                FROM disability_types dt 
+                JOIN disability_categories dc ON dt.category_id = dc.category_id 
+                WHERE dt.disability_id = ?
+            ");
+            $stmt->execute([$basicInfo['disability_id']]);
+            $categoryResult = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($categoryResult) {
+                $disabilityInfo['disability_category'] = $categoryResult['category_name'];
+            }
+        }
+    }
+    
+    error_log("BULLETPROOF: Disability info: " . $disabilityInfo['disability_name']);
+    
+    // ===== STEP 5: GET PWD ID (SEPARATE QUERY) =====
+    $stmt = $conn->prepare("SELECT pwd_id_number, issued_at FROM pwd_ids WHERE seeker_id = ?");
+    $stmt->execute([$seekerId]);
+    $pwdData = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    // ===== STEP 6: GET SKILLS (SEPARATE QUERY) =====
     $stmt = $conn->prepare("
         SELECT 
             s.skill_id,
@@ -93,24 +134,15 @@ try {
             'skill_tooltip' => $skill['skill_tooltip']
         ];
     }
-    
-    // Convert to indexed array
     $skills = array_values($skills);
     
-    // ===== WORK PREFERENCES =====
-    $stmt = $conn->prepare("
-        SELECT 
-            work_style,
-            job_type,
-            salary_range,
-            availability
-        FROM user_preferences
-        WHERE seeker_id = ?
-    ");
+    error_log("BULLETPROOF: Skills found: " . count($skills) . " categories");
+    
+    // ===== STEP 7: GET WORK PREFERENCES (SEPARATE QUERY) =====
+    $stmt = $conn->prepare("SELECT * FROM user_preferences WHERE seeker_id = ?");
     $stmt->execute([$seekerId]);
     $workPreferences = $stmt->fetch(PDO::FETCH_ASSOC);
     
-    // Set defaults if no preferences found
     if (!$workPreferences) {
         $workPreferences = [
             'work_style' => null,
@@ -120,15 +152,8 @@ try {
         ];
     }
     
-    // ===== ACCESSIBILITY NEEDS =====
-    $stmt = $conn->prepare("
-        SELECT 
-            disability_type,
-            accommodation_list,
-            no_accommodations_needed
-        FROM workplace_accommodations
-        WHERE seeker_id = ?
-    ");
+    // ===== STEP 8: GET ACCESSIBILITY NEEDS (SEPARATE QUERY) =====
+    $stmt = $conn->prepare("SELECT * FROM workplace_accommodations WHERE seeker_id = ?");
     $stmt->execute([$seekerId]);
     $accessibilityData = $stmt->fetch(PDO::FETCH_ASSOC);
     
@@ -142,7 +167,7 @@ try {
         }
     }
     
-    // ===== RESUME INFORMATION =====
+    // ===== STEP 9: GET RESUMES (SEPARATE QUERY) =====
     $stmt = $conn->prepare("
         SELECT 
             resume_id,
@@ -159,25 +184,18 @@ try {
     $stmt->execute([$seekerId]);
     $resumes = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    // Format resume data - FIXED: Use function directly, not $this->
+    // Format resume data
     foreach ($resumes as &$resume) {
         $resume['upload_date'] = date('F j, Y', strtotime($resume['upload_date']));
         $resume['file_size_formatted'] = formatFileSize($resume['file_size']);
         $resume['is_current'] = (bool)$resume['is_current'];
     }
     
-    // ===== EDUCATION =====
+    error_log("BULLETPROOF: Resumes found: " . count($resumes));
+    
+    // ===== STEP 10: GET EDUCATION (SEPARATE QUERY) =====
     $stmt = $conn->prepare("
-        SELECT 
-            education_id,
-            degree,
-            institution,
-            location,
-            start_date,
-            end_date,
-            is_current,
-            description
-        FROM education
+        SELECT * FROM education
         WHERE seeker_id = ?
         ORDER BY start_date DESC
     ");
@@ -192,18 +210,11 @@ try {
         $edu['period'] = $edu['start_date'] . ' - ' . ($edu['is_current'] ? 'Present' : $edu['end_date']);
     }
     
-    // ===== WORK EXPERIENCE =====
+    error_log("BULLETPROOF: Education found: " . count($education));
+    
+    // ===== STEP 11: GET EXPERIENCE (SEPARATE QUERY) =====
     $stmt = $conn->prepare("
-        SELECT 
-            experience_id,
-            job_title,
-            company,
-            location,
-            start_date,
-            end_date,
-            is_current,
-            description
-        FROM experience
+        SELECT * FROM experience
         WHERE seeker_id = ?
         ORDER BY start_date DESC
     ");
@@ -218,56 +229,47 @@ try {
         $exp['period'] = $exp['start_date'] . ' - ' . ($exp['is_current'] ? 'Present' : $exp['end_date']);
     }
     
-    // ===== CALCULATE PROFILE COMPLETION =====
+    error_log("BULLETPROOF: Experience found: " . count($experience));
+    
+    // ===== STEP 12: CALCULATE PROFILE COMPLETION =====
     $completionScore = 0;
     $totalFields = 10;
     
-    // Basic info (3 points)
-    if (!empty($personalInfo['first_name'])) $completionScore++;
-    if (!empty($personalInfo['email'])) $completionScore++;
-    if (!empty($personalInfo['contact_number'])) $completionScore++;
-    
-    // Profile details (2 points)
-    if (!empty($personalInfo['bio'])) $completionScore++;
-    if (!empty($personalInfo['headline'])) $completionScore++;
-    
-    // Skills (1 point)
+    if (!empty($basicInfo['first_name'])) $completionScore++;
+    if (!empty($email)) $completionScore++;
+    if (!empty($basicInfo['contact_number'])) $completionScore++;
+    if (!empty($profileDetails['bio'])) $completionScore++;
+    if (!empty($profileDetails['headline'])) $completionScore++;
     if (!empty($skills)) $completionScore++;
-    
-    // Work preferences (1 point)
     if (!empty($workPreferences['work_style']) || !empty($workPreferences['job_type'])) $completionScore++;
-    
-    // Resume (1 point)
     if (!empty($resumes)) $completionScore++;
-    
-    // Education (1 point)
     if (!empty($education)) $completionScore++;
-    
-    // Experience (1 point)
     if (!empty($experience)) $completionScore++;
     
     $profileCompletion = round(($completionScore / $totalFields) * 100);
     
-    // ===== COMPILE RESPONSE =====
+    error_log("BULLETPROOF: Profile completion: $profileCompletion%");
+    
+    // ===== STEP 13: COMPILE RESPONSE =====
     $profileData = [
         'personal_info' => [
-            'first_name' => $personalInfo['first_name'],
-            'middle_name' => $personalInfo['middle_name'],
-            'last_name' => $personalInfo['last_name'],
-            'suffix' => $personalInfo['suffix'],
-            'email' => $personalInfo['email'],
-            'contact_number' => $personalInfo['contact_number'],
-            'city' => $personalInfo['city'],
-            'province' => $personalInfo['province'],
-            'preferred_location' => $personalInfo['preferred_location'],
-            'bio' => $personalInfo['bio'],
-            'headline' => $personalInfo['headline'],
-            'profile_photo_path' => $personalInfo['profile_photo_path'],
-            'cover_photo_path' => $personalInfo['cover_photo_path'],
-            'disability_name' => $personalInfo['disability_name'],
-            'disability_category' => $personalInfo['disability_category'],
-            'pwd_id_number' => $personalInfo['pwd_id_number'],
-            'pwd_issued_date' => $personalInfo['pwd_issued_date']
+            'first_name' => $basicInfo['first_name'] ?? '',
+            'middle_name' => $basicInfo['middle_name'] ?? '',
+            'last_name' => $basicInfo['last_name'] ?? '',
+            'suffix' => $basicInfo['suffix'] ?? '',
+            'email' => $email,
+            'contact_number' => $basicInfo['contact_number'] ?? '',
+            'city' => $basicInfo['city'] ?? '',
+            'province' => $basicInfo['province'] ?? '',
+            'preferred_location' => $profileDetails['location'] ?? '',
+            'bio' => $profileDetails['bio'] ?? '',
+            'headline' => $profileDetails['headline'] ?? '',
+            'profile_photo_path' => $profileDetails['profile_photo_path'],
+            'cover_photo_path' => $profileDetails['cover_photo_path'],
+            'disability_name' => $disabilityInfo['disability_name'] ?? '',
+            'disability_category' => $disabilityInfo['disability_category'] ?? '',
+            'pwd_id_number' => $pwdData['pwd_id_number'] ?? '',
+            'pwd_issued_date' => $pwdData['issued_at'] ?? ''
         ],
         'skills' => $skills,
         'work_preferences' => $workPreferences,
@@ -275,18 +277,28 @@ try {
         'resumes' => $resumes,
         'education' => $education,
         'experience' => $experience,
-        'profile_completion' => $profileCompletion
+        'profile_completion' => $profileCompletion,
+        'debug_info' => [
+            'seeker_id' => $seekerId,
+            'basic_info_found' => !empty($basicInfo),
+            'email_found' => !empty($email),
+            'profile_details_found' => !empty($profileDetails['bio']),
+            'sql_working' => true
+        ]
     ];
+    
+    error_log("BULLETPROOF: Profile data compiled successfully");
     
     ApiResponse::success($profileData, "Profile data retrieved successfully");
     
 } catch(PDOException $e) {
-    error_log("Profile data database error: " . $e->getMessage());
-    ApiResponse::serverError("Database error occurred");
+    error_log("BULLETPROOF Profile database error: " . $e->getMessage());
+    error_log("BULLETPROOF SQL Error Info: " . json_encode($e->errorInfo ?? []));
+    ApiResponse::serverError("Database query failed: " . $e->getMessage());
     
 } catch(Exception $e) {
-    error_log("Profile data error: " . $e->getMessage());
-    ApiResponse::serverError("An error occurred while retrieving profile data");
+    error_log("BULLETPROOF Profile general error: " . $e->getMessage());
+    ApiResponse::serverError("API error: " . $e->getMessage());
 }
 
 // Helper function to format file size

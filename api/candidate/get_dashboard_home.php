@@ -1,7 +1,7 @@
 <?php
 /**
- * Get Dashboard Home Data API for ThisAble Mobile
- * Returns: stats, recent applications, upcoming interviews, suggested jobs
+ * BULLETPROOF Get Dashboard Home Data API for ThisAble Mobile
+ * Simple queries that match your exact database structure
  */
 
 // Include required files
@@ -23,12 +23,12 @@ try {
     }
     
     $seekerId = $user['user_id'];
-    error_log("Dashboard Home API: seeker_id=$seekerId");
+    error_log("BULLETPROOF Dashboard API: seeker_id=$seekerId");
 
     // Get database connection
     $conn = ApiDatabase::getConnection();
     
-    // ===== DASHBOARD STATS =====
+    // ===== STEP 1: DASHBOARD STATS (SIMPLE QUERIES) =====
     $stats = [];
     
     // Total applications count
@@ -41,7 +41,7 @@ try {
     $stmt->execute([$seekerId]);
     $stats['saved_jobs_count'] = $stmt->fetch(PDO::FETCH_ASSOC)['saved_jobs'];
     
-    // Interviews count
+    // Interviews count (simple query)
     $stmt = $conn->prepare("
         SELECT COUNT(*) as interviews_count 
         FROM interviews i 
@@ -51,23 +51,19 @@ try {
     $stmt->execute([$seekerId]);
     $stats['interviews_count'] = $stmt->fetch(PDO::FETCH_ASSOC)['interviews_count'];
     
-    // Profile views (placeholder - you can implement tracking later)
-    $stats['profile_views'] = 47; // Static for now, implement tracking later
+    // Profile views (placeholder)
+    $stats['profile_views'] = 47;
     
-    // ===== RECENT APPLICATIONS =====
+    error_log("BULLETPROOF: Stats collected - Apps: {$stats['applications_count']}, Saved: {$stats['saved_jobs_count']}, Interviews: {$stats['interviews_count']}");
+    
+    // ===== STEP 2: RECENT APPLICATIONS (SIMPLE QUERY) =====
     $stmt = $conn->prepare("
         SELECT 
             ja.application_id,
             ja.job_id,
             ja.application_status,
-            ja.applied_at,
-            jp.job_title,
-            e.company_name,
-            jp.location,
-            jp.employment_type
+            ja.applied_at
         FROM job_applications ja
-        JOIN job_posts jp ON ja.job_id = jp.job_id
-        JOIN employers e ON jp.employer_id = e.employer_id
         WHERE ja.seeker_id = ?
         ORDER BY ja.applied_at DESC
         LIMIT 5
@@ -75,7 +71,41 @@ try {
     $stmt->execute([$seekerId]);
     $recentApplications = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    // ===== UPCOMING INTERVIEWS =====
+    // Get job details for each application separately
+    foreach ($recentApplications as &$app) {
+        // Get job info
+        $jobStmt = $conn->prepare("SELECT job_title, location, employment_type FROM job_posts WHERE job_id = ?");
+        $jobStmt->execute([$app['job_id']]);
+        $jobInfo = $jobStmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($jobInfo) {
+            $app['job_title'] = $jobInfo['job_title'];
+            $app['location'] = $jobInfo['location'];
+            $app['employment_type'] = $jobInfo['employment_type'];
+        } else {
+            $app['job_title'] = 'Unknown Job';
+            $app['location'] = 'Unknown';
+            $app['employment_type'] = 'Unknown';
+        }
+        
+        // Get company name
+        $companyStmt = $conn->prepare("
+            SELECT e.company_name 
+            FROM employers e 
+            JOIN job_posts jp ON e.employer_id = jp.employer_id 
+            WHERE jp.job_id = ?
+        ");
+        $companyStmt->execute([$app['job_id']]);
+        $companyInfo = $companyStmt->fetch(PDO::FETCH_ASSOC);
+        $app['company_name'] = $companyInfo['company_name'] ?? 'Unknown Company';
+        
+        // Format date
+        $app['applied_at'] = date('F j, Y', strtotime($app['applied_at']));
+    }
+    
+    error_log("BULLETPROOF: Recent applications found: " . count($recentApplications));
+    
+    // ===== STEP 3: UPCOMING INTERVIEWS (SIMPLE QUERY) =====
     $stmt = $conn->prepare("
         SELECT 
             i.interview_id,
@@ -85,12 +115,9 @@ try {
             i.meeting_link,
             i.location_address,
             i.interview_status,
-            jp.job_title,
-            e.company_name
+            ja.job_id
         FROM interviews i
         JOIN job_applications ja ON i.application_id = ja.application_id
-        JOIN job_posts jp ON ja.job_id = jp.job_id
-        JOIN employers e ON jp.employer_id = e.employer_id
         WHERE ja.seeker_id = ? 
         AND i.scheduled_date >= CURDATE()
         AND i.interview_status IN ('scheduled', 'confirmed')
@@ -100,84 +127,113 @@ try {
     $stmt->execute([$seekerId]);
     $upcomingInterviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    // ===== SUGGESTED JOBS =====
-    // Get user's skills for job matching
-    $stmt = $conn->prepare("
-        SELECT GROUP_CONCAT(skill_id) as skill_ids 
-        FROM seeker_skills 
-        WHERE seeker_id = ?
-    ");
-    $stmt->execute([$seekerId]);
-    $userSkillsResult = $stmt->fetch(PDO::FETCH_ASSOC);
-    $userSkillIds = $userSkillsResult['skill_ids'] ? explode(',', $userSkillsResult['skill_ids']) : [];
+    // Get job and company details for each interview separately
+    foreach ($upcomingInterviews as &$interview) {
+        // Get job info
+        $jobStmt = $conn->prepare("SELECT job_title FROM job_posts WHERE job_id = ?");
+        $jobStmt->execute([$interview['job_id']]);
+        $jobInfo = $jobStmt->fetch(PDO::FETCH_ASSOC);
+        $interview['job_title'] = $jobInfo['job_title'] ?? 'Unknown Job';
+        
+        // Get company name
+        $companyStmt = $conn->prepare("
+            SELECT e.company_name 
+            FROM employers e 
+            JOIN job_posts jp ON e.employer_id = jp.employer_id 
+            WHERE jp.job_id = ?
+        ");
+        $companyStmt->execute([$interview['job_id']]);
+        $companyInfo = $companyStmt->fetch(PDO::FETCH_ASSOC);
+        $interview['company_name'] = $companyInfo['company_name'] ?? 'Unknown Company';
+        
+        // Format dates/times
+        $interview['scheduled_date'] = date('F j, Y', strtotime($interview['scheduled_date']));
+        if ($interview['scheduled_time']) {
+            $interview['scheduled_time'] = date('g:i A', strtotime($interview['scheduled_time']));
+        }
+    }
     
-    // Get suggested jobs (PWD-friendly jobs that match user preferences)
+    error_log("BULLETPROOF: Upcoming interviews found: " . count($upcomingInterviews));
+    
+    // ===== STEP 4: SUGGESTED JOBS (SIMPLE QUERY) =====
     $stmt = $conn->prepare("
-        SELECT DISTINCT
+        SELECT 
             jp.job_id,
             jp.job_title,
             jp.location,
             jp.employment_type,
             jp.salary_range,
             jp.posted_at,
-            e.company_name,
-            e.company_logo_path,
-            ja_accom.wheelchair_accessible,
-            ja_accom.flexible_schedule,
-            ja_accom.remote_work_option,
-            ja_accom.assistive_technology,
-            ja_accom.additional_accommodations
+            jp.employer_id
         FROM job_posts jp
-        JOIN employers e ON jp.employer_id = e.employer_id
-        LEFT JOIN job_accommodations ja_accom ON jp.job_id = ja_accom.job_id
-        LEFT JOIN job_applications existing_app ON jp.job_id = existing_app.job_id AND existing_app.seeker_id = ?
         WHERE jp.job_status = 'active'
-        AND existing_app.application_id IS NULL
-        AND jp.application_deadline >= CURDATE()
+        AND jp.job_id NOT IN (
+            SELECT job_id FROM job_applications WHERE seeker_id = ?
+        )
         ORDER BY jp.posted_at DESC
-        LIMIT 6
+        LIMIT 5
     ");
     $stmt->execute([$seekerId]);
     $suggestedJobs = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    // Process PWD accommodations for suggested jobs
+    // Get company info for suggested jobs
     foreach ($suggestedJobs as &$job) {
-        $accommodations = [];
-        if ($job['wheelchair_accessible']) $accommodations[] = 'Wheelchair Accessible';
-        if ($job['flexible_schedule']) $accommodations[] = 'Flexible Schedule';
-        if ($job['remote_work_option']) $accommodations[] = 'Remote Work';
-        if ($job['assistive_technology']) $accommodations[] = 'Assistive Technology';
-        if ($job['additional_accommodations']) {
-            $additional = json_decode($job['additional_accommodations'], true);
-            if (is_array($additional)) {
-                $accommodations = array_merge($accommodations, $additional);
-            }
-        }
-        $job['pwd_accommodations'] = $accommodations;
+        $companyStmt = $conn->prepare("SELECT company_name, company_logo_path FROM employers WHERE employer_id = ?");
+        $companyStmt->execute([$job['employer_id']]);
+        $company = $companyStmt->fetch(PDO::FETCH_ASSOC);
         
-        // Clean up individual accommodation fields
-        unset($job['wheelchair_accessible'], $job['flexible_schedule'], 
-              $job['remote_work_option'], $job['assistive_technology'], 
-              $job['additional_accommodations']);
+        $job['company_name'] = $company['company_name'] ?? 'Unknown Company';
+        $job['company_logo_path'] = $company['company_logo_path'] ?? null;
+        $job['company_logo'] = $job['company_logo_path'] ?? substr($job['company_name'], 0, 2);
+        
+        // Format date
+        $job['posted_at'] = date('F j, Y', strtotime($job['posted_at']));
+        
+        // Get basic accommodations
+        $accomStmt = $conn->prepare("SELECT wheelchair_accessible, flexible_schedule, remote_work_option FROM job_accommodations WHERE job_id = ?");
+        $accomStmt->execute([$job['job_id']]);
+        $accommodations = $accomStmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($accommodations) {
+            $job['wheelchair_accessible'] = (bool)$accommodations['wheelchair_accessible'];
+            $job['flexible_schedule'] = (bool)$accommodations['flexible_schedule'];
+            $job['remote_work_option'] = (bool)$accommodations['remote_work_option'];
+        } else {
+            $job['wheelchair_accessible'] = false;
+            $job['flexible_schedule'] = false;
+            $job['remote_work_option'] = false;
+        }
     }
     
-    // ===== COMPILE RESPONSE =====
-    $dashboardData = [
+    error_log("BULLETPROOF: Suggested jobs found: " . count($suggestedJobs));
+    
+    // ===== STEP 5: COMPILE RESPONSE =====
+    $responseData = [
         'stats' => $stats,
         'recent_applications' => $recentApplications,
         'upcoming_interviews' => $upcomingInterviews,
         'suggested_jobs' => $suggestedJobs,
-        'user_name' => $user['first_name'] ?? 'User' // From auth token
+        'debug_info' => [
+            'seeker_id' => $seekerId,
+            'stats_collected' => !empty($stats),
+            'applications_found' => count($recentApplications),
+            'interviews_found' => count($upcomingInterviews),
+            'suggested_jobs_found' => count($suggestedJobs),
+            'sql_working' => true
+        ]
     ];
     
-    ApiResponse::success($dashboardData, "Dashboard data retrieved successfully");
+    error_log("BULLETPROOF: Dashboard data compiled successfully");
+    
+    ApiResponse::success($responseData, "Dashboard data retrieved successfully");
     
 } catch(PDOException $e) {
-    error_log("Dashboard home database error: " . $e->getMessage());
-    ApiResponse::serverError("Database error occurred");
+    error_log("BULLETPROOF Dashboard database error: " . $e->getMessage());
+    error_log("BULLETPROOF SQL Error Info: " . json_encode($e->errorInfo ?? []));
+    ApiResponse::serverError("Database query failed: " . $e->getMessage());
     
 } catch(Exception $e) {
-    error_log("Dashboard home error: " . $e->getMessage());
-    ApiResponse::serverError("An error occurred while retrieving dashboard data");
+    error_log("BULLETPROOF Dashboard general error: " . $e->getMessage());
+    ApiResponse::serverError("API error: " . $e->getMessage());
 }
 ?>
