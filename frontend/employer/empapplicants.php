@@ -1,6 +1,4 @@
 <?php
-
-
 //session_start();
 require_once '../../backend/shared/session_helper.php';
 
@@ -321,12 +319,12 @@ $application_id = ''; // Will be set via JavaScript
                 </div>
                 
                 <div class="modal-footer">
-    <button class="footer-btn secondary-btn close-modal">Close</button>
-    <button class="footer-btn primary-btn" data-status="reviewed" data-application-id="<?php echo $application_id; ?>">Mark as Reviewed</button>
-    <button class="footer-btn interview-btn" data-status="interview" data-application-id="<?php echo $application_id; ?>">Schedule Interview</button>
-    <button class="footer-btn success-btn" data-status="hired" data-application-id="<?php echo $application_id; ?>">Hire</button>
-    <button class="footer-btn danger-btn" data-status="rejected" data-application-id="<?php echo $application_id; ?>">Reject</button>
-</div>
+                    <button class="footer-btn secondary-btn close-modal">Close</button>
+                    <button class="footer-btn primary-btn" data-status="reviewed" data-application-id="<?php echo $application_id; ?>">Mark as Reviewed</button>
+                    <button class="footer-btn interview-btn" data-status="interview" data-application-id="<?php echo $application_id; ?>">Schedule Interview</button>
+                    <button class="footer-btn success-btn" data-status="hired" data-application-id="<?php echo $application_id; ?>">Hire</button>
+                    <button class="footer-btn danger-btn" data-status="rejected" data-application-id="<?php echo $application_id; ?>">Reject</button>
+                </div>
             </div>
         </template>
 
@@ -588,5 +586,64 @@ $application_id = ''; // Will be set via JavaScript
             console.log('   - Notification System');
         });
         </script>
+
+        <script>
+// Debug version - add to empapplicant.php
+document.addEventListener('click', function(e) {
+    if (e.target.hasAttribute('data-status')) {
+        const status = e.target.getAttribute('data-status');
+        const applicationId = e.target.getAttribute('data-application-id');
+        
+        // DEBUG: Log what we're getting
+        console.log('=== BUTTON CLICK DEBUG ===');
+        console.log('Button element:', e.target);
+        console.log('Status attribute:', status);
+        console.log('Application ID attribute:', applicationId);
+        console.log('Button HTML:', e.target.outerHTML);
+        
+        // Check if values are actually there
+        if (!applicationId || !status) {
+            alert('DEBUG: Missing data!\nApplication ID: ' + applicationId + '\nStatus: ' + status);
+            return;
+        }
+        
+        // If we have both values, proceed
+        updateStatusWithDebug(status, applicationId);
+    }
+});
+
+async function updateStatusWithDebug(status, applicationId) {
+    const requestData = {
+        application_id: applicationId,
+        status: status
+    };
+    
+    console.log('=== SENDING TO BACKEND ===');
+    console.log('Request data:', requestData);
+    
+    try {
+        const response = await fetch('../../backend/employer/update_application_status.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestData)
+        });
+        
+        console.log('Response status:', response.status);
+        
+        const data = await response.json();
+        console.log('Response data:', data);
+        
+        if (data.success) {
+            alert('Status updated successfully!');
+            location.reload();
+        } else {
+            alert('Backend Error: ' + data.message);
+        }
+    } catch (error) {
+        console.error('Network error:', error);
+        alert('Network error: ' + error.message);
+    }
+}
+</script>
     </body>
 </html>

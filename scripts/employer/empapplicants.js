@@ -5045,3 +5045,128 @@ console.log('🎯 Ready for capstone demo!');
  * 
  * Perfect for capstone presentation! 🎓🚀
  */
+// Missing function definition - add this to empapplicants.js
+function setupCategoryModalEvents() {
+    console.log('🔄 Setting up category modal events with delegation');
+    
+    // Use event delegation for tab navigation
+    document.addEventListener('click', function(e) {
+        // Handle category tab clicks
+        if (e.target.closest('.category-tab')) {
+            const tab = e.target.closest('.category-tab');
+            const category = tab.dataset.category;
+            
+            console.log('🔄 Tab clicked via delegation:', category);
+            handleTabClick(e, tab, category);
+        }
+        
+        // Handle modal close buttons
+        if (e.target.matches('[data-modal="categoryModal"]') || 
+            e.target.closest('[data-modal="categoryModal"]')) {
+            console.log('🔄 Closing category modal');
+            handleModalClose();
+        }
+        
+        // Handle category modal status buttons - THIS IS THE KEY PART
+        if (e.target.hasAttribute('data-status')) {
+            const status = e.target.getAttribute('data-status');
+            const applicationId = e.target.getAttribute('data-application-id');
+            
+            console.log('Status button clicked:', status, 'Application ID:', applicationId);
+            
+            if (!applicationId || !status) {
+                alert('Missing data!\nApplication ID: ' + applicationId + '\nStatus: ' + status);
+                return;
+            }
+            
+            // Call existing status update function
+            if (typeof updateApplicantStatusInCategory === 'function') {
+                updateApplicantStatusInCategory(applicationId, status);
+            } else {
+                updateStatusFallback(status, applicationId);
+            }
+        }
+    });
+    
+    // Enhanced modal setup
+    const categoryModal = document.getElementById('categoryModal');
+    if (categoryModal) {
+        console.log('✅ Category modal found, setting up handlers');
+        
+        // Click outside to close
+        categoryModal.addEventListener('click', function(e) {
+            if (e.target === categoryModal) {
+                console.log('🔄 Closing modal via outside click');
+                handleModalClose();
+            }
+        });
+        
+        // Escape key to close
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && categoryModal.style.display === 'flex') {
+                console.log('🔄 Closing modal via Escape key');
+                handleModalClose();
+            }
+        });
+    } else {
+        console.log('❌ Category modal not found during setup');
+    }
+}
+
+// Helper functions for modal handling
+function handleTabClick(e, tab, category) {
+    // Update active tab immediately for better UX
+    document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    
+    // Update modal title
+    const titleEl = document.getElementById('categoryModalTitle');
+    if (titleEl) {
+        const categoryLabels = {
+            'excellent': '🔥 Excellent Matches',
+            'good': '🟢 Good Matches', 
+            'fair': '🟡 Fair Matches',
+            'needs-review': '⚠️ Needs Review'
+        };
+        titleEl.innerHTML = `<i class="fas fa-users"></i> ${categoryLabels[category] || 'Match Results'}`;
+    }
+    
+    // Load new category content
+    if (typeof loadCategoryContent === 'function') {
+        loadCategoryContent(category);
+        window.currentCategory = category;
+    }
+}
+
+function handleModalClose() {
+    const categoryModal = document.getElementById('categoryModal');
+    if (categoryModal) {
+        categoryModal.style.display = 'none';
+    }
+}
+
+// Fallback status update function
+async function updateStatusFallback(status, applicationId) {
+    try {
+        const response = await fetch('../../backend/employer/update_application_status.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                application_id: applicationId,
+                status: status
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert('Status updated successfully!');
+            location.reload();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    } catch (error) {
+        alert('Error updating status');
+        console.error(error);
+    }
+}
