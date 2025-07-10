@@ -320,10 +320,10 @@ $application_id = ''; // Will be set via JavaScript
                 
                 <div class="modal-footer">
                     <button class="footer-btn secondary-btn close-modal">Close</button>
-                    <button class="footer-btn primary-btn" data-status="reviewed" data-application-id="<?php echo $application_id; ?>">Mark as Reviewed</button>
-                    <button class="footer-btn interview-btn" data-status="interview" data-application-id="<?php echo $application_id; ?>">Schedule Interview</button>
-                    <button class="footer-btn success-btn" data-status="hired" data-application-id="<?php echo $application_id; ?>">Hire</button>
-                    <button class="footer-btn danger-btn" data-status="rejected" data-application-id="<?php echo $application_id; ?>">Reject</button>
+                    <button class="footer-btn primary-btn" data-status="reviewed" data-application-id="">Mark as Reviewed</button>
+                    <button class="footer-btn interview-btn" data-status="interview" data-application-id="">Schedule Interview</button>
+                    <button class="footer-btn success-btn" data-status="hired" data-application-id="">Hire</button>
+                    <button class="footer-btn danger-btn" data-status="rejected" data-application-id="">Reject</button>
                 </div>
             </div>
         </template>
