@@ -1,5 +1,5 @@
 /**
- * Profile Documents Management
+ * Profile Documents Management - COMPLETE WORKING VERSION
  * Save as: scripts/candidate/profile-documents.js
  */
 
@@ -50,7 +50,8 @@ function openDocumentUploadForm() {
         form.scrollIntoView({ behavior: 'smooth', block: 'center' });
         
         // Reset form
-        document.getElementById('document-upload-form')?.reset();
+        const uploadFormEl = document.getElementById('document-upload-form');
+        if (uploadFormEl) uploadFormEl.reset();
         removeSelectedFile();
     }
 }
@@ -60,240 +61,220 @@ function openDocumentUploadForm() {
  */
 async function loadUserDocuments() {
     const loadingDiv = document.getElementById('documents-loading');
-    const gridDiv = document.getElementById('documents-grid');
+    const containerDiv = document.getElementById('documents-container');
     const errorDiv = document.getElementById('documents-error');
 
     try {
+        console.log('📄 Starting to load documents...');
+        
         // Show loading state
         if (loadingDiv) loadingDiv.style.display = 'block';
-        if (gridDiv) gridDiv.style.display = 'none';
+        if (containerDiv) containerDiv.style.display = 'none';
         if (errorDiv) errorDiv.style.display = 'none';
 
         const response = await fetch('../../backend/candidate/get_documents.php');
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const data = await response.json();
+        console.log('📄 API Response:', data);
 
         if (data.success) {
             currentDocuments = data.data.documents;
-            renderDocuments(data.data.documents, data.data.counts);
-            updateDocumentsSummary(data.data.counts);
+            console.log('📄 Documents loaded:', currentDocuments);
+            
+            // Render all document categories
+            renderDocumentCategory('diploma');
+            renderDocumentCategory('certificate');
+            renderDocumentCategory('license');
+            renderDocumentCategory('other');
+            
+            // Update counts
+            updateDocumentCounts(data.data.counts);
+            
+            // Show container
+            if (loadingDiv) loadingDiv.style.display = 'none';
+            if (containerDiv) containerDiv.style.display = 'block';
+            
         } else {
             throw new Error(data.message || 'Failed to load documents');
         }
 
     } catch (error) {
-        console.error('Error loading documents:', error);
-        showDocumentsError(error.message);
-    } finally {
+        console.error('❌ Error loading documents:', error);
+        
+        // Show error state
         if (loadingDiv) loadingDiv.style.display = 'none';
-        if (gridDiv) gridDiv.style.display = 'block';
+        if (containerDiv) containerDiv.style.display = 'none';
+        if (errorDiv) {
+            errorDiv.style.display = 'block';
+            const errorMsg = document.getElementById('documents-error-message');
+            if (errorMsg) errorMsg.textContent = error.message;
+        }
     }
 }
 
 /**
- * Render documents in the UI
+ * Render documents for a specific category
  */
-function renderDocuments(documents, counts) {
-    const types = ['diploma', 'certificate', 'license', 'other'];
+function renderDocumentCategory(type) {
+    const itemsContainer = document.getElementById(`${type}-items`);
+    if (!itemsContainer) {
+        console.warn(`Container not found for type: ${type}`);
+        return;
+    }
+
+    const documents = currentDocuments[type] || [];
+    console.log(`📄 Rendering ${type} documents:`, documents);
     
-    types.forEach(type => {
-        const container = document.getElementById(`${type}-items`);
-        const emptyState = document.getElementById(`${type}-empty`);
-        const countBadge = document.getElementById(`${type}-count`);
-        
-        if (!container) return;
+    if (documents.length === 0) {
+        // Show empty state
+        itemsContainer.innerHTML = `
+            <div class="empty-document-state">
+                <i class="fas fa-file-upload"></i>
+                <p>No ${type}s uploaded yet</p>
+                <small>Upload your ${type === 'other' ? 'documents' : type}s</small>
+            </div>
+        `;
+    } else {
+        // Render documents in resume style
+        itemsContainer.innerHTML = documents.map(doc => renderDocumentItem(doc)).join('');
+    }
+}
 
-        // Update count badge
-        if (countBadge) {
-            countBadge.textContent = counts[type] || 0;
-        }
+/**
+ * Render individual document item (resume style)
+ */
+function renderDocumentItem(doc) {
+    // Get file extension and set icon
+    const ext = doc.original_filename.split('.').pop().toLowerCase();
+    let fileIcon = 'fa-file-alt';
+    let iconColor = '#666';
+    
+    if (ext === 'pdf') {
+        fileIcon = 'fa-file-pdf';
+        iconColor = '#f44336';
+    } else if (['doc', 'docx'].includes(ext)) {
+        fileIcon = 'fa-file-word';
+        iconColor = '#2196f3';
+    }
 
-        // Clear existing items except empty state
-        const existingItems = container.querySelectorAll('.document-item');
-        existingItems.forEach(item => item.remove());
+    const viewUrl = `../../backend/candidate/view_document.php?action=view&document_id=${doc.document_id}`;
+    const downloadUrl = `../../backend/candidate/view_document.php?action=download&document_id=${doc.document_id}`;
 
-        if (documents[type] && documents[type].length > 0) {
-            // Hide empty state
-            if (emptyState) emptyState.style.display = 'none';
+    return `
+        <div class="current-resume document-item" data-document-id="${doc.document_id}">
+            <div class="resume-preview">
+                <i class="fas ${fileIcon}" style="color: ${iconColor};"></i>
+                <div class="resume-info">
+                    <span class="resume-filename">${doc.document_name || doc.original_filename}</span>
+                    <span class="resume-meta">
+                        <span class="resume-date">Uploaded: ${doc.formatted_date}</span>
+                        <span class="resume-size">(${doc.formatted_size})</span>
+                    </span>
+                </div>
+            </div>
             
-            // Render documents
-            documents[type].forEach(doc => {
-                const docElement = createDocumentElement(doc);
-                container.appendChild(docElement);
-            });
-        } else {
-            // Show empty state
-            if (emptyState) emptyState.style.display = 'block';
-        }
-    });
-}
-
-/**
- * Create document element from template
- */
-function createDocumentElement(document) {
-    const template = document.getElementById('document-item-template');
-    if (!template) return null;
-
-    const clone = template.content.cloneNode(true);
-    const docElement = clone.querySelector('.document-item');
-    
-    // Set data attributes
-    docElement.setAttribute('data-document-id', document.document_id);
-    docElement.setAttribute('data-document-type', document.document_type);
-
-    // Fill in document information
-    const nameElement = clone.querySelector('.document-name');
-    const sizeElement = clone.querySelector('.document-size');
-    const dateElement = clone.querySelector('.document-date');
-    const statusElement = clone.querySelector('.verification-badge');
-
-    if (nameElement) nameElement.textContent = document.document_name;
-    if (sizeElement) sizeElement.textContent = document.formatted_size;
-    if (dateElement) dateElement.textContent = document.formatted_date;
-    
-    // Set verification status
-    if (statusElement) {
-        if (document.is_verified) {
-            statusElement.className = 'verification-badge verified';
-            statusElement.innerHTML = '<i class="fas fa-check-circle"></i> Verified';
-        } else {
-            statusElement.className = 'verification-badge unverified';
-            statusElement.innerHTML = '<i class="fas fa-clock"></i> Pending';
-        }
-    }
-
-    // Add action button handlers
-    const viewBtn = clone.querySelector('.view-btn');
-    const downloadBtn = clone.querySelector('.download-btn');
-    const deleteBtn = clone.querySelector('.delete-btn');
-
-    if (viewBtn) {
-        viewBtn.addEventListener('click', () => viewDocument(document));
-    }
-    if (downloadBtn) {
-        downloadBtn.addEventListener('click', () => downloadDocument(document));
-    }
-    if (deleteBtn) {
-        deleteBtn.addEventListener('click', () => showDeleteConfirmation(document));
-    }
-
-    return docElement;
-}
-
-/**
- * Handle document upload
- */
-async function handleDocumentUpload(event) {
-    event.preventDefault();
-    
-    if (isUploading) return;
-
-    const form = event.target;
-    const formData = new FormData(form);
-    const submitBtn = document.getElementById('upload-submit-btn');
-    const progressContainer = document.getElementById('upload-progress');
-    const progressFill = document.getElementById('progress-fill');
-    const progressPercentage = document.getElementById('progress-percentage');
-
-    try {
-        isUploading = true;
-        
-        // Disable submit button
-        if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
-        }
-
-        // Show progress
-        if (progressContainer) progressContainer.style.display = 'block';
-
-        // Create XMLHttpRequest for progress tracking
-        const xhr = new XMLHttpRequest();
-        
-        // Upload progress handler
-        xhr.upload.addEventListener('progress', (e) => {
-            if (e.lengthComputable) {
-                const percentComplete = (e.loaded / e.total) * 100;
-                if (progressFill) progressFill.style.width = percentComplete + '%';
-                if (progressPercentage) progressPercentage.textContent = Math.round(percentComplete) + '%';
-            }
-        });
-
-        // Response handler
-        xhr.addEventListener('load', () => {
-            try {
-                const response = JSON.parse(xhr.responseText);
+            <div class="resume-actions">
+                <button class="btn view-resume-btn" onclick="viewDocument('${viewUrl}', '${doc.original_filename}')" title="View document">
+                    <i class="fas fa-eye"></i> View
+                </button>
                 
-                if (response.success) {
-                    showSuccessMessage(response.message);
-                    closeDocumentForm();
-                    loadUserDocuments(); // Reload documents
-                } else {
-                    throw new Error(response.message || 'Upload failed');
-                }
-            } catch (error) {
-                showErrorMessage('Upload failed: ' + error.message);
-            }
-        });
+                <button class="btn download-resume-btn" onclick="downloadDocument('${downloadUrl}')" title="Download file">
+                    <i class="fas fa-download"></i> Download
+                </button>
+                        
+                <button class="btn delete-resume-btn" onclick="confirmDeleteDocument(${doc.document_id}, '${doc.document_name || doc.original_filename}')" title="Delete Document">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </div>
+            
+            <!-- File type info -->
+            <div class="file-type-info">
+                ${ext === 'pdf' ? `
+                    <div class="info-badge success">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Can be viewed in browser</span>
+                    </div>
+                ` : `
+                    <div class="info-badge info">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Download to view</span>
+                    </div>
+                `}
+            </div>
+            
+            <!-- Document statistics -->
+            <div class="resume-stats">
+                <div class="stat-item">
+                    <i class="fas fa-file-alt stat-icon"></i>
+                    <span class="stat-label">Type</span>
+                    <span class="stat-value">${ext.toUpperCase()}</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-hdd stat-icon"></i>
+                    <span class="stat-label">Size</span>
+                    <span class="stat-value">${doc.formatted_size}</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-calendar stat-icon"></i>
+                    <span class="stat-label">Updated</span>
+                    <span class="stat-value">${doc.formatted_date.split(' ')[0]} ${doc.formatted_date.split(' ')[1]}</span>
+                </div>
+            </div>
+        </div>
+    `;
+}
 
-        xhr.addEventListener('error', () => {
-            showErrorMessage('Upload failed: Network error');
-        });
-
-        // Send request
-        xhr.open('POST', '../../backend/candidate/upload_document.php');
-        xhr.send(formData);
-
-    } catch (error) {
-        console.error('Upload error:', error);
-        showErrorMessage('Upload failed: ' + error.message);
-    } finally {
-        isUploading = false;
-        
-        // Reset submit button
-        if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fas fa-upload"></i> Upload Document';
-        }
-        
-        // Hide progress
-        if (progressContainer) progressContainer.style.display = 'none';
-    }
+/**
+ * Update document counts
+ */
+function updateDocumentCounts(counts) {
+    if (!counts) return;
+    
+    const diplomaCount = document.getElementById('diploma-count');
+    const certificateCount = document.getElementById('certificate-count');
+    const licenseCount = document.getElementById('license-count');
+    const otherCount = document.getElementById('other-count');
+    
+    if (diplomaCount) diplomaCount.textContent = counts.diploma || 0;
+    if (certificateCount) certificateCount.textContent = counts.certificate || 0;
+    if (licenseCount) licenseCount.textContent = counts.license || 0;
+    if (otherCount) otherCount.textContent = counts.other || 0;
 }
 
 /**
  * View document in new tab
  */
-function viewDocument(document) {
-    const viewUrl = `../../backend/candidate/view_document.php?document_id=${document.document_id}`;
-    window.open(viewUrl, '_blank');
+function viewDocument(url, filename) {
+    console.log('📄 Opening document:', filename);
+    const newTab = window.open(url, '_blank');
+    if (!newTab) {
+        alert('Please allow popups to view documents');
+    }
 }
 
 /**
  * Download document
  */
-function downloadDocument(document) {
-    const downloadUrl = `../../backend/candidate/view_document.php?document_id=${document.document_id}&download=1`;
-    window.open(downloadUrl, '_blank');
+function downloadDocument(url) {
+    console.log('📄 Downloading document from:', url);
+    const link = document.createElement('a');
+    link.href = url;
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
 /**
- * Show delete confirmation modal
+ * Confirm document deletion
  */
-function showDeleteConfirmation(document) {
-    const modal = document.getElementById('delete-document-modal');
-    const nameElement = document.getElementById('delete-document-name');
-    const typeElement = document.getElementById('delete-document-type');
-    const confirmBtn = document.getElementById('confirm-delete-btn');
-
-    if (modal && nameElement && typeElement && confirmBtn) {
-        nameElement.textContent = document.document_name;
-        typeElement.textContent = document.document_type.toUpperCase();
-        
-        // Set up confirm button
-        confirmBtn.onclick = () => deleteDocument(document.document_id);
-        
-        modal.style.display = 'flex';
+function confirmDeleteDocument(documentId, documentName) {
+    if (confirm(`Are you sure you want to delete "${documentName}"?`)) {
+        deleteDocument(documentId);
     }
 }
 
@@ -305,77 +286,114 @@ async function deleteDocument(documentId) {
         const response = await fetch('../../backend/candidate/delete_document.php', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify({ document_id: documentId })
         });
 
         const data = await response.json();
-
+        
         if (data.success) {
-            showSuccessMessage(data.message);
-            closeDeleteModal();
-            loadUserDocuments(); // Reload documents
+            // Reload documents
+            loadUserDocuments();
+            alert('Document deleted successfully!');
         } else {
-            throw new Error(data.message || 'Delete failed');
+            alert('Error deleting document: ' + data.message);
         }
-
     } catch (error) {
         console.error('Delete error:', error);
-        showErrorMessage('Delete failed: ' + error.message);
+        alert('Error deleting document. Please try again.');
     }
 }
 
 /**
- * Update documents summary
+ * Handle document upload
  */
-function updateDocumentsSummary(counts) {
-    const summaryDiv = document.getElementById('documents-summary');
-    const totalElement = document.getElementById('total-documents');
-    const verifiedElement = document.getElementById('verified-documents');
-
-    if (summaryDiv && counts.total > 0) {
-        summaryDiv.style.display = 'block';
-        if (totalElement) totalElement.textContent = counts.total;
-        if (verifiedElement) verifiedElement.textContent = counts.verified;
-    } else if (summaryDiv) {
-        summaryDiv.style.display = 'none';
-    }
-}
-
-/**
- * Show documents error
- */
-function showDocumentsError(message) {
-    const errorDiv = document.getElementById('documents-error');
-    const errorMessage = document.getElementById('documents-error-message');
-    const gridDiv = document.getElementById('documents-grid');
-
-    if (errorDiv) {
-        errorDiv.style.display = 'block';
-        if (errorMessage) errorMessage.textContent = message;
-    }
-    if (gridDiv) gridDiv.style.display = 'none';
-}
-
-/**
- * Show success message
- */
-function showSuccessMessage(message) {
-    // You can integrate this with your existing toast/notification system
-    console.log('Success:', message);
+async function handleDocumentUpload(event) {
+    event.preventDefault();
     
-    // Simple alert for now - replace with your toast system
-    alert('Success: ' + message);
+    if (isUploading) {
+        return;
+    }
+    
+    const form = event.target;
+    const formData = new FormData(form);
+    
+    // Validate required fields
+    const documentType = formData.get('document_type');
+    const documentFile = formData.get('document_file');
+    
+    if (!documentType || !documentFile || documentFile.size === 0) {
+        alert('Please select a document type and file');
+        return;
+    }
+    
+    try {
+        isUploading = true;
+        
+        // Show upload progress
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn ? submitBtn.innerHTML : '';
+        if (submitBtn) {
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+            submitBtn.disabled = true;
+        }
+        
+        const response = await fetch('../../backend/candidate/upload_document.php', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Success - close form and reload documents
+            closeDocumentForm();
+            loadUserDocuments();
+            alert('Document uploaded successfully!');
+        } else {
+            throw new Error(data.message || 'Upload failed');
+        }
+        
+    } catch (error) {
+        console.error('Upload error:', error);
+        alert('Error uploading document: ' + error.message);
+    } finally {
+        isUploading = false;
+        
+        // Reset submit button
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.innerHTML = originalText || '<i class="fas fa-upload"></i> Upload Document';
+            submitBtn.disabled = false;
+        }
+    }
 }
 
 /**
- * Show error message
+ * Close document upload form
  */
-function showErrorMessage(message) {
-    // You can integrate this with your existing toast/notification system
-    console.error('Error:', message);
-    
-    // Simple alert for now - replace with your toast system
-    alert('Error: ' + message);
+function closeDocumentForm() {
+    const form = document.getElementById('documents-edit-form');
+    if (form) {
+        form.style.display = 'none';
+        form.classList.remove('active');
+        // Reset form
+        const uploadFormEl = document.getElementById('document-upload-form');
+        if (uploadFormEl) uploadFormEl.reset();
+        removeSelectedFile();
+    }
+}
+
+/**
+ * Remove selected file preview
+ */
+function removeSelectedFile() {
+    const fileInput = document.getElementById('document-file');
+    const uploadArea = document.getElementById('file-upload-area');
+    const filePreview = document.getElementById('file-preview');
+
+    if (fileInput) fileInput.value = '';
+    if (uploadArea) uploadArea.style.display = 'block';
+    if (filePreview) filePreview.style.display = 'none';
 }

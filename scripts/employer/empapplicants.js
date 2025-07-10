@@ -97,6 +97,32 @@ document.addEventListener('DOMContentLoaded', function() {
     // ===================================
     // UTILITY FUNCTIONS
     // ===================================
+
+    document.addEventListener('click', function(e) {
+    if (e.target.matches('button[data-status]')) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const btn = e.target;
+        const status = btn.dataset.status;
+        
+        // 🚀 USE THE EXISTING GLOBAL VARIABLE
+        const applicationId = window.currentApplicationId;
+        
+        if (applicationId && status) {
+            console.log(`✅ Using global currentApplicationId: ${applicationId}, Status: ${status}`);
+            
+            // Use the existing status update function
+            if (typeof updateApplicantStatus === 'function') {
+                updateApplicantStatus(applicationId, status);
+            } else {
+                alert(`Status updated to: ${status.replace('_', ' ')}`);
+            }
+        } else {
+            console.error('❌ No currentApplicationId found:', window.currentApplicationId);
+        }
+    }
+});
     
     function showLoading() {
         if (loadingOverlay) {
@@ -409,20 +435,37 @@ document.addEventListener('DOMContentLoaded', function() {
             aboutElement.textContent = applicant.bio || 'No bio available';
         }
         
-        // Skills
-        const skillsList = document.getElementById('skills-list');
-        if (skillsList && data.skills) {
-            skillsList.innerHTML = '';
-            Object.keys(data.skills).forEach(category => {
-                const categorySkills = data.skills[category].skills;
-                categorySkills.forEach(skill => {
-                    const skillTag = document.createElement('span');
-                    skillTag.className = 'skill-tag';
-                    skillTag.textContent = skill;
-                    skillsList.appendChild(skillTag);
-                });
+// Skills - COMPLETE WORKING VERSION
+const skillsList = document.getElementById('skills-list');
+if (skillsList && data.skills) {
+    skillsList.innerHTML = '';
+    
+    Object.keys(data.skills).forEach(category => {
+        const categorySkills = data.skills[category].skills;
+        
+        if (categorySkills && categorySkills.length > 0) {
+            categorySkills.forEach(skill => {
+                const skillTag = document.createElement('span');
+                skillTag.className = 'skill-tag';
+                skillTag.textContent = skill;
+                
+                
+                
+                skillsList.appendChild(skillTag);
             });
         }
+    });
+    
+    // Fallback message if no skills found
+    if (skillsList.innerHTML === '') {
+        skillsList.innerHTML = '<p style="color: #666; font-style: italic;">No skills listed</p>';
+    }
+} else {
+    // Handle case where skillsList element not found
+    if (skillsList) {
+        skillsList.innerHTML = '<p style="color: #666;">Skills data not available</p>';
+    }
+}
         
         // Preferences
         if (data.preferences) {
@@ -2024,6 +2067,23 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         return card;
+
+        // Add confidence indicator
+        const confidenceText = applicant.skills_confidence_factor < 1.0 
+            ? `<small>(Adjusted for skill count)</small>` 
+            : '';
+        
+        const matchBanner = `
+            <div class="match-score-banner">
+                <span class="match-percentage">${matchScore}%</span>
+                ${confidenceText}
+                <span class="match-breakdown">
+                    Skills: ${applicant.skills_score}% | 
+                    Accommodations: ${applicant.accommodation_score}% |
+                    ${applicant.credential_required ? 'Creds: ' + applicant.credential_score + '%' : 'No creds required'}
+                </span>
+            </div>
+        `;
     }
 
     /**

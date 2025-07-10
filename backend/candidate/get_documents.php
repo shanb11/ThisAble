@@ -1,6 +1,6 @@
 <?php
 /**
- * Get Documents API for Candidates
+ * Get Documents API for Candidates - COMPLETE VERSION
  * Save as: backend/candidate/get_documents.php
  */
 
@@ -20,6 +20,19 @@ if (!isset($_SESSION['seeker_id'])) {
 }
 
 $seeker_id = $_SESSION['seeker_id'];
+
+/**
+ * Format file size to human readable format
+ */
+function formatFileSize($bytes) {
+    if ($bytes === 0) return '0 Bytes';
+    
+    $k = 1024;
+    $sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    $i = floor(log($bytes) / log($k));
+    
+    return round($bytes / pow($k, $i), 2) . ' ' . $sizes[$i];
+}
 
 try {
     // Get all documents for the user
@@ -96,20 +109,7 @@ try {
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => 'Failed to retrieve documents'
+        'message' => 'Error retrieving documents: ' . $e->getMessage()
     ]);
-}
-
-/**
- * Format file size in human readable format
- */
-function formatFileSize($bytes) {
-    if ($bytes == 0) return '0 Bytes';
-    
-    $k = 1024;
-    $sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    $i = floor(log($bytes) / log($k));
-    
-    return round($bytes / pow($k, $i), 2) . ' ' . $sizes[$i];
 }
 ?>

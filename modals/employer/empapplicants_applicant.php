@@ -68,12 +68,12 @@
                 </div>
 
                 <!-- Resume Section -->
-                <div class="profile-section" id="resume-section">
-                    <h4><i class="fas fa-file-alt"></i> Resume</h4>
-                    <div id="resume-actions">
+                <!-- <div class="profile-section" id="resume-section"> -->
+                    <!-- <h4><i class="fas fa-file-alt"></i> Resume</h4> -->
+                    <!-- <div id="resume-actions"> -->
                         <!-- Resume actions will be populated by JavaScript -->
-                    </div>
-                </div>
+                    <!-- </div> -->
+                <!-- </div> -->
 
                 <!-- Application Details -->
                 <div class="profile-section">
@@ -113,11 +113,11 @@
         </div>
 
         <div class="modal-footer">
-    <button class="footer-btn secondary-btn close-modal">Close</button>
-    <button class="footer-btn primary-btn" data-status="reviewed" data-application-id="<?php echo $application_id; ?>">Mark as Reviewed</button>
-    <button class="footer-btn interview-btn" data-status="interview" data-application-id="<?php echo $application_id; ?>">Schedule Interview</button>
-    <button class="footer-btn success-btn" data-status="hired" data-application-id="<?php echo $application_id; ?>">Hire</button>
-    <button class="footer-btn danger-btn" data-status="rejected" data-application-id="<?php echo $application_id; ?>">Reject</button>
-</div>
+            <button class="footer-btn secondary-btn close-modal">Close</button>
+            <button class="footer-btn primary-btn" data-status="reviewed" data-application-id="<?php echo $application_id; ?>">Mark as Reviewed</button>
+            <button class="footer-btn interview-btn" data-status="interview" data-application-id="<?php echo $application_id; ?>">Schedule Interview</button>
+            <button class="footer-btn success-btn" data-status="hired" data-application-id="<?php echo $application_id; ?>">Hire</button>
+            <button class="footer-btn danger-btn" data-status="rejected" data-application-id="<?php echo $application_id; ?>">Reject</button>
+        </div>
     </div>
 </div>

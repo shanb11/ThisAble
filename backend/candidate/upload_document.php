@@ -89,7 +89,7 @@ try {
 
     // Start database transaction
     $conn->beginTransaction();
-
+/*
     // For diplomas, replace existing one
     if ($document_type === 'diploma') {
         $check_sql = "SELECT document_id, file_path FROM candidate_documents 
@@ -111,7 +111,7 @@ try {
             $delete_stmt->execute(['document_id' => $existing['document_id']]);
         }
     }
-
+*/
     // Insert document record
     $insert_sql = "
         INSERT INTO candidate_documents (

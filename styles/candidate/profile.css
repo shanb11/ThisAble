@@ -2398,7 +2398,7 @@ body.screen-reader-mode textarea:focus {
 
 /* Documents Display */
 .documents-display {
-    margin-top: 20px;
+    margin: 20px;
 }
 
 .documents-loading {
@@ -2966,5 +2966,411 @@ body.screen-reader-mode textarea:focus {
     
     .modal-actions {
         flex-direction: column;
+    }
+}
+
+/* Documents Section Styling - IMPROVED WITH BETTER SPACING */
+/* Add to styles/candidate/profile.css */
+
+/* Documents Container */
+.documents-container {
+    display: flex;
+    flex-direction: column;
+    gap: 35px; /* Increased gap between categories */
+    margin-top: 20px; /* Add top margin */
+}
+
+.document-category {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 12px; /* More rounded corners */
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05); /* Subtle shadow */
+}
+
+.category-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 18px 25px; /* More padding */
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.category-header h4 {
+    margin: 0;
+    color: #257180;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Increased gap */
+}
+
+.category-header h4 i {
+    font-size: 18px; /* Slightly larger icons */
+}
+
+.document-count {
+    background: linear-gradient(135deg, #257180, #1e5a66);
+    color: white;
+    padding: 6px 12px; /* Larger padding */
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 600;
+    min-width: 24px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(37, 113, 128, 0.3);
+}
+
+.document-items {
+    padding: 25px; /* Increased padding */
+}
+
+/* Empty Document State */
+.empty-document-state {
+    text-align: center;
+    padding: 50px 20px; /* More padding */
+    color: #666;
+    background: #fafafa;
+    border-radius: 8px;
+    margin: 10px 0; /* Add margins */
+}
+
+.empty-document-state i {
+    font-size: 54px; /* Larger icon */
+    color: #ddd;
+    margin-bottom: 20px; /* More space */
+}
+
+.empty-document-state p {
+    margin: 0 0 8px 0;
+    font-weight: 500;
+    color: #666;
+    font-size: 16px;
+}
+
+.empty-document-state small {
+    color: #999;
+    font-size: 14px;
+}
+
+/* Document Items - Better Spacing */
+.document-item.current-resume {
+    margin-bottom: 25px; /* Increased margin between documents */
+    padding: 25px; /* More padding inside each document */
+    background: #f9f9f9;
+    border-radius: 12px; /* More rounded */
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.document-item.current-resume:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border-color: #257180;
+}
+
+.document-item.current-resume:last-child {
+    margin-bottom: 0;
+}
+
+/* Resume Preview Section */
+.resume-preview {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Increased gap */
+    margin-bottom: 15px; /* Add bottom margin */
+}
+
+.resume-preview i {
+    font-size: 32px; /* Larger icon */
+}
+
+.resume-info {
+    flex: 1;
+}
+
+.resume-filename {
+    font-weight: 600;
+    color: #333;
+    font-size: 16px;
+    display: block;
+    margin-bottom: 8px; /* Add spacing */
+}
+
+.resume-meta {
+    display: flex;
+    gap: 15px; /* Add gap between meta items */
+    flex-wrap: wrap;
+}
+
+.resume-date, .resume-size {
+    font-size: 13px;
+    color: #666;
+}
+
+/* Action Buttons */
+.resume-actions {
+    display: flex;
+    gap: 12px; /* Increased gap */
+    margin-bottom: 20px; /* Add bottom margin */
+    flex-wrap: wrap;
+}
+
+.view-resume-btn, .download-resume-btn, .delete-resume-btn {
+    padding: 10px 16px; /* More padding */
+    border-radius: 25px; /* More rounded */
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Gap between icon and text */
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.view-resume-btn {
+    background: linear-gradient(135deg, #257180, #1e5a66);
+    color: white;
+}
+
+.view-resume-btn:hover {
+    background: linear-gradient(135deg, #1e5a66, #164149);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(37, 113, 128, 0.3);
+}
+
+.download-resume-btn {
+    background: linear-gradient(135deg, #FD8B51, #fc7a3d);
+    color: white;
+}
+
+.download-resume-btn:hover {
+    background: linear-gradient(135deg, #fc7a3d, #fb6929);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(253, 139, 81, 0.3);
+}
+
+.delete-resume-btn {
+    background: linear-gradient(135deg, #f44336, #d32f2f);
+    color: white;
+    min-width: auto;
+    padding: 10px 12px;
+}
+
+.delete-resume-btn:hover {
+    background: linear-gradient(135deg, #d32f2f, #b71c1c);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(244, 67, 54, 0.3);
+}
+
+/* Info Badge */
+.file-type-info {
+    margin: 15px 0; /* Add margins */
+}
+
+.info-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px; /* More padding */
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.info-badge.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.info-badge.info {
+    background: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+/* Document Statistics */
+.resume-stats {
+    display: flex;
+    gap: 25px; /* Increased gap */
+    padding: 20px 0 0 0; /* More top padding */
+    border-top: 1px solid #e9ecef;
+    margin-top: 15px; /* Add top margin */
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px; /* Increased gap */
+    min-width: 70px; /* Slightly wider */
+}
+
+.stat-icon {
+    color: #257180;
+    font-size: 20px; /* Larger icons */
+}
+
+.stat-label {
+    font-size: 11px;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+}
+
+.stat-value {
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+}
+
+/* Loading State */
+.documents-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 80px 20px; /* More padding */
+    color: #666;
+}
+
+.loading-spinner i {
+    font-size: 36px; /* Larger spinner */
+    color: #257180;
+    margin-bottom: 20px; /* More margin */
+}
+
+.documents-loading p {
+    margin: 0;
+    font-size: 16px;
+}
+
+/* Error State */
+.documents-error {
+    text-align: center;
+    padding: 80px 20px; /* More padding */
+    color: #666;
+}
+
+.error-icon i {
+    font-size: 54px; /* Larger error icon */
+    color: #f44336;
+    margin-bottom: 20px; /* More margin */
+}
+
+.documents-error h4 {
+    color: #333;
+    margin: 0 0 15px 0; /* More margin */
+    font-size: 20px; /* Larger text */
+}
+
+.documents-error p {
+    margin: 0 0 25px 0; /* More margin */
+    color: #666;
+    font-size: 16px;
+}
+
+.secondary-btn {
+    background: linear-gradient(135deg, #6c757d, #5a6268);
+    color: white;
+    border: none;
+    padding: 12px 24px; /* More padding */
+    border-radius: 25px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px; /* More gap */
+    transition: all 0.3s ease;
+    font-weight: 500;
+    box-shadow: 0 2px 6px rgba(108, 117, 125, 0.3);
+}
+
+.secondary-btn:hover {
+    background: linear-gradient(135deg, #5a6268, #495057);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(108, 117, 125, 0.4);
+}
+
+/* Upload Document Button */
+.add-item-btn {
+    background: linear-gradient(135deg, #FD8B51, #fc7a3d);
+    color: white;
+    border: none;
+    padding: 10px 18px; /* More padding */
+    border-radius: 25px;
+    font-size: 14px; /* Slightly larger */
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px; /* More gap */
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(253, 139, 81, 0.3);
+}
+
+.add-item-btn:hover {
+    background: linear-gradient(135deg, #fc7a3d, #fb6929);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(253, 139, 81, 0.4);
+}
+
+/* Section Header Spacing */
+.section-header {
+    margin-bottom: 25px; /* More margin */
+    padding-bottom: 15px; /* Add bottom padding */
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.section-header h2 {
+    margin-bottom: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .documents-container {
+        gap: 25px; /* Reduced gap on mobile */
+    }
+    
+    .category-header {
+        padding: 15px 20px;
+    }
+    
+    .document-items {
+        padding: 20px;
+    }
+    
+    .document-item.current-resume {
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .resume-preview {
+        gap: 15px;
+    }
+    
+    .resume-actions {
+        gap: 10px;
+        flex-direction: column; /* Stack buttons vertically on mobile */
+    }
+    
+    .view-resume-btn, 
+    .download-resume-btn,
+    .delete-resume-btn {
+        font-size: 12px;
+        padding: 8px 14px;
+        width: 100%; /* Full width on mobile */
+        justify-content: center;
+    }
+    
+    .resume-stats {
+        gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
     }
 }

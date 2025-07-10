@@ -16,6 +16,9 @@ echo " -->";
 requireEmployerLogin('emplogin.php');
 // Check if employer is logged in
 requireEmployerLogin('emplogin.php');
+
+// ADD THIS LINE TO DEFINE THE VARIABLE
+$application_id = ''; // Will be set via JavaScript
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -86,7 +89,7 @@ requireEmployerLogin('emplogin.php');
                         </p>
                     </div>
                     <div class="match-actions">
-                        <button class="btn btn-primary" id="calculate-matches-btn" style="display: flex; align-items: center; gap: 8px;">
+                        <button class="calc-btn" id="calculate-matches-btn" style="display: flex; align-items: center; gap: 8px;">
                             <i class="fas fa-sync"></i>
                             <span>Calculate Matches</span>
                         </button>

@@ -302,7 +302,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 
                                 <div class="form-row">
                                     <label class="form-label" for="job-location">Location*</label>
-                                    <input type="text" id="job-location" class="form-control" placeholder="e.g. Manila, Philippines" value="${jobData.location || ''}" required>
+                                    <input type="text" id="job-location" class="form-control" placeholder="e.g. Cavite" value="${jobData.location || ''}" required>
                                 </div>
                             </div>
                             

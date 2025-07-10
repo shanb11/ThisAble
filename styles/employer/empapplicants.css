@@ -4960,3 +4960,43 @@ body {
         display: none !important;
     }
 }
+
+.calc-btn {
+    flex: 1;
+    padding: 8px;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+}
+
+.calc-btn {
+    background-color: var(--primary);
+    color: white;
+}
+
+.calc-btn:hover {
+    background-color: #FD8B51;
+}
+
+/* Fix modal layering */
+#categoryModal {
+    z-index: 1050 !important;
+}
+
+#scheduleInterviewModal,
+#interviewSuccessModal {
+    z-index: 1100 !important;
+}
+
+/* Add to empapplicants.css */
+#applicantModal .skill-tag {
+    background: #F2E5BF !important;
+    color: #257180 !important;
+    padding: 4px 8px !important;
+    margin: 2px !important;
+    border-radius: 12px !important;
+}

@@ -119,6 +119,21 @@ function calculateJobMatch($conn, $job_id, $seeker_id) {
             'skill_names' => array_column($job_skills, 'skill_name')
         ]));
         error_log("Candidate {$seeker_id} has skills: " . json_encode(array_column($candidate_data['skills'], 'skill_name')));
+
+        // Get candidate documents count
+        $doc_query = "SELECT COUNT(*) as doc_count FROM candidate_documents WHERE seeker_id = ?";
+        $doc_stmt = $conn->prepare($doc_query);
+        $doc_stmt->execute([$seeker_id]);
+        $doc_result = $doc_stmt->fetch();
+        $candidate_documents = $doc_result['doc_count'] ?? 0;
+        
+        // Check if job requires credentials
+        $requires_creds = $job_data['requires_credentials'] ?? false;
+        
+        $credential_match = calculateCredentialMatch(
+            ['requires_credentials' => $requires_creds], 
+            $candidate_documents
+        );
         
         // ENHANCED: Calculate skills match with weighting
         $skills_match = calculateEnhancedSkillsMatch($job_skills, $candidate_data['skills']);
@@ -130,12 +145,22 @@ function calculateJobMatch($conn, $job_id, $seeker_id) {
         $preferences_match = calculatePreferencesMatch($job_data, $candidate_data);
         
         // Enhanced overall scoring with critical skills penalty
-        $base_score = (
-            $skills_match['score'] * 0.50 +           // 50% skills
-            $accommodation_match['score'] * 0.20 +    // 20% accommodations
-            $preferences_match['score'] * 0.20 +      // 20% work preferences
-            calculateExperienceMatch($job_data, $candidate_data) * 0.10  // 10% experience
-        );
+        if ($requires_creds) {
+            $base_score = (
+                $skills_match['score'] * 0.30 +           // Reduced
+                $credential_match['score'] * 0.20 +       // NEW!
+                $accommodation_match['score'] * 0.25 +
+                $preferences_match['score'] * 0.20 +
+                $experience_match * 0.05
+            );
+        } else {
+            $base_score = (
+                $skills_match['score'] * 0.35 +
+                $accommodation_match['score'] * 0.25 +
+                $preferences_match['score'] * 0.25 +
+                $experience_match * 0.15
+            );
+        }
         
         // Apply critical skills penalty
         $critical_penalty = 0;
@@ -315,6 +340,22 @@ function calculateExperienceMatch($job_data, $candidate_data) {
             'required_years' => 0,
             'analysis' => 'Experience data unavailable'
         ];
+    }
+}
+
+function calculateCredentialMatch($job_data, $candidate_documents) {
+    // If job doesn't require credentials
+    if (!$job_data['requires_credentials']) {
+        return ['score' => 100, 'type' => 'not_required'];
+    }
+    
+    // Simple check: does candidate have ANY documents?
+    $candidate_doc_count = count($candidate_documents);
+    
+    if ($candidate_doc_count > 0) {
+        return ['score' => 100, 'type' => 'has_documents'];
+    } else {
+        return ['score' => 0, 'type' => 'missing_documents'];
     }
 }
 
@@ -723,10 +764,13 @@ function getJobSkills($conn, $job_id, $job_requirements_text) {
 /**
  * Enhanced Calculate skills match with weighted scoring
  */
+/**
+ * Enhanced Calculate skills match with weighted scoring + CONFIDENCE FACTOR
+ */
 function calculateEnhancedSkillsMatch($job_skills, $candidate_skills) {
     if (empty($job_skills)) {
         return [
-            'score' => 100, // If no specific skills required, everyone matches
+            'score' => 100, 
             'matched_skills' => [],
             'missing_skills' => [],
             'critical_missing' => [],
@@ -734,7 +778,9 @@ function calculateEnhancedSkillsMatch($job_skills, $candidate_skills) {
             'matched_count' => 0,
             'structured_skills_count' => 0,
             'text_extracted_count' => 0,
-            'weighted_score' => 100
+            'weighted_score' => 100,
+            'confidence_factor' => 1.0,  // NEW
+            'raw_score' => 100           // NEW
         ];
     }
     
@@ -794,10 +840,31 @@ function calculateEnhancedSkillsMatch($job_skills, $candidate_skills) {
     $simple_percentage = (count($matched_skills) / count($job_skills)) * 100;
     
     // Use weighted score if we have structured skills, otherwise use simple percentage
-    $final_score = $structured_count > 0 ? $weighted_score : $simple_percentage;
+    $raw_score = $structured_count > 0 ? $weighted_score : $simple_percentage;
+    
+    // NEW: Calculate confidence factor based on candidate's total skill count
+    $candidate_skill_count = count($candidate_skills);
+    
+    if ($candidate_skill_count > 20) {
+        $confidence_factor = 0.80; // 20% penalty for claiming too many skills
+    } elseif ($candidate_skill_count > 15) {
+        $confidence_factor = 0.85; // 15% penalty
+    } elseif ($candidate_skill_count > 12) {
+        $confidence_factor = 0.90; // 10% penalty  
+    } elseif ($candidate_skill_count > 8) {
+        $confidence_factor = 0.95; // 5% penalty
+    } else {
+        $confidence_factor = 1.0;   // No penalty for reasonable skill count
+    }
+    
+    // Apply confidence factor to final score
+    $final_score = $raw_score * $confidence_factor;
     
     return [
-        'score' => round($final_score, 2),
+        'score' => round($final_score, 2),                           // ADJUSTED score
+        'raw_score' => round($raw_score, 2),                        // NEW: Original score
+        'confidence_factor' => $confidence_factor,                  // NEW: Confidence factor applied
+        'candidate_skill_count' => $candidate_skill_count,          // NEW: For debugging
         'matched_skills' => array_column($matched_skills, 'skill_name'),
         'missing_skills' => array_column($missing_skills, 'skill_name'),
         'critical_missing' => array_column($critical_missing, 'skill_name'),

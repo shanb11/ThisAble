@@ -19,7 +19,7 @@ if (!isset($_SESSION['seeker_id'])) {
     exit();
 }
 
-if (!in_array($_SERVER['REQUEST_METHOD'], ['POST', 'DELETE'])) {
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode([
         'success' => false,
@@ -31,65 +31,49 @@ if (!in_array($_SERVER['REQUEST_METHOD'], ['POST', 'DELETE'])) {
 $seeker_id = $_SESSION['seeker_id'];
 
 try {
-    // Get document ID from request
+    // Get JSON input
     $input = json_decode(file_get_contents('php://input'), true);
-    $document_id = $input['document_id'] ?? $_POST['document_id'] ?? null;
-
-    if (!$document_id || !is_numeric($document_id)) {
-        throw new Exception('Valid document ID is required');
+    
+    if (!isset($input['document_id'])) {
+        throw new Exception('Document ID is required');
     }
+
+    $document_id = intval($input['document_id']);
 
     // Start transaction
     $conn->beginTransaction();
 
-    // Get document details and verify ownership
-    $select_sql = "
-        SELECT 
-            document_id,
-            document_type,
-            document_name,
-            file_path,
-            original_filename
+    // Get document info with security check
+    $stmt = $conn->prepare("
+        SELECT file_path, document_name, original_filename 
         FROM candidate_documents 
-        WHERE document_id = :document_id AND seeker_id = :seeker_id
-    ";
-
-    $select_stmt = $conn->prepare($select_sql);
-    $select_stmt->execute([
-        'document_id' => $document_id,
-        'seeker_id' => $seeker_id
-    ]);
-
-    $document = $select_stmt->fetch(PDO::FETCH_ASSOC);
+        WHERE document_id = ? AND seeker_id = ?
+    ");
+    $stmt->execute([$document_id, $seeker_id]);
+    $document = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$document) {
-        throw new Exception('Document not found or you do not have permission to delete it');
+        throw new Exception('Document not found or access denied');
     }
 
     // Delete file from filesystem
-    $file_path = '../../' . $document['file_path'];
-    $file_deleted = false;
-
+    $file_path = __DIR__ . '/../../' . $document['file_path'];
     if (file_exists($file_path)) {
-        if (unlink($file_path)) {
-            $file_deleted = true;
-        } else {
-            error_log("Warning: Could not delete file: " . $file_path);
+        if (!unlink($file_path)) {
+            error_log("Failed to delete file: " . $file_path);
+            // Continue anyway - don't fail just because file deletion failed
         }
-    } else {
-        $file_deleted = true; // File doesn't exist
     }
 
-    // Delete database record
-    $delete_sql = "DELETE FROM candidate_documents WHERE document_id = :document_id AND seeker_id = :seeker_id";
-    $delete_stmt = $conn->prepare($delete_sql);
-    $delete_stmt->execute([
-        'document_id' => $document_id,
-        'seeker_id' => $seeker_id
-    ]);
+    // Delete from database
+    $delete_stmt = $conn->prepare("
+        DELETE FROM candidate_documents 
+        WHERE document_id = ? AND seeker_id = ?
+    ");
+    $delete_stmt->execute([$document_id, $seeker_id]);
 
     if ($delete_stmt->rowCount() === 0) {
-        throw new Exception('Failed to delete document from database');
+        throw new Exception('Document not found or already deleted');
     }
 
     // Commit transaction
@@ -97,23 +81,19 @@ try {
 
     echo json_encode([
         'success' => true,
-        'message' => ucfirst($document['document_type']) . ' deleted successfully',
+        'message' => 'Document deleted successfully',
         'data' => [
-            'deleted_document' => [
-                'document_id' => $document['document_id'],
-                'document_type' => $document['document_type'],
-                'document_name' => $document['document_name']
-            ],
-            'file_deleted' => $file_deleted
+            'document_id' => $document_id,
+            'document_name' => $document['document_name'] ?: $document['original_filename']
         ]
     ]);
 
 } catch (Exception $e) {
-    // Rollback transaction on error
-    if (isset($conn) && $conn->inTransaction()) {
+    // Rollback transaction
+    if ($conn->inTransaction()) {
         $conn->rollback();
     }
-
+    
     error_log("Delete document error: " . $e->getMessage());
     
     http_response_code(400);
