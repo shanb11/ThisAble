@@ -3055,117 +3055,165 @@ if (skillsList && data.skills) {
             listEl.appendChild(applicantCard);
         });
     }
+// REPLACE THE INCOMPLETE createCategoryApplicantCard FUNCTION WITH THIS COMPLETE VERSION
 
-    // FIXED: Create individual applicant card for category modal
-    function createCategoryApplicantCard(applicant) {
-        const template = document.getElementById('categoryApplicantTemplate');
-        if (!template) {
-            console.error('❌ Category applicant template not found');
-            return document.createElement('div');
-        }
-        
-        // Clone the template content properly
-        const cardFragment = template.content.cloneNode(true);
-        
-        // Get the main card element BEFORE doing any manipulations
-        const cardEl = cardFragment.querySelector('.category-applicant-card');
-        if (!cardEl) {
-            console.error('❌ Category applicant card element not found in template');
-            return document.createElement('div');
-        }
-        
-        // Set applicant info
-        const nameEl = cardFragment.querySelector('.applicant-name');
-        const scoreEl = cardFragment.querySelector('.applicant-score');
-        const avatarImg = cardFragment.querySelector('.applicant-avatar img');
-        const avatarFallback = cardFragment.querySelector('.avatar-fallback');
-        
-        if (nameEl) nameEl.textContent = applicant.full_name;
-        if (scoreEl) scoreEl.textContent = `${applicant.match_score}%`;
-        
-        // Handle avatar
-        if (applicant.profile_picture) {
-            if (avatarImg) {
-                avatarImg.src = applicant.profile_picture;
-                avatarImg.style.display = 'block';
-            }
-            if (avatarFallback) avatarFallback.style.display = 'none';
-        } else {
-            if (avatarImg) avatarImg.style.display = 'none';
-            if (avatarFallback) avatarFallback.style.display = 'flex';
-        }
-        
-        // Set skills analysis
-        const matchedSkillsEl = cardFragment.querySelector('.skills-list.matched');
-        const missingSkillsEl = cardFragment.querySelector('.skills-list.missing');
-        
-        if (applicant.skills_analysis) {
-            if (matchedSkillsEl) {
-                if (applicant.skills_analysis.matched_skills.length > 0) {
-                    matchedSkillsEl.innerHTML = applicant.skills_analysis.matched_skills
-                        .map(skill => `<span class="skill-tag">${skill}</span>`)
-                        .join('');
-                } else {
-                    matchedSkillsEl.innerHTML = '<span class="no-skills">No matched skills</span>';
-                }
-            }
-            
-            if (missingSkillsEl) {
-                if (applicant.skills_analysis.missing_skills.length > 0) {
-                    missingSkillsEl.innerHTML = applicant.skills_analysis.missing_skills
-                        .map(skill => `<span class="skill-tag">${skill}</span>`)
-                        .join('');
-                } else {
-                    missingSkillsEl.innerHTML = '<span class="no-skills">No missing skills</span>';
-                }
-            }
-        }
-        
-        // Set resume preview with enhanced design
-        const resumePreview = cardFragment.querySelector('.resume-preview');
-        if (resumePreview && applicant.resume_content) {
-            const resumeContent = applicant.resume_content;
-            
-            if (resumeContent.includes('Resume file available')) {
-                // File-based resume
-                resumePreview.innerHTML = `
-                    <div class="resume-file-info">
-                        <div class="file-icon">📄</div>
-                        <div class="file-details">
-                            <div class="file-name">${applicant.resume_file || 'Resume File'}</div>
-                            <div class="file-type">${applicant.resume_type || 'PDF Document'}</div>
-                            <button class="view-full-resume-btn" onclick="viewFullResume('${applicant.application_id}')">
-                                <i class="fas fa-external-link-alt"></i> View Full Resume
-                            </button>
-                        </div>
-                    </div>
-                `;
-            } else {
-                // Text content preview
-                resumePreview.innerHTML = `
-                    <div class="resume-text-preview">
-                        <div class="preview-text">${resumeContent}</div>
-                        <button class="view-full-resume-btn" onclick="viewFullResume('${applicant.application_id}')">
-                            <i class="fas fa-expand"></i> View Full Resume
-                        </button>
-                    </div>
-                `;
-            }
-        } else if (resumePreview) {
-            resumePreview.innerHTML = `
-                <div class="no-resume">
-                    <i class="fas fa-file-slash"></i>
-                    <span>No resume available</span>
-                </div>
-            `;
-        }
-        
-        // Add action button listeners
-        addCategoryApplicantActions(cardFragment, applicant);
-        
-        // Return the actual DOM element, not the fragment
-        return cardEl;
+function createCategoryApplicantCard(applicant) {
+    console.log('🔄 Creating category card for applicant:', applicant.application_id, applicant.full_name);
+    
+    const template = document.getElementById('categoryApplicantTemplate');
+    if (!template) {
+        console.error('❌ Category applicant template not found');
+        return document.createElement('div');
     }
+    
+    // Clone the template content properly
+    const cardFragment = template.content.cloneNode(true);
+    
+    // Get the main card element BEFORE doing any manipulations
+    const cardEl = cardFragment.querySelector('.category-applicant-card');
+    if (!cardEl) {
+        console.error('❌ Category applicant card element not found in template');
+        return document.createElement('div');
+    }
+    
+    // Set applicant info
+    const nameEl = cardFragment.querySelector('.applicant-name');
+    const scoreEl = cardFragment.querySelector('.applicant-score');
+    const avatarImg = cardFragment.querySelector('.applicant-avatar img');
+    const avatarFallback = cardFragment.querySelector('.avatar-fallback');
+    
+    if (nameEl) nameEl.textContent = applicant.full_name || 'Unknown Name';
+    if (scoreEl) scoreEl.textContent = `${applicant.match_score || 0}%`;
+    
+    // Handle avatar
+    if (applicant.profile_picture) {
+        if (avatarImg) {
+            avatarImg.src = applicant.profile_picture;
+            avatarImg.style.display = 'block';
+        }
+        if (avatarFallback) avatarFallback.style.display = 'none';
+    } else {
+        if (avatarImg) avatarImg.style.display = 'none';
+        if (avatarFallback) avatarFallback.style.display = 'flex';
+    }
+    
+    // Set skills analysis - COMPLETE VERSION
+    const matchedSkillsEl = cardFragment.querySelector('.skills-list.matched');
+    const missingSkillsEl = cardFragment.querySelector('.skills-list.missing');
+    
+    if (applicant.skills_analysis) {
+        if (matchedSkillsEl) {
+            if (applicant.skills_analysis.matched_skills && applicant.skills_analysis.matched_skills.length > 0) {
+                matchedSkillsEl.innerHTML = applicant.skills_analysis.matched_skills
+                    .map(skill => `<span class="skill-tag">${skill}</span>`).join('');
+            } else {
+                matchedSkillsEl.innerHTML = '<span class="no-skills">No matching skills</span>';
+            }
+        }
+        
+        if (missingSkillsEl) {
+            if (applicant.skills_analysis.missing_skills && applicant.skills_analysis.missing_skills.length > 0) {
+                missingSkillsEl.innerHTML = applicant.skills_analysis.missing_skills
+                    .map(skill => `<span class="skill-tag missing">${skill}</span>`).join('');
+            } else {
+                missingSkillsEl.innerHTML = '<span class="no-skills">All skills matched</span>';
+            }
+        }
+    } else {
+        if (matchedSkillsEl) matchedSkillsEl.innerHTML = '<span class="no-skills">No skills data</span>';
+        if (missingSkillsEl) missingSkillsEl.innerHTML = '<span class="no-skills">No skills data</span>';
+    }
+    
+    // Handle resume preview
+    const resumePreview = cardFragment.querySelector('.resume-preview');
+    if (applicant.resume_file && resumePreview) {
+        resumePreview.innerHTML = `
+            <div class="resume-available">
+                <i class="fas fa-file-pdf"></i>
+                <span>Resume Available</span>
+                <button class="view-full-resume-btn" data-application-id="${applicant.application_id}">
+                    <i class="fas fa-external-link-alt"></i> View
+                </button>
+            </div>
+        `;
+    } else if (resumePreview) {
+        resumePreview.innerHTML = `
+            <div class="no-resume">
+                <i class="fas fa-file-slash"></i>
+                <span>No resume available</span>
+            </div>
+        `;
+    }
+    
+    // 🎯 THE KEY FIX: Set application_id on ALL status buttons
+    const statusButtons = cardFragment.querySelectorAll('[data-status]');
+    console.log('🔍 Found', statusButtons.length, 'status buttons to update');
+    
+    statusButtons.forEach(button => {
+        const oldId = button.getAttribute('data-application-id');
+        button.setAttribute('data-application-id', applicant.application_id);
+        const newId = button.getAttribute('data-application-id');
+        
+        console.log('✅ Updated button:', {
+            status: button.getAttribute('data-status'),
+            oldId: oldId,
+            newId: newId,
+            applicantId: applicant.application_id
+        });
+    });
+    
+    // Add action button listeners for view buttons
+    const viewResumeBtn = cardFragment.querySelector('.view-resume-btn, .view-full-resume-btn');
+    if (viewResumeBtn) {
+        viewResumeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('🔄 View Resume clicked for:', applicant.application_id);
+            
+            if (typeof openEnhancedResumeViewer === 'function') {
+                openEnhancedResumeViewer(applicant.application_id);
+            } else {
+                alert('Resume viewer not available');
+            }
+        });
+    }
+    
+    const viewProfileBtn = cardFragment.querySelector('.view-profile-btn');
+    if (viewProfileBtn) {
+        viewProfileBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('🔄 View Profile clicked for:', applicant.application_id);
+            
+            if (typeof openApplicantModal === 'function') {
+                openApplicantModal(applicant.application_id);
+            } else {
+                alert('Profile viewer not available');
+            }
+        });
+    }
+    
+    console.log('✅ Category card created successfully for:', applicant.full_name, 'with application_id:', applicant.application_id);
+    
+    // Return the actual DOM element, not the fragment
+    return cardEl;
+}
+
+// Add this debug function to check if buttons have proper IDs
+function debugCategoryButtons() {
+    const buttons = document.querySelectorAll('.category-applicant-card [data-status]');
+    console.log('🔍 Debug: Found', buttons.length, 'category buttons:');
+    
+    buttons.forEach((button, index) => {
+        console.log(`Button ${index + 1}:`, {
+            status: button.getAttribute('data-status'),
+            applicationId: button.getAttribute('data-application-id'),
+            hasApplicationId: !!button.getAttribute('data-application-id')
+        });
+    });
+}
+
+console.log('✅ Complete createCategoryApplicantCard function loaded!');
 
     // Add action button listeners for category applicant cards
     function addCategoryApplicantActions(card, applicant) {
@@ -5171,3 +5219,34 @@ async function updateStatusFallback(status, applicationId) {
     }
 }
 
+// Fix view resume button by closing category modal and opening resume modal
+document.addEventListener('click', function(e) {
+    if (e.target.closest('.action-btn.view-resume-btn')) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const button = e.target.closest('.action-btn.view-resume-btn');
+        const card = button.closest('.category-applicant-card');
+        const applicationId = card?.dataset.applicationId || 
+                             card?.querySelector('[data-application-id]')?.getAttribute('data-application-id');
+        
+        console.log('View resume clicked, application ID:', applicationId);
+        
+        if (applicationId) {
+            // Close category modal
+            const categoryModal = document.getElementById('categoryModal');
+            if (categoryModal) {
+                categoryModal.style.display = 'none';
+            }
+            
+            // Open resume viewer modal
+            if (typeof openEnhancedResumeViewer === 'function') {
+                openEnhancedResumeViewer(applicationId);
+            } else {
+                alert('Resume viewer not available');
+            }
+        } else {
+            alert('Application ID not found');
+        }
+    }
+});

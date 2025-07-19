@@ -310,12 +310,12 @@ $application_id = ''; // Will be set via JavaScript
                         </div>
                     </div>
                     
-                    <div class="resume-section">
-                        <h6>Resume Preview</h6>
-                        <div class="resume-preview">
-                            <div class="resume-loading">Loading preview...</div>
-                        </div>
-                    </div>
+                    <!-- <div class="resume-section"> -->
+                        <!-- <h6>Resume Preview</h6> -->
+                        <!-- <div class="resume-preview"> -->
+                            <!-- <div class="resume-loading">Loading preview...</div> -->
+                        <!-- </div> -->
+                    <!-- </div> -->
                 </div>
                 
                 <div class="modal-footer">

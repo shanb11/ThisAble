@@ -195,3 +195,23 @@
 {"timestamp":"2025-07-08 09:56:09","action":"google_login","ip":"192.168.1.2","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":4,"email":"baccayshan@gmail.com","setup_complete":true}}
 {"timestamp":"2025-07-08 09:59:19","action":"google_login","ip":"192.168.1.2","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":4,"email":"baccayshan@gmail.com","setup_complete":true}}
 {"timestamp":"2025-07-08 11:33:29","action":"google_login","ip":"192.168.1.2","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":4,"email":"baccayshan@gmail.com","setup_complete":true}}
+{"timestamp":"2025-07-11 02:01:41","action":"google_login","ip":"192.168.13.179","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":4,"email":"baccayshan@gmail.com","setup_complete":true}}
+{"timestamp":"2025-07-11 02:02:15","action":"google_login","ip":"192.168.13.179","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":4,"email":"baccayshan@gmail.com","setup_complete":true}}
+{"timestamp":"2025-07-11 03:26:05","action":"skills_saved","ip":"192.168.13.179","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":"4","skill_count":3,"skill_ids":[1,2,3]}}
+{"timestamp":"2025-07-11 03:26:29","action":"workstyle_saved","ip":"192.168.13.179","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":"4","work_style":"onsite"}}
+{"timestamp":"2025-07-11 03:26:51","action":"setup_data_saved","ip":"192.168.13.179","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":"4","work_style":null,"job_type":"fulltime"}}
+{"timestamp":"2025-07-11 03:29:51","action":"accommodations_saved","ip":"192.168.13.179","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":"4","disability_type":"non-apparent","accommodations_count":2,"no_accommodations_needed":false}}
+{"timestamp":"2025-07-11 03:30:10","action":"resume_uploaded","ip":"192.168.13.179","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":4,"file_name":"temp.pdf","file_size":241553,"file_path":"uploads\/resumes\/4_687069220912e.pdf"}}
+{"timestamp":"2025-07-11 03:30:10","action":"setup_completed","ip":"192.168.13.179","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":"4","completion_time":"2025-07-11 03:30:10"}}
+{"timestamp":"2025-07-11 03:32:23","action":"skills_saved","ip":"192.168.13.179","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":"4","skill_count":1,"skill_ids":[18]}}
+{"timestamp":"2025-07-11 03:32:26","action":"workstyle_saved","ip":"192.168.13.179","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":"4","work_style":"onsite"}}
+{"timestamp":"2025-07-11 03:32:28","action":"setup_data_saved","ip":"192.168.13.179","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":"4","work_style":null,"job_type":"fulltime"}}
+{"timestamp":"2025-07-11 03:32:34","action":"accommodations_saved","ip":"192.168.13.179","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":"4","disability_type":"non-apparent","accommodations_count":0,"no_accommodations_needed":true}}
+{"timestamp":"2025-07-11 03:32:39","action":"resume_uploaded","ip":"192.168.13.179","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":4,"file_name":"temp2.pdf","file_size":304190,"file_path":"uploads\/resumes\/4_687069b7b536b.pdf"}}
+{"timestamp":"2025-07-11 03:32:39","action":"setup_completed","ip":"192.168.13.179","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":"4","completion_time":"2025-07-11 03:32:39"}}
+{"timestamp":"2025-07-11 03:40:27","action":"skills_saved","ip":"192.168.13.179","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":"4","skill_count":1,"skill_ids":[22]}}
+{"timestamp":"2025-07-11 03:40:31","action":"workstyle_saved","ip":"192.168.13.179","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":"4","work_style":"onsite"}}
+{"timestamp":"2025-07-11 03:40:34","action":"setup_data_saved","ip":"192.168.13.179","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":"4","work_style":null,"job_type":"parttime"}}
+{"timestamp":"2025-07-11 03:40:44","action":"accommodations_saved","ip":"192.168.13.179","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":"4","disability_type":"non-apparent","accommodations_count":0,"no_accommodations_needed":true}}
+{"timestamp":"2025-07-11 03:40:53","action":"resume_uploaded","ip":"192.168.13.179","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":4,"file_name":"temp2.pdf","file_size":304190,"file_path":"uploads\/resumes\/4_68706ba5899f9.pdf"}}
+{"timestamp":"2025-07-11 03:40:53","action":"setup_completed","ip":"192.168.13.179","user_agent":"Dart\/3.8 (dart:io)","data":{"user_id":"4","completion_time":"2025-07-11 03:40:53"}}

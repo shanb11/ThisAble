@@ -39,5 +39,6 @@
         </button>
         
         <div class="signup">New to ThisAble? <a href="#" id="signupLink" onclick="event.preventDefault(); document.getElementById('selectionModal').style.display='flex'; return false;">Sign up</a></div>
+        <div class="signup">Click here to <a href="/ThisAble/frontend/candidate/login.php" id="signupLink">Log in as applicant</a>    
     </div>
 </div>

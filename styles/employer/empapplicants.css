@@ -2924,6 +2924,8 @@ body {
     display: flex;
     align-items: center;
     gap: 5px;
+    position: relative !important;
+    z-index: 9999 !important;
 }
 
 .view-full-resume-btn:hover {
@@ -4999,4 +5001,14 @@ body {
     padding: 4px 8px !important;
     margin: 2px !important;
     border-radius: 12px !important;
+}
+
+.category-applicant-card .applicant-header {
+    position: relative;
+    z-index: 10;
+}
+
+.category-applicant-card .applicant-details {
+    position: relative;
+    z-index: 1;
 }
