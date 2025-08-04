@@ -2114,3 +2114,208 @@ html {
 .skeleton-loader.narrow {
     width: 50%;
 }
+
+/* Add these styles to your existing dashboard.css */
+/* Just append at the end, don't replace anything */
+
+/* Make stat cards clickable */
+.clickable-stat {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.clickable-stat:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    border-color: var(--primary);
+}
+
+.clickable-stat:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* Action hint text */
+.stat-action-hint {
+    font-size: 11px;
+    color: var(--primary);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    font-weight: 500;
+    margin-top: 5px;
+    text-align: center;
+}
+
+.clickable-stat:hover .stat-action-hint {
+    opacity: 1;
+}
+
+/* Simple popup styles */
+.quick-stats-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.popup-content {
+    background: white;
+    border-radius: 12px;
+    max-width: 400px;
+    width: 90%;
+    max-height: 80vh;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from { 
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.popup-header {
+    padding: 20px 25px 15px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, var(--primary), var(--sidebar));
+    color: white;
+}
+
+.popup-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.popup-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: white;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+    padding: 5px;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.popup-close:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.popup-body {
+    padding: 20px 25px;
+    line-height: 1.5;
+    color: #333;
+}
+
+.popup-body p {
+    margin: 0 0 10px 0;
+}
+
+.popup-body strong {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.popup-body ul {
+    color: #666;
+    font-size: 14px;
+}
+
+.popup-body li {
+    margin-bottom: 5px;
+}
+
+.popup-footer {
+    padding: 15px 25px 20px;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    background: #f8f9fa;
+}
+
+.btn-primary, .btn-secondary {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--accent-secondary);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: white;
+    color: #666;
+    border: 1px solid #ddd;
+}
+
+.btn-secondary:hover {
+    background: #f8f9fa;
+    color: #333;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .popup-content {
+        width: 95%;
+        margin: 20px;
+    }
+    
+    .popup-header,
+    .popup-body,
+    .popup-footer {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    
+    .popup-footer {
+        flex-direction: column;
+    }
+    
+    .btn-primary, .btn-secondary {
+        width: 100%;
+        justify-content: center;
+    }
+}

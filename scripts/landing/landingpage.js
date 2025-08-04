@@ -1,186 +1,161 @@
-// Sample job data
-const jobsData = [
+// Real jobs data - will be populated by AJAX
+let jobsData = [];
+let categoryStats = {};
+let siteStats = {};
+
+// Sample/fallback jobs data (keep your original hardcoded data as backup)
+const sampleJobsData = [
     {
-        id: 1,
-        title: "Elementary School Teacher",
-        company: "Bright Future Academy",
-        location: "New York",
+        id: 999,
+        title: "Sample - Elementary School Teacher",
+        company: "Demo Academy",
+        location: "Sample Location",
         type: "Full-time",
         category: "education",
-        salary: "$45,000 - $60,000",
-        description: "Looking for a passionate elementary school teacher to educate and inspire young minds. Must have a teaching certificate and experience working with children."
+        salary: "₱45,000 - ₱60,000",
+        description: "This is a sample job posting. Real jobs will appear here once employers start posting."
     },
     {
-        id: 2,
-        title: "Administrative Assistant",
-        company: "Global Solutions Inc.",
-        location: "Chicago",
+        id: 998,
+        title: "Sample - Administrative Assistant",
+        company: "Demo Company",
+        location: "Sample City",
         type: "Full-time",
         category: "office",
-        salary: "$35,000 - $45,000",
-        description: "Seeking an organized administrative assistant to support our executive team. Responsibilities include scheduling, document management, and customer service."
-    },
-    {
-        id: 3,
-        title: "Customer Service Representative",
-        company: "Tech Support Central",
-        location: "Remote",
-        type: "Part-time",
-        category: "customer",
-        salary: "$18 - $22 per hour",
-        description: "Join our remote customer service team providing technical support to customers. Strong communication skills and problem-solving abilities required."
-    },
-    {
-        id: 4,
-        title: "Business Analyst",
-        company: "Finance Corp",
-        location: "San Francisco",
-        type: "Full-time",
-        category: "business",
-        salary: "$70,000 - $90,000",
-        description: "Seeking a business analyst to help improve our operational processes. Must have experience with data analysis and business process optimization."
-    },
-    {
-        id: 5,
-        title: "Registered Nurse",
-        company: "Community Health Center",
-        location: "Miami",
-        type: "Full-time",
-        category: "healthcare",
-        salary: "$65,000 - $85,000",
-        description: "Join our healthcare team as a registered nurse. Must have valid nursing license and experience in direct patient care."
-    },
-    {
-        id: 6,
-        title: "Accountant",
-        company: "Financial Services LLC",
-        location: "Chicago",
-        type: "Full-time",
-        category: "finance",
-        salary: "$55,000 - $75,000",
-        description: "Seeking an experienced accountant to join our finance team. Responsibilities include financial reporting, budgeting, and tax preparation."
-    },
-    {
-        id: 7,
-        title: "Math Tutor",
-        company: "Learning Center",
-        location: "Remote",
-        type: "Part-time",
-        category: "education",
-        salary: "$25 - $35 per hour",
-        description: "Experienced math tutor needed to help students improve their skills. Must have strong knowledge of algebra, geometry, and calculus."
-    },
-    {
-        id: 8,
-        title: "Executive Assistant",
-        company: "Tech Innovations",
-        location: "San Francisco",
-        type: "Full-time",
-        category: "office",
-        salary: "$50,000 - $65,000",
-        description: "Support our CEO and executive team with administrative tasks, scheduling, and travel arrangements. Must be highly organized and proactive."
-    },
-    {
-        id: 9,
-        title: "Call Center Agent",
-        company: "Customer First Services",
-        location: "Remote",
-        type: "Full-time",
-        category: "customer",
-        salary: "$35,000 - $42,000",
-        description: "Join our remote call center team handling customer inquiries and support requests. Must have excellent communication skills and patience."
-    },
-    {
-        id: 10,
-        title: "Marketing Coordinator",
-        company: "Brand Builders Inc.",
-        location: "New York",
-        type: "Full-time",
-        category: "business",
-        salary: "$45,000 - $55,000",
-        description: "Seeking a creative marketing coordinator to help manage our campaigns and social media presence. Experience with digital marketing preferred."
-    },
-    {
-        id: 11,
-        title: "Medical Assistant",
-        company: "Wellness Medical Group",
-        location: "Miami",
-        type: "Full-time",
-        category: "healthcare",
-        salary: "$38,000 - $48,000",
-        description: "Join our healthcare team as a medical assistant. Responsibilities include patient intake, vital signs, and assisting physicians."
-    },
-    {
-        id: 12,
-        title: "Financial Analyst",
-        company: "Investment Partners",
-        location: "Chicago",
-        type: "Full-time",
-        category: "finance",
-        salary: "$65,000 - $85,000",
-        description: "Seeking a detailed financial analyst to perform market research and investment analysis. Strong Excel and financial modeling skills required."
-    },
-    {
-        id: 13,
-        title: "ESL Teacher",
-        company: "Language Academy",
-        location: "Remote",
-        type: "Contract",
-        category: "education",
-        salary: "$20 - $30 per hour",
-        description: "Online ESL teacher needed to teach English to international students. TEFL certification and teaching experience preferred."
-    },
-    {
-        id: 14,
-        title: "Data Entry Specialist",
-        company: "Information Services",
-        location: "Remote",
-        type: "Part-time",
-        category: "office",
-        salary: "$16 - $20 per hour",
-        description: "Accurate data entry specialist needed to input and validate information. Must have attention to detail and fast typing skills."
-    },
-    {
-        id: 15,
-        title: "Help Desk Support",
-        company: "IT Solutions",
-        location: "San Francisco",
-        type: "Full-time",
-        category: "customer",
-        salary: "$40,000 - $50,000",
-        description: "Provide technical support to employees and customers. Must have knowledge of common software applications and troubleshooting skills."
-    },
-    {
-        id: 16,
-        title: "Project Manager",
-        company: "Development Enterprises",
-        location: "New York",
-        type: "Full-time",
-        category: "business",
-        salary: "$75,000 - $95,000",
-        description: "Experienced project manager needed to oversee development projects. PMP certification and 3+ years of experience preferred."
-    },
-    {
-        id: 17,
-        title: "Physical Therapist",
-        company: "Rehabilitation Center",
-        location: "Miami",
-        type: "Full-time",
-        category: "healthcare",
-        salary: "$70,000 - $90,000",
-        description: "Licensed physical therapist needed to help patients recover from injuries. Must have experience with rehabilitation techniques."
-    },
-    {
-        id: 18,
-        title: "Bookkeeper",
-        company: "Small Business Services",
-        location: "Remote",
-        type: "Part-time",
-        category: "finance",
-        salary: "$22 - $28 per hour",
-        description: "Experienced bookkeeper needed to maintain financial records. Knowledge of QuickBooks and Excel required."
+        salary: "₱35,000 - ₱45,000",
+        description: "This is a sample job posting. Real jobs will appear here once employers start posting."
     }
 ];
+
+// Fetch real jobs from database
+async function fetchRealJobs() {
+    try {
+        console.log('Fetching real jobs from database...');
+        
+        const response = await fetch('/thisable/backend/landing/get_landing_jobs.php');
+        const data = await response.json();
+        
+        console.log('Response from backend:', data);
+        
+        if (data.success && data.jobs.length > 0) {
+            // Use real jobs
+            jobsData = data.jobs;
+            categoryStats = data.categories;
+            siteStats = data.stats;
+            
+            console.log('Loaded ' + data.jobs.length + ' real jobs');
+            
+            // Update category counts on page
+            updateCategoryCounts();
+            
+            // Update site statistics if hero section exists
+            updateSiteStats();
+            
+        } else {
+            // Fallback to sample data
+            console.log('No real jobs found, using sample data');
+            jobsData = sampleJobsData;
+            categoryStats = {
+                'education': 1,
+                'office': 1,
+                'customer': 0,
+                'business': 0,
+                'healthcare': 0,
+                'finance': 0
+            };
+            
+            // Show demo notice
+            showDemoNotice();
+        }
+        
+    } catch (error) {
+        console.error('Error fetching real jobs:', error);
+        
+        // Fallback to sample data on error
+        jobsData = sampleJobsData;
+        categoryStats = {
+            'education': 1,
+            'office': 1,
+            'customer': 0,
+            'business': 0,
+            'healthcare': 0,
+            'finance': 0
+        };
+        
+        showDemoNotice();
+    }
+}
+
+// Update category counts in the UI
+function updateCategoryCounts() {
+    const categories = {
+        'education': 'Education & Training',
+        'office': 'Office Administration', 
+        'customer': 'Customer Service',
+        'business': 'Business Administration',
+        'healthcare': 'Healthcare & Wellness',
+        'finance': 'Finance & Accounting'
+    };
+    
+    Object.keys(categories).forEach(categoryKey => {
+        const count = categoryStats[categoryKey] || 0;
+        const categoryCard = document.querySelector(`[data-category="${categoryKey}"]`);
+        
+        if (categoryCard) {
+            const countElement = categoryCard.querySelector('p');
+            if (countElement) {
+                if (count > 0) {
+                    countElement.textContent = `${count} job${count > 1 ? 's' : ''} available`;
+                } else {
+                    countElement.textContent = 'Coming soon!';
+                    countElement.style.fontStyle = 'italic';
+                    countElement.style.color = '#999';
+                }
+            }
+        }
+    });
+}
+
+// Update site statistics in hero section
+function updateSiteStats() {
+    if (siteStats.total_jobs) {
+        // You can add this feature later if you want live stats in hero
+        console.log('Site stats:', siteStats);
+    }
+}
+
+// Show demo notice when using sample data
+function showDemoNotice() {
+    const hero = document.querySelector('.hero');
+    if (hero && !document.querySelector('.demo-notice')) {
+        const notice = document.createElement('div');
+        notice.className = 'demo-notice';
+        notice.style.cssText = `
+            background: rgba(253, 139, 81, 0.1);
+            border: 1px solid #FD8B51;
+            border-radius: 5px;
+            padding: 10px 20px;
+            margin: 20px auto;
+            max-width: 600px;
+            text-align: center;
+            font-size: 0.9rem;
+        `;
+        notice.innerHTML = '<i class="fas fa-info-circle"></i> Sample jobs shown. Real job postings will appear here once employers start posting.';
+        hero.appendChild(notice);
+    }
+}
+
+// Initialize - fetch real jobs when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Fetch real jobs first
+    fetchRealJobs().then(() => {
+        // Then set up event listeners (your existing code)
+        setupEventListeners();
+    });
+});
+
+// Your existing setupEventListeners function stays exactly the same
+// Just make sure it's called after fetchRealJobs() completes
 
 // DOM elements
 const searchBtn = document.getElementById('search-btn');
@@ -201,10 +176,11 @@ const filterLocation = document.getElementById('filter-location');
 const filterType = document.getElementById('filter-type');
 const jobPostForm = document.getElementById('job-post-form');
 
-// Initialize the page
 document.addEventListener('DOMContentLoaded', function() {
-    // Set up event listeners
-    setupEventListeners();
+    // Fetch real jobs first, then setup event listeners
+    fetchRealJobs().then(() => {
+        setupEventListeners();
+    });
 });
 
 // Set up all event listeners
