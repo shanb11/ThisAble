@@ -27,17 +27,72 @@ try {
     $googleAccessToken = trim($input['accessToken'] ?? '');
     $action = trim($input['action'] ?? 'login');
     
-    // Validation
-    if (empty($googleIdToken)) {
-        ApiResponse::validationError(['idToken' => 'Google ID token is required']);
+    // Determine which verification method to use
+    $googleUserInfo = null;
+    
+    // Try ID token first (preferred for security - mobile platforms)
+    if (!empty($googleIdToken)) {
+        $googleUserInfo = verifyGoogleIdToken($googleIdToken);
+        if ($googleUserInfo) {
+            error_log("Verified using ID token");
+        }
     }
     
-    // Verify Google ID token
-    $googleUserInfo = verifyGoogleIdToken($googleIdToken);
+    // If no ID token or verification failed, try access token (web fallback)
+    if (!$googleUserInfo && !empty($googleAccessToken)) {
+        $googleUserInfo = verifyGoogleAccessToken($googleAccessToken);
+        if ($googleUserInfo) {
+            error_log("Verified using access token (web fallback)");
+        }
+    }
     
+    // If still no user info, authentication failed
     if (!$googleUserInfo) {
-        ApiResponse::error("Invalid Google ID token", 401);
+        ApiResponse::error("Invalid Google authentication", 401);
     }
+
+
+
+// Add this new function
+function verifyGoogleAccessToken($accessToken) {
+    try {
+        // Use Google's userinfo endpoint with the access token
+        $url = "https://www.googleapis.com/oauth2/v1/userinfo?access_token=" . $accessToken;
+        
+        $context = stream_context_create([
+            'http' => [
+                'timeout' => 10,
+                'user_agent' => 'ThisAble Mobile App'
+            ]
+        ]);
+        
+        $response = file_get_contents($url, false, $context);
+        
+        if ($response === FALSE) {
+            return null;
+        }
+        
+        $data = json_decode($response, true);
+        
+        // Verify we got valid user data
+        if (isset($data['email']) && isset($data['id'])) {
+            // Format to match ID token structure
+            return [
+                'email' => $data['email'],
+                'given_name' => $data['given_name'] ?? '',
+                'family_name' => $data['family_name'] ?? '',
+                'picture' => $data['picture'] ?? '',
+                'sub' => $data['id']
+            ];
+        }
+        
+        return null;
+        
+    } catch (Exception $e) {
+        error_log("Google access token verification error: " . $e->getMessage());
+        return null;
+    }
+}
     
     // Extract user information from Google
     $email = $googleUserInfo['email'];
@@ -289,4 +344,74 @@ function verifyGoogleIdToken($idToken) {
         return null;
     }
 }
+
+/**
+ * Verify Google Access Token (Web fallback)
+ * Add this AFTER the existing verifyGoogleIdToken function
+ */
+function verifyGoogleAccessToken($accessToken) {
+    try {
+        // Use Google's tokeninfo endpoint
+        $url = "https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=" . urlencode($accessToken);
+        
+        $context = stream_context_create([
+            'http' => [
+                'timeout' => 10,
+                'user_agent' => 'ThisAble Mobile App'
+            ]
+        ]);
+        
+        $response = @file_get_contents($url, false, $context);
+        
+        if ($response === FALSE) {
+            error_log("Access token verification failed: Invalid response");
+            return null;
+        }
+        
+        $data = json_decode($response, true);
+        
+        // Verify the token is for your app
+        $expectedClientId = '83628564105-ebo9ng5modqfhkgepbm55rkv92d669l9.apps.googleusercontent.com';
+        
+        if (!isset($data['aud']) || $data['aud'] !== $expectedClientId) {
+            error_log("Access token verification failed: Wrong client ID");
+            return null;
+        }
+        
+        // Get user info using the access token
+        $userInfoUrl = "https://www.googleapis.com/oauth2/v2/userinfo";
+        $opts = [
+            'http' => [
+                'method' => 'GET',
+                'header' => "Authorization: Bearer " . $accessToken . "\r\n",
+                'timeout' => 10
+            ]
+        ];
+        
+        $userContext = stream_context_create($opts);
+        $userResponse = @file_get_contents($userInfoUrl, false, $userContext);
+        
+        if ($userResponse === FALSE) {
+            error_log("Failed to get user info with access token");
+            return null;
+        }
+        
+        $userInfo = json_decode($userResponse, true);
+        
+        // Format to match ID token structure
+        return [
+            'email' => $userInfo['email'] ?? null,
+            'given_name' => $userInfo['given_name'] ?? '',
+            'family_name' => $userInfo['family_name'] ?? '',
+            'picture' => $userInfo['picture'] ?? '',
+            'sub' => $userInfo['id'] ?? null,
+            'email_verified' => $userInfo['verified_email'] ?? false
+        ];
+        
+    } catch (Exception $e) {
+        error_log("Access token verification error: " . $e->getMessage());
+        return null;
+    }
+}
+?>
 ?>
