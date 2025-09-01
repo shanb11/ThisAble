@@ -1,7 +1,8 @@
 <?php
 /**
- * BULLETPROOF Get Applications List API for ThisAble Mobile
- * Simple queries that match your exact database structure
+ * FIXED Get Applications List API for ThisAble Mobile
+ * Now includes search functionality to match Flutter app requirements
+ * File: C:\xampp\htdocs\ThisAble\api\candidate\get_applications_list.php
  */
 
 // Include required files
@@ -23,11 +24,11 @@ try {
     }
     
     $seekerId = $user['user_id'];
-    error_log("BULLETPROOF Applications API: seeker_id=$seekerId");
+    error_log("Applications API: seeker_id=$seekerId");
 
-    // Get query parameters
+    // ✅ FIXED: Get query parameters (including search)
     $status_filter = $_GET['status'] ?? 'all';
-    $search_query = $_GET['search'] ?? '';
+    $search_query = $_GET['search'] ?? '';  // ✅ ADDED: Handle search parameter from Flutter
     $page = intval($_GET['page'] ?? 1);
     $limit = intval($_GET['limit'] ?? 20);
     $offset = ($page - 1) * $limit;
@@ -35,7 +36,7 @@ try {
     // Get database connection
     $conn = ApiDatabase::getConnection();
     
-    // ===== STEP 1: BUILD SIMPLE QUERY =====
+    // ===== STEP 1: BUILD QUERY WITH SEARCH SUPPORT =====
     $whereConditions = ["ja.seeker_id = ?"];
     $params = [$seekerId];
     
@@ -45,18 +46,19 @@ try {
         $params[] = $status_filter;
     }
     
-    // Search filter
+    // ✅ ADDED: Search filter support
     if (!empty($search_query)) {
         $whereConditions[] = "(jp.job_title LIKE ? OR e.company_name LIKE ? OR jp.location LIKE ?)";
         $searchParam = "%{$search_query}%";
         $params[] = $searchParam;
         $params[] = $searchParam;
         $params[] = $searchParam;
+        error_log("Applications API: Search query = '$search_query'");
     }
     
     $whereClause = implode(' AND ', $whereConditions);
     
-    // ===== STEP 2: GET APPLICATIONS (SIMPLE QUERY) =====
+    // ===== STEP 2: GET APPLICATIONS WITH JOIN FOR SEARCH =====
     $stmt = $conn->prepare("
         SELECT 
             ja.application_id,
@@ -66,8 +68,16 @@ try {
             ja.cover_letter,
             ja.employer_notes,
             ja.last_activity,
-            ja.resume_id
+            ja.resume_id,
+            jp.job_title,
+            jp.location,
+            jp.employment_type,
+            jp.employer_id,
+            e.company_name,
+            e.logo_url
         FROM job_applications ja
+        JOIN job_posts jp ON ja.job_id = jp.job_id
+        JOIN employers e ON jp.employer_id = e.employer_id
         WHERE {$whereClause}
         ORDER BY ja.applied_at DESC
         LIMIT $limit OFFSET $offset
@@ -76,150 +86,58 @@ try {
     $stmt->execute($params);
     $applications = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    error_log("BULLETPROOF: Found " . count($applications) . " applications");
+    error_log("Applications API: Found " . count($applications) . " applications");
     
-    // ===== STEP 3: GET JOB AND COMPANY INFO FOR EACH APPLICATION =====
-    foreach ($applications as &$app) {
-        // Get job info
-        $jobStmt = $conn->prepare("SELECT job_title, location, employment_type, employer_id FROM job_posts WHERE job_id = ?");
-        $jobStmt->execute([$app['job_id']]);
-        $jobInfo = $jobStmt->fetch(PDO::FETCH_ASSOC);
-        
-        if ($jobInfo) {
-            $app['job_title'] = $jobInfo['job_title'];
-            $app['job_location'] = $jobInfo['location'];
-            $app['employment_type'] = $jobInfo['employment_type'];
-            
-            // Get company name
-            $companyStmt = $conn->prepare("SELECT company_name FROM employers WHERE employer_id = ?");
-            $companyStmt->execute([$jobInfo['employer_id']]);
-            $companyInfo = $companyStmt->fetch(PDO::FETCH_ASSOC);
-            $app['company_name'] = $companyInfo['company_name'] ?? 'Unknown Company';
-        } else {
-            $app['job_title'] = 'Unknown Job';
-            $app['job_location'] = 'Unknown';
-            $app['employment_type'] = 'Unknown';
-            $app['company_name'] = 'Unknown Company';
-        }
-        
-        // Add progress percentage based on status
-        switch ($app['application_status']) {
-            case 'submitted':
-                $app['progress_percentage'] = 20;
-                break;
-            case 'under_review':
-                $app['progress_percentage'] = 40;
-                break;
-            case 'shortlisted':
-                $app['progress_percentage'] = 60;
-                break;
-            case 'interview_scheduled':
-                $app['progress_percentage'] = 60;
-                break;
-            case 'interviewed':
-                $app['progress_percentage'] = 80;
-                break;
-            case 'hired':
-                $app['progress_percentage'] = 100;
-                break;
-            default:
-                $app['progress_percentage'] = 20;
-        }
-        
-        // Check if can withdraw
-        $app['can_withdraw'] = in_array($app['application_status'], ['submitted', 'under_review']) ? 1 : 0;
-        
-        // Format dates
-        $app['applied_at'] = date('F j, Y', strtotime($app['applied_at']));
-        $app['last_activity'] = date('F j, Y', strtotime($app['last_activity']));
-        
-        // Get application timeline/history
-        $timelineStmt = $conn->prepare("
-            SELECT 
-                changed_at as date,
-                new_status as status,
-                notes,
-                CASE 
-                    WHEN new_status = 'submitted' THEN 'Application Submitted'
-                    WHEN new_status = 'under_review' THEN 'Application Reviewed'
-                    WHEN new_status = 'shortlisted' THEN 'Shortlisted'
-                    WHEN new_status = 'interview_scheduled' THEN 'Interview Scheduled'
-                    WHEN new_status = 'interviewed' THEN 'Interview Completed'
-                    WHEN new_status = 'hired' THEN 'Job Offer Received'
-                    WHEN new_status = 'rejected' THEN 'Application Rejected'
-                    ELSE 'Status Updated'
-                END as title
-            FROM application_status_history
-            WHERE application_id = ?
-            ORDER BY changed_at ASC
-        ");
-        $timelineStmt->execute([$app['application_id']]);
-        $app['timeline'] = $timelineStmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        // Format timeline dates
-        foreach ($app['timeline'] as &$timeline_item) {
-            $timeline_item['date'] = date('M j, Y', strtotime($timeline_item['date']));
-        }
-    }
-    
-    // ===== STEP 4: GET TOTAL COUNT =====
+    // ===== STEP 3: GET TOTAL COUNT FOR PAGINATION =====
     $countStmt = $conn->prepare("
-        SELECT COUNT(*) as total_count
+        SELECT COUNT(*) as total
         FROM job_applications ja
-        LEFT JOIN job_posts jp ON ja.job_id = jp.job_id
-        LEFT JOIN employers e ON jp.employer_id = e.employer_id
+        JOIN job_posts jp ON ja.job_id = jp.job_id
+        JOIN employers e ON jp.employer_id = e.employer_id
         WHERE {$whereClause}
     ");
     $countStmt->execute($params);
-    $totalCount = $countStmt->fetch(PDO::FETCH_ASSOC)['total_count'];
+    $totalCount = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
     
-    // ===== STEP 5: GET STATUS STATS =====
-    $statsStmt = $conn->prepare("
-        SELECT 
-            application_status,
-            COUNT(*) as count
-        FROM job_applications 
-        WHERE seeker_id = ?
-        GROUP BY application_status
-    ");
-    $statsStmt->execute([$seekerId]);
-    $statusStats = $statsStmt->fetchAll(PDO::FETCH_ASSOC);
+    // ===== STEP 4: FORMAT RESPONSE =====
+    $totalPages = ceil($totalCount / $limit);
     
-    // Convert to associative array
-    $stats = ['all' => $totalCount];
-    foreach ($statusStats as $stat) {
-        $stats[$stat['application_status']] = $stat['count'];
+    // Format applications for Flutter
+    $formattedApplications = [];
+    foreach ($applications as $app) {
+        $formattedApplications[] = [
+            'application_id' => intval($app['application_id']),
+            'job_id' => intval($app['job_id']),
+            'job_title' => $app['job_title'],
+            'company_name' => $app['company_name'],
+            'company_logo' => $app['logo_url'],
+            'location' => $app['location'],
+            'employment_type' => $app['employment_type'],
+            'application_status' => $app['application_status'],
+            'applied_at' => $app['applied_at'],
+            'cover_letter' => $app['cover_letter'],
+            'employer_notes' => $app['employer_notes'],
+            'last_activity' => $app['last_activity'],
+            'resume_id' => $app['resume_id'] ? intval($app['resume_id']) : null,
+        ];
     }
     
-    // ===== STEP 6: COMPILE RESPONSE =====
-    $responseData = [
-        'applications' => $applications,
+    ApiResponse::success([
+        'applications' => $formattedApplications,
         'pagination' => [
             'current_page' => $page,
-            'total_count' => $totalCount,
-            'per_page' => $limit,
-            'total_pages' => ceil($totalCount / $limit)
+            'total_pages' => $totalPages,
+            'total_items' => intval($totalCount),
+            'items_per_page' => $limit,
+            'has_next' => $page < $totalPages,
+            'has_previous' => $page > 1
         ],
-        'filter_stats' => $stats,
-        'debug_info' => [
-            'seeker_id' => $seekerId,
-            'applications_found' => count($applications),
-            'where_clause' => $whereClause,
-            'sql_working' => true
-        ]
-    ];
+        'search_query' => $search_query,  // ✅ ADDED: Return search query for debugging
+        'status_filter' => $status_filter
+    ], 'Applications retrieved successfully');
     
-    error_log("BULLETPROOF: Applications data compiled successfully");
-    
-    ApiResponse::success($responseData, "Applications retrieved successfully");
-    
-} catch(PDOException $e) {
-    error_log("BULLETPROOF Applications database error: " . $e->getMessage());
-    error_log("BULLETPROOF SQL Error Info: " . json_encode($e->errorInfo ?? []));
-    ApiResponse::serverError("Database query failed: " . $e->getMessage());
-    
-} catch(Exception $e) {
-    error_log("BULLETPROOF Applications general error: " . $e->getMessage());
-    ApiResponse::serverError("API error: " . $e->getMessage());
+} catch (Exception $e) {
+    error_log("Applications API Error: " . $e->getMessage());
+    ApiResponse::error("Failed to retrieve applications: " . $e->getMessage());
 }
 ?>
