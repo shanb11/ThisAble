@@ -5,7 +5,7 @@
  */
 
 // Include your existing database connection
-require_once '../../backend/db.php';
+require_once 'C:/xampp/htdocs/ThisAble/backend/db.php';
 
 class ApiDatabase {
     

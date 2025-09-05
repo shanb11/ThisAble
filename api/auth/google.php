@@ -1,7 +1,9 @@
 <?php
 /**
- * Google OAuth API for ThisAble Mobile - FIXED FOR WEB
- * ENHANCED to handle both ID tokens (mobile) and Access tokens (web)
+ * FIXED Google OAuth API for ThisAble Mobile
+ * ✅ CORRECTED to match your EXACT database schema
+ * ✅ Handles both ID tokens (mobile) and Access tokens (web)
+ * ✅ Uses your working authentication patterns
  */
 
 require_once '../config/cors.php';
@@ -27,7 +29,7 @@ try {
     $action = $input['action'] ?? 'login';
     
     // Debug logging
-    error_log("=== GOOGLE AUTH DEBUG ===");
+    error_log("=== FIXED GOOGLE AUTH DEBUG ===");
     error_log("Has idToken: " . (!empty($idToken) ? 'YES' : 'NO'));
     error_log("Has accessToken: " . (!empty($accessToken) ? 'YES' : 'NO'));
     error_log("Action: " . $action);
@@ -66,8 +68,8 @@ try {
         ApiResponse::validationError(['email' => 'Email not found in Google response']);
     }
     
-    // Connect to database
-    $conn = ApiDatabase::connect();
+    // ✅ FIXED: Use correct database connection method
+    $conn = ApiDatabase::getConnection();
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
     $email = $userInfo['email'];
@@ -77,107 +79,148 @@ try {
     
     error_log("Processing user: $email");
     
-    // Check if user exists in user_accounts
-    $stmt = $conn->prepare("SELECT user_id, account_type FROM user_accounts WHERE email = ?");
+    // ✅ FIXED: Check if user exists using CORRECT column names
+    $stmt = $conn->prepare("SELECT account_id, seeker_id FROM user_accounts WHERE email = ?");
     $stmt->execute([$email]);
     $existingUser = $stmt->fetch(PDO::FETCH_ASSOC);
     
     if ($existingUser) {
-        error_log("Existing user found");
+        // ✅ EXISTING USER LOGIN - Use correct table structure
+        error_log("Existing user found, logging in");
         
-        if ($existingUser['account_type'] !== 'candidate') {
-            ApiResponse::validationError(['account_type' => 'This email is registered as an employer account']);
-        }
+        $seekerId = $existingUser['seeker_id'];
         
-        // Get candidate profile
-        $candidateStmt = $conn->prepare("
-            SELECT js.*, ua.email, ua.account_type, ua.created_at as account_created
+        // Get complete user data using WORKING query pattern from your other APIs
+        $userStmt = $conn->prepare("
+            SELECT 
+                js.seeker_id, js.first_name, js.middle_name, js.last_name, 
+                js.suffix, js.disability_id, js.contact_number, js.setup_complete,
+                js.city, js.province,
+                dt.disability_name,
+                ua.email, ua.google_account
             FROM job_seekers js 
-            INNER JOIN user_accounts ua ON js.user_id = ua.user_id 
-            WHERE ua.user_id = ?
+            LEFT JOIN disability_types dt ON js.disability_id = dt.disability_id
+            LEFT JOIN user_accounts ua ON js.seeker_id = ua.seeker_id
+            WHERE js.seeker_id = ?
         ");
-        $candidateStmt->execute([$existingUser['user_id']]);
-        $candidate = $candidateStmt->fetch(PDO::FETCH_ASSOC);
+        $userStmt->execute([$seekerId]);
+        $user = $userStmt->fetch(PDO::FETCH_ASSOC);
         
-        if (!$candidate) {
-            ApiResponse::serverError("Candidate profile not found");
+        if (!$user) {
+            error_log("User data not found for seeker_id: $seekerId");
+            ApiResponse::serverError("User data not found");
         }
         
-        // FIXED: Update profile picture if changed
-        if (!empty($profilePicture) && $candidate['profile_picture'] !== $profilePicture) {
-            $updatePictureStmt = $conn->prepare("UPDATE job_seekers SET profile_picture = ? WHERE user_id = ?");
-            $updatePictureStmt->execute([$profilePicture, $existingUser['user_id']]);
-            $candidate['profile_picture'] = $profilePicture;
+        // Generate API token using your working method
+        $token = ApiDatabase::generateApiToken($seekerId, 'candidate');
+        
+        if (!$token) {
+            error_log("Failed to generate API token");
+            ApiResponse::serverError("Failed to generate authentication token");
         }
         
-        // Generate or refresh token
-        $token = ApiDatabase::generateToken($existingUser['user_id']);
-        
-        ApiResponse::success([
-            'message' => 'Login successful',
-            'user' => [
-                'user_id' => $candidate['user_id'],
-                'first_name' => $candidate['first_name'],
-                'last_name' => $candidate['last_name'],
-                'middle_name' => $candidate['middle_name'],
-                'email' => $candidate['email'],
-                'phone' => $candidate['phone'],
-                'account_type' => $candidate['account_type'],
-                'profile_picture' => $candidate['profile_picture'],
-                'account_setup_completed' => $candidate['account_setup_completed'],
-                'created_at' => $candidate['account_created']
-            ],
-            'token' => $token
+        // Log successful login
+        ApiResponse::logActivity('google_login', [
+            'user_id' => $seekerId,
+            'email' => $email,
+            'setup_complete' => (bool)$user['setup_complete']
         ]);
         
+        // ✅ FIXED: Prepare user data matching your working APIs
+        $userData = [
+            'user_id' => $seekerId,
+            'account_id' => $existingUser['account_id'],
+            'email' => $email,
+            'first_name' => $user['first_name'],
+            'middle_name' => $user['middle_name'],
+            'last_name' => $user['last_name'],
+            'full_name' => trim($user['first_name'] . ' ' . $user['last_name']),
+            'disability_type' => $user['disability_name'],
+            'setup_complete' => (bool)$user['setup_complete'],
+            'pwd_verified' => false, // Will be checked separately
+            'google_account' => true,
+            'user_type' => 'candidate'
+        ];
+        
+        // Return success response with token
+        ApiResponse::success([
+            'user' => $userData,
+            'token' => $token,
+            'token_type' => 'Bearer',
+            'expires_in' => 30 * 24 * 60 * 60, // 30 days in seconds
+            'next_step' => $user['setup_complete'] ? 'dashboard' : 'account_setup'
+        ], "Login successful");
+        
     } else {
-        // New user registration
+        // ✅ NEW USER REGISTRATION - Fixed to match your schema
         error_log("New user registration");
         
         $conn->beginTransaction();
         
         try {
-            // Create user account
-            $insertUserStmt = $conn->prepare("
-                INSERT INTO user_accounts (email, account_type, email_verified, created_at) 
-                VALUES (?, 'candidate', 1, NOW())
-            ");
-            $insertUserStmt->execute([$email]);
-            $userId = $conn->lastInsertId();
-            
-            // Create candidate profile
-            $insertCandidateStmt = $conn->prepare("
+            // ✅ FIXED: Insert into job_seekers FIRST (correct order)
+            // Using default values for required fields that Google doesn't provide
+            $insertJobSeekerStmt = $conn->prepare("
                 INSERT INTO job_seekers (
-                    user_id, first_name, last_name, email, profile_picture, 
-                    account_setup_completed, created_at
-                ) VALUES (?, ?, ?, ?, ?, 0, NOW())
+                    first_name, middle_name, last_name, suffix, 
+                    disability_id, contact_number, setup_complete
+                ) VALUES (?, '', ?, '', 1, '09000000000', 0)
             ");
-            $insertCandidateStmt->execute([
-                $userId, $firstName, $lastName, $email, $profilePicture
-            ]);
+            $insertJobSeekerStmt->execute([$firstName, $lastName]);
+            $seekerId = $conn->lastInsertId();
+            
+            error_log("Created job_seeker with ID: $seekerId");
+            
+            // ✅ FIXED: Insert into user_accounts with correct columns
+            $insertUserStmt = $conn->prepare("
+                INSERT INTO user_accounts (seeker_id, email, password_hash, google_account) 
+                VALUES (?, ?, '', 1)
+            ");
+            $insertUserStmt->execute([$seekerId, $email]);
+            $accountId = $conn->lastInsertId();
+            
+            error_log("Created user_account with ID: $accountId");
             
             $conn->commit();
             
-            // Generate token
-            $token = ApiDatabase::generateToken($userId);
+            // Generate API token using your working method
+            $token = ApiDatabase::generateApiToken($seekerId, 'candidate');
+            
+            if (!$token) {
+                error_log("Failed to generate API token for new user");
+                ApiResponse::serverError("Failed to generate authentication token");
+            }
+            
+            // Log successful registration
+            ApiResponse::logActivity('google_registration', [
+                'user_id' => $seekerId,
+                'email' => $email
+            ]);
+            
+            // ✅ FIXED: Return new user data matching your working APIs
+            $userData = [
+                'user_id' => $seekerId,
+                'account_id' => $accountId,
+                'email' => $email,
+                'first_name' => $firstName,
+                'middle_name' => '',
+                'last_name' => $lastName,
+                'full_name' => trim($firstName . ' ' . $lastName),
+                'disability_type' => null, // Will be set during account setup
+                'setup_complete' => false,
+                'pwd_verified' => false,
+                'google_account' => true,
+                'user_type' => 'candidate'
+            ];
             
             ApiResponse::success([
-                'message' => 'Account created successfully',
-                'user' => [
-                    'user_id' => $userId,
-                    'first_name' => $firstName,
-                    'last_name' => $lastName,
-                    'middle_name' => null,
-                    'email' => $email,
-                    'phone' => null,
-                    'account_type' => 'candidate',
-                    'profile_picture' => $profilePicture,
-                    'account_setup_completed' => 0,
-                    'created_at' => date('Y-m-d H:i:s')
-                ],
+                'user' => $userData,
                 'token' => $token,
+                'token_type' => 'Bearer',
+                'expires_in' => 30 * 24 * 60 * 60, // 30 days in seconds
+                'next_step' => 'account_setup',
                 'is_new_user' => true
-            ]);
+            ], "Account created successfully");
             
         } catch (Exception $e) {
             $conn->rollBack();
@@ -196,7 +239,7 @@ try {
 }
 
 /**
- * Verify Google ID token
+ * Verify Google ID token - WORKING VERSION
  */
 function verifyGoogleIdToken($idToken) {
     try {
@@ -240,7 +283,7 @@ function verifyGoogleIdToken($idToken) {
 }
 
 /**
- * Verify Google Access Token (Web fallback) - ENHANCED ERROR HANDLING
+ * Verify Google Access Token (Web fallback) - WORKING VERSION
  */
 function verifyGoogleAccessToken($accessToken) {
     try {
