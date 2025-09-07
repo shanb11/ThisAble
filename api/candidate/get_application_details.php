@@ -1,7 +1,7 @@
 <?php
 /**
- * PHASE 2: Get Application Details API for ThisAble Mobile
- * Returns comprehensive application details including job info, company details, timeline
+ * COMPLETELY FIXED: Get Application Details API for ThisAble Mobile
+ * ALL database column names corrected to match your actual schema
  * File: C:\xampp\htdocs\ThisAble\api\candidate\get_application_details.php
  */
 
@@ -37,10 +37,10 @@ try {
     // Get database connection
     $conn = ApiDatabase::getConnection();
     
-    // ===== STEP 1: GET COMPREHENSIVE APPLICATION DETAILS =====
+    // ===== COMPLETELY FIXED SQL QUERY - MATCHES YOUR EXACT DATABASE SCHEMA =====
     $stmt = $conn->prepare("
         SELECT 
-            -- Application details
+            -- Application details (ALL CORRECT)
             ja.application_id,
             ja.job_id,
             ja.application_status,
@@ -56,30 +56,33 @@ try {
             ja.rejection_reason,
             ja.last_activity,
             
-            -- Job details
+            -- Job details (FIXED: Using actual column names from your database)
             jp.job_title,
             jp.job_description,
             jp.job_requirements,
             jp.location,
             jp.employment_type,
-            jp.salary_min,
-            jp.salary_max,
-            jp.salary_type,
-            jp.benefits,
+            jp.salary_range,
             jp.posted_at,
             jp.application_deadline,
             jp.job_status,
+            jp.department,
+            jp.remote_work_available,
+            jp.flexible_schedule,
+            jp.min_experience_years,
             
-            -- Company details
+            -- Company details (FIXED: Using actual column names)
             e.employer_id,
             e.company_name,
             e.company_description,
             e.industry,
             e.company_size,
-            e.website_url,
+            e.company_website,
             e.company_logo_path,
+            e.mission_vision,
+            e.why_join_us,
             
-            -- HR Contact details
+            -- HR Contact details (ALL CORRECT)
             ec.first_name as hr_first_name,
             ec.last_name as hr_last_name,
             ec.position as hr_position,
@@ -141,17 +144,16 @@ try {
     
     // ===== STEP 4: BUILD COMPREHENSIVE RESPONSE =====
     
-    // Format salary display
+    // FIXED: Handle salary correctly (single salary_range field)
     $salaryDisplay = 'Not specified';
-    if ($applicationData['salary_min'] && $applicationData['salary_max']) {
-        $salaryDisplay = "₱" . number_format($applicationData['salary_min']) . " - ₱" . number_format($applicationData['salary_max']);
-        if ($applicationData['salary_type']) {
-            $salaryDisplay .= " " . $applicationData['salary_type'];
-        }
-    } elseif ($applicationData['salary_min']) {
-        $salaryDisplay = "₱" . number_format($applicationData['salary_min']) . "+";
-        if ($applicationData['salary_type']) {
-            $salaryDisplay .= " " . $applicationData['salary_type'];
+    if (!empty($applicationData['salary_range'])) {
+        $salary = $applicationData['salary_range'];
+        // If it's just a number, format it nicely
+        if (is_numeric($salary)) {
+            $salaryDisplay = "₱" . number_format($salary);
+        } else {
+            // If it already contains currency or text, use as-is
+            $salaryDisplay = $salary;
         }
     }
     
@@ -159,7 +161,7 @@ try {
     $hrContact = null;
     if ($applicationData['hr_first_name']) {
         $hrContact = [
-            'name' => trim($applicationData['hr_first_name'] . ' ' . $applicationData['hr_last_name']),
+            'name' => trim($applicationData['hr_first_name'] . ' ' . ($applicationData['hr_last_name'] ?? '')),
             'position' => $applicationData['hr_position'] ?? 'HR Representative',
             'email' => $applicationData['hr_email'],
             'phone' => $applicationData['hr_phone']
@@ -180,7 +182,7 @@ try {
     // Determine next steps based on current status
     $nextSteps = _getNextSteps($applicationData['application_status'], $interviewData);
     
-    // Build final response
+    // FIXED: Build response using actual database field names
     $response = [
         'application' => [
             'application_id' => $applicationData['application_id'],
@@ -201,10 +203,13 @@ try {
             'location' => $applicationData['location'],
             'employment_type' => $applicationData['employment_type'],
             'salary' => $salaryDisplay,
-            'benefits' => $applicationData['benefits'],
+            'department' => $applicationData['department'],
             'posted_date' => $applicationData['posted_at'],
             'deadline' => $applicationData['application_deadline'],
-            'status' => $applicationData['job_status']
+            'status' => $applicationData['job_status'],
+            'remote_work_available' => (bool)$applicationData['remote_work_available'],
+            'flexible_schedule' => (bool)$applicationData['flexible_schedule'],
+            'min_experience_years' => $applicationData['min_experience_years']
         ],
         'company' => [
             'employer_id' => $applicationData['employer_id'],
@@ -212,8 +217,10 @@ try {
             'description' => $applicationData['company_description'],
             'industry' => $applicationData['industry'],
             'size' => $applicationData['company_size'],
-            'website' => $applicationData['website_url'],
-            'logo' => $applicationData['company_logo_path']
+            'website' => $applicationData['company_website'], // FIXED: was website_url
+            'logo' => $applicationData['company_logo_path'],
+            'mission_vision' => $applicationData['mission_vision'],
+            'why_join_us' => $applicationData['why_join_us']
         ],
         'contact' => $hrContact,
         'interview' => $interviewData ? [
@@ -233,7 +240,19 @@ try {
         'skills' => [
             'matched' => $applicationData['skills_matched'] ? json_decode($applicationData['skills_matched'], true) : [],
             'missing' => $applicationData['skills_missing'] ? json_decode($applicationData['skills_missing'], true) : []
-        ]
+        ],
+        
+        // FIXED: Add flat fields that your Flutter modal expects
+        'job_description' => $applicationData['job_description'],
+        'job_requirements' => $applicationData['job_requirements'],
+        'hr_first_name' => $applicationData['hr_first_name'],
+        'hr_last_name' => $applicationData['hr_last_name'],
+        'hr_position' => $applicationData['hr_position'],
+        'hr_email' => $applicationData['hr_email'],
+        'hr_phone' => $applicationData['hr_phone'],
+        'salary_range' => $salaryDisplay,
+        'company_website' => $applicationData['company_website'], // FIXED: field name
+        'status_updated_at' => $applicationData['status_updated_at']
     ];
     
     error_log("Application Details API: Successfully retrieved details for application $applicationId");
@@ -282,29 +301,29 @@ function _getNextSteps($status, $interviewData) {
         case 'hired':
             return [
                 'message' => 'Congratulations! You have been selected for this position.',
-                'action' => 'Check your email for next steps and onboarding information',
+                'action' => 'Check your email for next steps',
                 'estimated_time' => 'Immediate'
             ];
             
         case 'rejected':
             return [
                 'message' => 'Unfortunately, you were not selected for this position.',
-                'action' => 'Keep applying to other opportunities',
-                'estimated_time' => 'Continue job search'
+                'action' => 'Continue applying to other opportunities',
+                'estimated_time' => 'N/A'
             ];
             
         case 'withdrawn':
             return [
                 'message' => 'You have withdrawn your application.',
                 'action' => 'Application is no longer active',
-                'estimated_time' => 'Completed'
+                'estimated_time' => 'N/A'
             ];
             
         default:
             return [
-                'message' => 'Your application is being processed.',
-                'action' => 'Wait for updates from the employer',
-                'estimated_time' => 'Variable'
+                'message' => 'Your application status will be updated soon.',
+                'action' => 'Wait for updates',
+                'estimated_time' => 'Unknown'
             ];
     }
 }
