@@ -28,33 +28,71 @@ try {
     // Get database connection
     $conn = ApiDatabase::getConnection();
     
-    // ===== STEP 1: DASHBOARD STATS (SIMPLE QUERIES) =====
+    // ===== STEP 1: USER-SPECIFIC DASHBOARD STATS =====
     $stats = [];
     
-    // Total applications count
+    // Total applications count FOR THIS USER ONLY
     $stmt = $conn->prepare("SELECT COUNT(*) as total_applications FROM job_applications WHERE seeker_id = ?");
     $stmt->execute([$seekerId]);
     $stats['applications_count'] = $stmt->fetch(PDO::FETCH_ASSOC)['total_applications'];
     
-    // Saved jobs count
+    // Saved jobs count FOR THIS USER ONLY
     $stmt = $conn->prepare("SELECT COUNT(*) as saved_jobs FROM saved_jobs WHERE seeker_id = ?");
     $stmt->execute([$seekerId]);
     $stats['saved_jobs_count'] = $stmt->fetch(PDO::FETCH_ASSOC)['saved_jobs'];
     
-    // Interviews count (simple query)
+    // FIXED: Get status breakdown FOR THIS USER ONLY
     $stmt = $conn->prepare("
-        SELECT COUNT(*) as interviews_count 
-        FROM interviews i 
-        JOIN job_applications ja ON i.application_id = ja.application_id 
-        WHERE ja.seeker_id = ?
+        SELECT 
+            application_status,
+            COUNT(*) as count
+        FROM job_applications 
+        WHERE seeker_id = ? 
+        GROUP BY application_status
     ");
     $stmt->execute([$seekerId]);
-    $stats['interviews_count'] = $stmt->fetch(PDO::FETCH_ASSOC)['interviews_count'];
+    $statusBreakdown = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Initialize all status counts to 0
+    $stats['submitted_count'] = 0;
+    $stats['under_review_count'] = 0;
+    $stats['interview_scheduled_count'] = 0;
+    $stats['interviewed_count'] = 0;
+    $stats['hired_count'] = 0;
+    $stats['rejected_count'] = 0;
+    
+    // Populate actual counts from database
+    foreach ($statusBreakdown as $status) {
+        switch ($status['application_status']) {
+            case 'submitted':
+                $stats['submitted_count'] = $status['count'];
+                break;
+            case 'under_review':
+                $stats['under_review_count'] = $status['count'];
+                break;
+            case 'interview_scheduled':
+                $stats['interview_scheduled_count'] = $status['count'];
+                break;
+            case 'interviewed':
+                $stats['interviewed_count'] = $status['count'];
+                break;
+            case 'hired':
+                $stats['hired_count'] = $status['count'];
+                break;
+            case 'rejected':
+                $stats['rejected_count'] = $status['count'];
+                break;
+        }
+    }
+    
+    // FIXED: interviews_count should be user-specific
+    $stats['interviews_count'] = $stats['interview_scheduled_count'] + $stats['interviewed_count'];
     
     // Profile views (placeholder)
     $stats['profile_views'] = 47;
     
-    error_log("BULLETPROOF: Stats collected - Apps: {$stats['applications_count']}, Saved: {$stats['saved_jobs_count']}, Interviews: {$stats['interviews_count']}");
+    error_log("USER-SPECIFIC STATS for seeker_id: $seekerId");
+    error_log("Total: {$stats['applications_count']}, Interview_scheduled: {$stats['interview_scheduled_count']}, Interviews_count: {$stats['interviews_count']}");
     
     // ===== STEP 2: RECENT APPLICATIONS (SIMPLE QUERY) =====
     $stmt = $conn->prepare("

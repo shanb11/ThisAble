@@ -74,7 +74,7 @@ try {
             jp.employment_type,
             jp.employer_id,
             e.company_name,
-            e.logo_url
+            e.company_logo_path    
         FROM job_applications ja
         JOIN job_posts jp ON ja.job_id = jp.job_id
         JOIN employers e ON jp.employer_id = e.employer_id
@@ -110,7 +110,7 @@ try {
             'job_id' => intval($app['job_id']),
             'job_title' => $app['job_title'],
             'company_name' => $app['company_name'],
-            'company_logo' => $app['logo_url'],
+            'company_logo' => $app['company_logo_path'],
             'location' => $app['location'],
             'employment_type' => $app['employment_type'],
             'application_status' => $app['application_status'],
