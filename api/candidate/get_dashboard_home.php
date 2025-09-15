@@ -1,15 +1,13 @@
 <?php
 /**
- * CORRECTED Dashboard API - Fixed response structure
- * LOCATION: api/candidate/get_dashboard_home.php
+ * FIXED Dashboard API for ThisAble Mobile
+ * Location: C:\xampp\htdocs\ThisAble\api\candidate\get_dashboard_home.php
  */
 
-// Include required files
 require_once '../config/cors.php';
 require_once '../config/response.php';
 require_once '../config/database.php';
 
-// Only allow GET requests
 if ($_SERVER["REQUEST_METHOD"] !== "GET") {
     ApiResponse::error("Method not allowed", 405);
 }
@@ -22,30 +20,34 @@ try {
         ApiResponse::unauthorized("Invalid user type");
     }
     
-    $seekerId = $user['user_id'] ?? $user['seeker_id'] ?? null;
+    // CRITICAL FIX: Ensure we get the correct seeker_id
+    $seekerId = $user['seeker_id'] ?? $user['user_id'] ?? null;
     
     if (!$seekerId) {
+        error_log("❌ DASHBOARD ERROR: No seeker_id found in user data: " . json_encode($user));
         ApiResponse::serverError("No seeker_id found");
     }
+    
+    // LOG the seeker_id being used for debugging
+    error_log("✅ DASHBOARD API: Using seeker_id = $seekerId for user: " . ($user['email'] ?? 'unknown'));
 
-    error_log("Dashboard API: Processing for seeker_id = $seekerId");
-
-    // Get database connection
     $conn = ApiDatabase::getConnection();
     
-    // GET APPLICATIONS COUNT
+    // 1. GET APPLICATIONS COUNT
     $stmt = $conn->prepare("SELECT COUNT(*) as count FROM job_applications WHERE seeker_id = ?");
     $stmt->execute([$seekerId]);
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $apps_count = (int)$result['count'];
+    error_log("📊 Applications count: $apps_count");
     
-    // GET SAVED JOBS COUNT  
+    // 2. GET SAVED JOBS COUNT
     $stmt = $conn->prepare("SELECT COUNT(*) as count FROM saved_jobs WHERE seeker_id = ?");
     $stmt->execute([$seekerId]);
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $saved_count = (int)$result['count'];
+    error_log("📊 Saved jobs count: $saved_count");
     
-    // GET INTERVIEWS COUNT
+    // 3. GET INTERVIEWS COUNT (upcoming only)
     $stmt = $conn->prepare("
         SELECT COUNT(*) as count
         FROM interviews i
@@ -57,8 +59,9 @@ try {
     $stmt->execute([$seekerId]);
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $interviews_count = (int)$result['count'];
+    error_log("📊 Interviews count: $interviews_count");
     
-    // GET NOTIFICATIONS COUNT
+    // 4. GET NOTIFICATIONS COUNT (unread only)
     $stmt = $conn->prepare("
         SELECT COUNT(*) as count 
         FROM notifications 
@@ -69,8 +72,9 @@ try {
     $stmt->execute([$seekerId]);
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $notifications_count = (int)$result['count'];
+    error_log("📊 Notifications count: $notifications_count");
     
-    // BUILD STATS WITH GUARANTEED INTEGERS
+    // BUILD STATS OBJECT
     $stats = [
         'applications_count' => $apps_count,
         'saved_jobs_count' => $saved_count,
@@ -78,7 +82,9 @@ try {
         'notifications_count' => $notifications_count
     ];
     
-    // GET RECENT APPLICATIONS
+    error_log("📊 FINAL STATS: " . json_encode($stats));
+    
+    // GET RECENT APPLICATIONS (last 5)
     $stmt = $conn->prepare("
         SELECT 
             ja.application_id,
@@ -97,90 +103,46 @@ try {
         LIMIT 5
     ");
     $stmt->execute([$seekerId]);
-    $recentApplications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $recent_applications = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    // Format dates
-    foreach ($recentApplications as &$app) {
-        $app['applied_at'] = date('F j, Y', strtotime($app['applied_at']));
-    }
-    
-    // GET UPCOMING INTERVIEWS  
+    // GET UPCOMING INTERVIEWS (next 3)
     $stmt = $conn->prepare("
         SELECT 
             i.interview_id,
             i.scheduled_date,
             i.scheduled_time,
             i.interview_type,
-            i.meeting_link,
-            i.location_address,
             i.interview_status,
             jp.job_title,
-            e.company_name
+            e.company_name,
+            ja.application_id
         FROM interviews i
         JOIN job_applications ja ON i.application_id = ja.application_id
         JOIN job_posts jp ON ja.job_id = jp.job_id
         JOIN employers e ON jp.employer_id = e.employer_id
-        WHERE ja.seeker_id = ? 
-        AND i.scheduled_date >= CURDATE()
+        WHERE ja.seeker_id = ?
         AND i.interview_status IN ('scheduled', 'confirmed')
+        AND i.scheduled_date >= CURDATE()
         ORDER BY i.scheduled_date ASC, i.scheduled_time ASC
-        LIMIT 5
+        LIMIT 3
     ");
     $stmt->execute([$seekerId]);
-    $upcomingInterviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $upcoming_interviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    // Format interview dates/times
-    foreach ($upcomingInterviews as &$interview) {
-        $interview['scheduled_date'] = date('F j, Y', strtotime($interview['scheduled_date']));
-        if ($interview['scheduled_time']) {
-            $interview['scheduled_time'] = date('g:i A', strtotime($interview['scheduled_time']));
-        }
-    }
-    
-    // GET SUGGESTED JOBS
-    $stmt = $conn->prepare("
-        SELECT 
-            jp.job_id,
-            jp.job_title,
-            jp.location,
-            jp.employment_type,
-            jp.salary_range,
-            jp.posted_at,
-            e.company_name,
-            e.company_logo_path
-        FROM job_posts jp
-        JOIN employers e ON jp.employer_id = e.employer_id
-        WHERE jp.job_status = 'active'
-        AND jp.job_id NOT IN (
-            SELECT job_id FROM job_applications WHERE seeker_id = ?
-        )
-        ORDER BY jp.posted_at DESC
-        LIMIT 5
-    ");
-    $stmt->execute([$seekerId]);
-    $suggestedJobs = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    // Format job dates
-    foreach ($suggestedJobs as &$job) {
-        $job['posted_at'] = date('F j, Y', strtotime($job['posted_at']));
-        $job['company_logo'] = $job['company_logo_path'] ?? substr($job['company_name'], 0, 2);
-    }
-    
-    // CORRECTED: Build response data object (not string)
+    // PREPARE RESPONSE DATA
     $responseData = [
         'stats' => $stats,
-        'recent_applications' => $recentApplications,
-        'upcoming_interviews' => $upcomingInterviews, 
-        'suggested_jobs' => $suggestedJobs
+        'recent_applications' => $recent_applications,
+        'upcoming_interviews' => $upcoming_interviews,
+        'seeker_id' => $seekerId // For debugging
     ];
     
-    error_log("Dashboard API Success: " . json_encode($stats));
+    error_log("✅ DASHBOARD SUCCESS: Returning data for seeker_id $seekerId");
     
-    // FIXED: Correct parameter order - message first, data second
-    ApiResponse::success('Dashboard data retrieved successfully', $responseData);
+    ApiResponse::success($responseData, 'Dashboard data retrieved successfully');
     
 } catch (Exception $e) {
-    error_log("Dashboard API Error: " . $e->getMessage());
-    ApiResponse::error("Failed to fetch dashboard data: " . $e->getMessage());
+    error_log("❌ DASHBOARD ERROR: " . $e->getMessage());
+    error_log("❌ Stack trace: " . $e->getTraceAsString());
+    ApiResponse::serverError("Failed to load dashboard data");
 }
-?>
