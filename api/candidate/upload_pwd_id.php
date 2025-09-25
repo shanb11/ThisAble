@@ -11,7 +11,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
 // Handle preflight requests
@@ -20,12 +20,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 // Include required files
-require_once('../../backend/db.php');
-require_once('../../backend/ApiResponse.php');
+//require_once('../../backend/db.php');
+require_once('../config/ApiResponse.php');  // Instead of ../../backend/
 
 // Only allow POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    ApiResponse::error('Invalid request method', 405);
+    http_response_code(405);
+    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
     exit;
 }
 
@@ -38,12 +39,12 @@ try {
 
     // Validate required fields
     if ($action !== 'upload') {
-        ApiResponse::error('Invalid action');
+        echo json_encode(['success' => false, 'message' => 'Invalid action']);
         exit;
     }
 
     if (empty($pwdIdNumber) || empty($pwdIdIssuedDate) || empty($pwdIdIssuingLGU)) {
-        ApiResponse::error('Missing required PWD ID information');
+        echo json_encode(['success' => false, 'message' => 'Missing required PWD ID information']);
         exit;
     }
 
@@ -62,7 +63,7 @@ try {
         $error_code = $_FILES['pwdIdFile']['error'] ?? UPLOAD_ERR_NO_FILE;
         $error_message = $error_messages[$error_code] ?? 'Unknown upload error';
         
-        ApiResponse::error('File upload failed: ' . $error_message);
+        echo json_encode(['success' => false, 'message' => 'File upload failed: ' . $error_message]);
         exit;
     }
 
@@ -73,13 +74,13 @@ try {
     $fileType = mime_content_type($uploadedFile['tmp_name']);
     
     if (!in_array($fileType, $allowedTypes)) {
-        ApiResponse::error('Invalid file type. Only JPG, PNG, and PDF files are allowed.');
+        echo json_encode(['success' => false, 'message' => 'Invalid file type. Only JPG, PNG, and PDF files are allowed.']);
         exit;
     }
 
     // Validate file size (5MB limit)
     if ($uploadedFile['size'] > 5 * 1024 * 1024) {
-        ApiResponse::error('File size too large. Maximum size is 5MB.');
+        echo json_encode(['success' => false, 'message' => 'File size too large. Maximum size is 5MB.']);
         exit;
     }
 
@@ -106,7 +107,7 @@ try {
     
     if (!file_exists($uploadDir)) {
         if (!mkdir($uploadDir, 0755, true)) {
-            ApiResponse::error('Failed to create upload directory');
+            echo json_encode(['success' => false, 'message' => 'Failed to create upload directory']);
             exit;
         }
     }
@@ -120,7 +121,7 @@ try {
 
     // Move uploaded file
     if (!move_uploaded_file($uploadedFile['tmp_name'], $fullPath)) {
-        ApiResponse::error('Failed to save uploaded file');
+        echo json_encode(['success' => false, 'message' => 'Failed to save uploaded file']);
         exit;
     }
 
@@ -165,13 +166,17 @@ try {
     }
 
     // Return success response
-    ApiResponse::success([
+    echo json_encode([
+        'success' => true,
         'message' => 'PWD ID uploaded successfully for manual verification',
-        'filename' => $fileName,
-        'upload_time' => date('Y-m-d H:i:s'),
-        'status' => 'pending_verification',
-        'next_steps' => 'Our team will review your PWD ID within 24 hours and notify you of the result.'
+        'data' => [
+            'filename' => $fileName,
+            'upload_time' => date('Y-m-d H:i:s'),
+            'status' => 'pending_verification',
+            'next_steps' => 'Our team will review your PWD ID within 24 hours and notify you of the result.'
+        ]
     ]);
+    exit;
 
 } catch (Exception $e) {
     error_log("PWD Upload Error: " . $e->getMessage());

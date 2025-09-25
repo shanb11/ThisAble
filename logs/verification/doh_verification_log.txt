@@ -148,3 +148,9 @@
 2025-09-24 21:52:20 | IP: ::1 | PWD ID: 12234564888 | Result: ERROR | HTTP error: 403
 2025-09-24 21:56:37 | IP: ::1 | PWD ID: 123456789 | Result: ATTEMPT | Verification attempt started
 2025-09-24 21:56:38 | IP: ::1 | PWD ID: 123456789 | Result: ERROR | HTTP error: 403
+2025-09-25 09:54:41 | IP: ::1 | PWD ID: 1231456979 | Result: ATTEMPT | Verification attempt started
+2025-09-25 09:54:42 | IP: ::1 | PWD ID: 1231456979 | Result: ERROR | HTTP error: 403
+2025-09-25 14:24:24 | IP: ::1 | PWD ID: 123546879 | Result: ATTEMPT | Verification attempt started
+2025-09-25 14:24:25 | IP: ::1 | PWD ID: 123546879 | Result: ERROR | HTTP error: 403
+2025-09-25 14:34:26 | IP: ::1 | PWD ID: 12345679 | Result: ATTEMPT | Verification attempt started
+2025-09-25 14:34:27 | IP: ::1 | PWD ID: 12345679 | Result: ERROR | HTTP error: 403
