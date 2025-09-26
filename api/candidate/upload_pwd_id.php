@@ -14,6 +14,9 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
+require_once('../config/response.php');
+require_once('../config/database.php');
+
 // Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit(0);
@@ -84,21 +87,15 @@ try {
         exit;
     }
 
-    // Get user ID from session or token
-    $seekerId = null;
-    
-    // Try to get seeker_id from session first
-    if (isset($_SESSION['seeker_id'])) {
-        $seekerId = $_SESSION['seeker_id'];
-    } else {
-        // Try to get from authorization header
-        $headers = apache_request_headers();
-        if (isset($headers['Authorization'])) {
-            $token = str_replace('Bearer ', '', $headers['Authorization']);
-            // TODO: Validate token and get seeker_id
-            // For now, we'll handle without authentication
-        }
+    // Require authentication (same as save_skills.php)
+    $user = requireAuth();
+
+    if ($user['user_type'] !== 'candidate') {
+        echo json_encode(['success' => false, 'message' => 'Invalid user type']);
+        exit;
     }
+
+    $seekerId = $user['user_id'];
 
     // Create upload directory structure
     $uploadBaseDir = '../../uploads/pwd_ids/';
