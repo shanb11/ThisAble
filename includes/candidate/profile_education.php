@@ -47,8 +47,6 @@
             echo '<i class="fas fa-graduation-cap"></i>';
             echo '<h3>No education details added yet</h3>';
             echo '<p>Add your education history to showcase your academic background to employers.</p>';
-            echo '<button class="btn primary-btn" id="add-education-empty-btn">';
-            echo '<i class="fas fa-plus"></i> Add Education</button>';
             echo '</div>';
         }
         ?>

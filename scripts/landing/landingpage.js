@@ -3,30 +3,6 @@ let jobsData = [];
 let categoryStats = {};
 let siteStats = {};
 
-// Sample/fallback jobs data (keep your original hardcoded data as backup)
-const sampleJobsData = [
-    {
-        id: 999,
-        title: "Sample - Elementary School Teacher",
-        company: "Demo Academy",
-        location: "Sample Location",
-        type: "Full-time",
-        category: "education",
-        salary: "₱45,000 - ₱60,000",
-        description: "This is a sample job posting. Real jobs will appear here once employers start posting."
-    },
-    {
-        id: 998,
-        title: "Sample - Administrative Assistant",
-        company: "Demo Company",
-        location: "Sample City",
-        type: "Full-time",
-        category: "office",
-        salary: "₱35,000 - ₱45,000",
-        description: "This is a sample job posting. Real jobs will appear here once employers start posting."
-    }
-];
-
 // Fetch real jobs from database
 async function fetchRealJobs() {
     try {
@@ -37,13 +13,13 @@ async function fetchRealJobs() {
         
         console.log('Response from backend:', data);
         
-        if (data.success && data.jobs.length > 0) {
+        if (data.success) {
             // Use real jobs
-            jobsData = data.jobs;
-            categoryStats = data.categories;
-            siteStats = data.stats;
+            jobsData = data.jobs || [];
+            categoryStats = data.categories || {};
+            siteStats = data.stats || {};
             
-            console.log('Loaded ' + data.jobs.length + ' real jobs');
+            console.log('Loaded ' + jobsData.length + ' real jobs');
             
             // Update category counts on page
             updateCategoryCounts();
@@ -52,37 +28,15 @@ async function fetchRealJobs() {
             updateSiteStats();
             
         } else {
-            // Fallback to sample data
-            console.log('No real jobs found, using sample data');
-            jobsData = sampleJobsData;
-            categoryStats = {
-                'education': 1,
-                'office': 1,
-                'customer': 0,
-                'business': 0,
-                'healthcare': 0,
-                'finance': 0
-            };
-            
-            // Show demo notice
-            showDemoNotice();
+            console.log('No real jobs found or backend error');
+            jobsData = [];
+            categoryStats = {};
         }
         
     } catch (error) {
         console.error('Error fetching real jobs:', error);
-        
-        // Fallback to sample data on error
-        jobsData = sampleJobsData;
-        categoryStats = {
-            'education': 1,
-            'office': 1,
-            'customer': 0,
-            'business': 0,
-            'healthcare': 0,
-            'finance': 0
-        };
-        
-        showDemoNotice();
+        jobsData = [];
+        categoryStats = {};
     }
 }
 
@@ -104,13 +58,7 @@ function updateCategoryCounts() {
         if (categoryCard) {
             const countElement = categoryCard.querySelector('p');
             if (countElement) {
-                if (count > 0) {
-                    countElement.textContent = `${count} job${count > 1 ? 's' : ''} available`;
-                } else {
-                    countElement.textContent = 'Coming soon!';
-                    countElement.style.fontStyle = 'italic';
-                    countElement.style.color = '#999';
-                }
+                countElement.textContent = `${count} job${count > 1 ? 's' : ''} available`;
             }
         }
     });
@@ -119,29 +67,8 @@ function updateCategoryCounts() {
 // Update site statistics in hero section
 function updateSiteStats() {
     if (siteStats.total_jobs) {
-        // You can add this feature later if you want live stats in hero
         console.log('Site stats:', siteStats);
-    }
-}
-
-// Show demo notice when using sample data
-function showDemoNotice() {
-    const hero = document.querySelector('.hero');
-    if (hero && !document.querySelector('.demo-notice')) {
-        const notice = document.createElement('div');
-        notice.className = 'demo-notice';
-        notice.style.cssText = `
-            background: rgba(253, 139, 81, 0.1);
-            border: 1px solid #FD8B51;
-            border-radius: 5px;
-            padding: 10px 20px;
-            margin: 20px auto;
-            max-width: 600px;
-            text-align: center;
-            font-size: 0.9rem;
-        `;
-        notice.innerHTML = '<i class="fas fa-info-circle"></i> Sample jobs shown. Real job postings will appear here once employers start posting.';
-        hero.appendChild(notice);
+        // You can add live stats display here if needed
     }
 }
 
@@ -149,92 +76,92 @@ function showDemoNotice() {
 document.addEventListener('DOMContentLoaded', function() {
     // Fetch real jobs first
     fetchRealJobs().then(() => {
-        // Then set up event listeners (your existing code)
-        setupEventListeners();
-    });
-});
-
-// Your existing setupEventListeners function stays exactly the same
-// Just make sure it's called after fetchRealJobs() completes
-
-// DOM elements
-const searchBtn = document.getElementById('search-btn');
-const jobSearchInput = document.getElementById('job-search');
-const locationSearchInput = document.getElementById('location-search');
-const browseJobsBtn = document.getElementById('browse-jobs-btn');
-const footerBrowseJobs = document.getElementById('footer-browse-jobs');
-const postJobBtn = document.getElementById('post-job-btn');
-const footerPostJob = document.getElementById('footer-post-job');
-const footerAboutUs = document.getElementById('footer-about-us');
-const categoryCards = document.querySelectorAll('.category-card');
-const jobsModal = document.getElementById('jobs-modal');
-const postJobModal = document.getElementById('post-job-modal');
-const modalCloseButtons = document.querySelectorAll('.close');
-const jobsContainer = document.getElementById('jobs-container');
-const modalTitle = document.getElementById('modal-title');
-const filterLocation = document.getElementById('filter-location');
-const filterType = document.getElementById('filter-type');
-const jobPostForm = document.getElementById('job-post-form');
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Fetch real jobs first, then setup event listeners
-    fetchRealJobs().then(() => {
+        // Then set up event listeners
         setupEventListeners();
     });
 });
 
 // Set up all event listeners
 function setupEventListeners() {
+    // DOM elements
+    const searchBtn = document.getElementById('search-btn');
+    const jobSearchInput = document.getElementById('job-search');
+    const locationSearchInput = document.getElementById('location-search');
+    const browseJobsBtn = document.getElementById('browse-jobs-btn');
+    const footerBrowseJobs = document.getElementById('footer-browse-jobs');
+    const postJobBtn = document.getElementById('post-job-btn');
+    const footerPostJob = document.getElementById('footer-post-job');
+    const footerAboutUs = document.getElementById('footer-about-us');
+    const categoryCards = document.querySelectorAll('.category-card');
+    const jobsModal = document.getElementById('jobs-modal');
+    const postJobModal = document.getElementById('post-job-modal');
+    const modalCloseButtons = document.querySelectorAll('.close');
+    const jobsContainer = document.getElementById('jobs-container');
+    const modalTitle = document.getElementById('modal-title');
+    const filterLocation = document.getElementById('filter-location');
+    const filterType = document.getElementById('filter-type');
+    const jobPostForm = document.getElementById('job-post-form');
+
     // Search button
-    searchBtn.addEventListener('click', function() {
-        const keyword = jobSearchInput.value.trim().toLowerCase();
-        const location = locationSearchInput.value.trim().toLowerCase();
-        
-        // Filter jobs based on search criteria
-        let filteredJobs = jobsData;
-        
-        if (keyword) {
-            filteredJobs = filteredJobs.filter(job => 
-                job.title.toLowerCase().includes(keyword) || 
-                job.description.toLowerCase().includes(keyword) ||
-                job.company.toLowerCase().includes(keyword) ||
-                job.category.toLowerCase().includes(keyword)
-            );
-        }
-        
-        if (location && location !== 'all locations') {
-            filteredJobs = filteredJobs.filter(job => 
-                job.location.toLowerCase().includes(location)
-            );
-        }
-        
-        // Display filtered jobs
-        displayJobs(filteredJobs, `Search Results for "${keyword}"`);
-    });
+    if (searchBtn) {
+        searchBtn.addEventListener('click', function() {
+            const keyword = jobSearchInput.value.trim().toLowerCase();
+            const location = locationSearchInput.value.trim().toLowerCase();
+            
+            // Filter jobs based on search criteria
+            let filteredJobs = jobsData;
+            
+            if (keyword) {
+                filteredJobs = filteredJobs.filter(job => 
+                    job.title.toLowerCase().includes(keyword) || 
+                    job.description.toLowerCase().includes(keyword) ||
+                    job.company.toLowerCase().includes(keyword) ||
+                    job.category.toLowerCase().includes(keyword)
+                );
+            }
+            
+            if (location && location !== 'all locations') {
+                filteredJobs = filteredJobs.filter(job => 
+                    job.location.toLowerCase().includes(location)
+                );
+            }
+            
+            // Display filtered jobs
+            displayJobs(filteredJobs, `Search Results for "${keyword}"`);
+        });
+    }
     
     // Enter key in search inputs
-    jobSearchInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            searchBtn.click();
-        }
-    });
+    if (jobSearchInput) {
+        jobSearchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchBtn.click();
+            }
+        });
+    }
     
-    locationSearchInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            searchBtn.click();
-        }
-    });
+    if (locationSearchInput) {
+        locationSearchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchBtn.click();
+            }
+        });
+    }
     
     // Browse Jobs button
-    browseJobsBtn.addEventListener('click', function() {
-        displayJobs(jobsData, 'All Available Jobs');
-    });
+    if (browseJobsBtn) {
+        browseJobsBtn.addEventListener('click', function() {
+            displayJobs(jobsData, 'All Available Jobs');
+        });
+    }
     
     // Footer Browse Jobs link
-    footerBrowseJobs.addEventListener('click', function(e) {
-        e.preventDefault();
-        displayJobs(jobsData, 'All Available Jobs');
-    });
+    if (footerBrowseJobs) {
+        footerBrowseJobs.addEventListener('click', function(e) {
+            e.preventDefault();
+            displayJobs(jobsData, 'All Available Jobs');
+        });
+    }
     
     // Category cards
     categoryCards.forEach(card => {
@@ -247,22 +174,26 @@ function setupEventListeners() {
     });
     
     // Post Job button
-    postJobBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        openPostJobModal();
-    });
+    if (postJobBtn) {
+        postJobBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            openPostJobModal();
+        });
+    }
     
     // Footer Post Job link
-    footerPostJob.addEventListener('click', function(e) {
-        e.preventDefault();
-        openPostJobModal();
-    });
+    if (footerPostJob) {
+        footerPostJob.addEventListener('click', function(e) {
+            e.preventDefault();
+            openPostJobModal();
+        });
+    }
     
     // Close buttons for modals
     modalCloseButtons.forEach(button => {
         button.addEventListener('click', function() {
-            jobsModal.style.display = 'none';
-            postJobModal.style.display = 'none';
+            if (jobsModal) jobsModal.style.display = 'none';
+            if (postJobModal) postJobModal.style.display = 'none';
         });
     });
     
@@ -277,47 +208,53 @@ function setupEventListeners() {
     });
     
     // Filter change events
-    filterLocation.addEventListener('change', applyFilters);
-    filterType.addEventListener('change', applyFilters);
+    if (filterLocation) {
+        filterLocation.addEventListener('change', applyFilters);
+    }
+    if (filterType) {
+        filterType.addEventListener('change', applyFilters);
+    }
     
     // Job post form submission
-    jobPostForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Get form values
-        const title = document.getElementById('job-title').value;
-        const company = document.getElementById('company-name').value;
-        const location = document.getElementById('job-location').value;
-        const type = document.getElementById('job-type').value;
-        const category = document.getElementById('job-category').value;
-        const description = document.getElementById('job-description').value;
-        
-        // Create new job object
-        const newJob = {
-            id: jobsData.length + 1,
-            title,
-            company,
-            location,
-            type,
-            category,
-            salary: "Competitive",
-            description
-        };
-        
-        // Add to jobs data
-        jobsData.unshift(newJob);
-        
-        // Reset form and close modal
-        jobPostForm.reset();
-        postJobModal.style.display = 'none';
-        
-        // Show success message
-        alert('Job posted successfully!');
-    });
+    if (jobPostForm) {
+        jobPostForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const title = document.getElementById('job-title').value;
+            const company = document.getElementById('company-name').value;
+            const location = document.getElementById('job-location').value;
+            const type = document.getElementById('job-type').value;
+            const category = document.getElementById('job-category').value;
+            const description = document.getElementById('job-description').value;
+            
+            // Show success message
+            alert('Job posted successfully!');
+            
+            // Reset form and close modal
+            jobPostForm.reset();
+            if (postJobModal) {
+                postJobModal.style.display = 'none';
+            }
+            
+            // Refresh jobs data
+            fetchRealJobs().then(() => {
+                displayJobs(jobsData, 'All Available Jobs');
+            });
+        });
+    }
 }
 
 // Display jobs in modal
 function displayJobs(jobs, title) {
+    const jobsModal = document.getElementById('jobs-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const jobsContainer = document.getElementById('jobs-container');
+    const filterLocation = document.getElementById('filter-location');
+    const filterType = document.getElementById('filter-type');
+    
+    if (!jobsModal || !modalTitle || !jobsContainer) return;
+    
     // Set modal title
     modalTitle.textContent = title;
     
@@ -328,7 +265,7 @@ function displayJobs(jobs, title) {
     if (jobs.length === 0) {
         jobsContainer.innerHTML = `
             <div class="no-jobs">
-                <p>No jobs found matching your criteria.</p>
+                <p>No jobs available at the moment.</p>
             </div>
         `;
     } else {
@@ -342,7 +279,7 @@ function displayJobs(jobs, title) {
                 <div class="job-details">
                     <span class="job-detail"><i class="fas fa-map-marker-alt"></i> ${job.location}</span>
                     <span class="job-detail"><i class="fas fa-briefcase"></i> ${job.type}</span>
-                    <span class="job-detail"><i class="fas fa-dollar-sign"></i> ${job.salary}</span>
+                    <span class="job-detail"><i class="fas fa-dollar-sign"></i> ${job.salary || 'Competitive'}</span>
                 </div>
                 <div class="job-description">${job.description}</div>
                 <a href="#" class="apply-btn">Apply Now</a>
@@ -355,12 +292,20 @@ function displayJobs(jobs, title) {
     jobsModal.style.display = 'block';
     
     // Reset filters
-    filterLocation.value = '';
-    filterType.value = '';
+    if (filterLocation) filterLocation.value = '';
+    if (filterType) filterType.value = '';
 }
 
 // Apply filters to current jobs
 function applyFilters() {
+    const modalTitle = document.getElementById('modal-title');
+    const filterLocation = document.getElementById('filter-location');
+    const filterType = document.getElementById('filter-type');
+    const jobSearchInput = document.getElementById('job-search');
+    const locationSearchInput = document.getElementById('location-search');
+    
+    if (!modalTitle) return;
+    
     // Get current jobs and title
     const currentTitle = modalTitle.textContent;
     let baseJobs;
@@ -370,8 +315,8 @@ function applyFilters() {
         baseJobs = jobsData;
     } else if (currentTitle.includes('Search Results')) {
         // Get keyword from title
-        const keyword = jobSearchInput.value.trim().toLowerCase();
-        const location = locationSearchInput.value.trim().toLowerCase();
+        const keyword = jobSearchInput ? jobSearchInput.value.trim().toLowerCase() : '';
+        const location = locationSearchInput ? locationSearchInput.value.trim().toLowerCase() : '';
         
         baseJobs = jobsData.filter(job => {
             const matchesKeyword = !keyword || 
@@ -400,8 +345,8 @@ function applyFilters() {
     }
     
     // Apply additional filters
-    const locationFilter = filterLocation.value.toLowerCase();
-    const typeFilter = filterType.value;
+    const locationFilter = filterLocation ? filterLocation.value.toLowerCase() : '';
+    const typeFilter = filterType ? filterType.value : '';
     
     let filteredJobs = baseJobs;
     
@@ -423,6 +368,10 @@ function applyFilters() {
 
 // Update jobs display without changing title or modal state
 function updateJobsDisplay(jobs) {
+    const jobsContainer = document.getElementById('jobs-container');
+    
+    if (!jobsContainer) return;
+    
     // Clear jobs container
     jobsContainer.innerHTML = '';
     
@@ -444,7 +393,7 @@ function updateJobsDisplay(jobs) {
                 <div class="job-details">
                     <span class="job-detail"><i class="fas fa-map-marker-alt"></i> ${job.location}</span>
                     <span class="job-detail"><i class="fas fa-briefcase"></i> ${job.type}</span>
-                    <span class="job-detail"><i class="fas fa-dollar-sign"></i> ${job.salary}</span>
+                    <span class="job-detail"><i class="fas fa-dollar-sign"></i> ${job.salary || 'Competitive'}</span>
                 </div>
                 <div class="job-description">${job.description}</div>
                 <a href="#" class="apply-btn">Apply Now</a>
@@ -456,5 +405,8 @@ function updateJobsDisplay(jobs) {
 
 // Open post job modal
 function openPostJobModal() {
-    postJobModal.style.display = 'block';
+    const postJobModal = document.getElementById('post-job-modal');
+    if (postJobModal) {
+        postJobModal.style.display = 'block';
+    }
 }

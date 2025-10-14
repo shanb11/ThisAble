@@ -58,60 +58,61 @@ class ApiDatabase {
      */
     public static function validateToken($token) {
         try {
-            error_log("🔐 VALIDATING TOKEN: " . substr($token, 0, 20) . "...");
-            
             $conn = self::getConnection();
             
-            // Step 1: Check token in api_tokens table
+            // Get token data
             $stmt = $conn->prepare("SELECT user_id, user_type FROM api_tokens 
-                                   WHERE token = ? 
-                                   AND is_active = 1 
-                                   AND expires_at > NOW()");
+                                WHERE token = ? 
+                                AND is_active = 1 
+                                AND expires_at > NOW()");
             $stmt->execute([$token]);
             $tokenData = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if (!$tokenData) {
-                error_log("🔐 TOKEN NOT FOUND OR EXPIRED");
                 return null;
             }
             
             $userId = $tokenData['user_id'];
             $userType = $tokenData['user_type'];
             
-            error_log("🔐 TOKEN VALID: user_id=$userId, type=$userType");
-            
-            // Step 2: Get user info with SIMPLE queries (no JOINs)
+            // Get user info for candidates
             if ($userType === 'candidate') {
-                $userStmt = $conn->prepare("SELECT seeker_id as user_id, first_name, last_name FROM job_seekers WHERE seeker_id = ?");
+                $userStmt = $conn->prepare("
+                    SELECT 
+                        js.seeker_id,
+                        js.first_name, 
+                        js.last_name,
+                        ua.email
+                    FROM job_seekers js 
+                    LEFT JOIN user_accounts ua ON js.seeker_id = ua.seeker_id
+                    WHERE js.seeker_id = ?
+                ");
                 $userStmt->execute([$userId]);
                 $userData = $userStmt->fetch(PDO::FETCH_ASSOC);
                 
                 if ($userData) {
+                    // CRITICAL FIX: Ensure both user_id and seeker_id are set
+                    $userData['user_id'] = $userData['seeker_id'];  // Set user_id = seeker_id
                     $userData['user_type'] = 'candidate';
-                    $userData['email'] = ''; // Will get from user_accounts if needed
                 }
                 
             } else {
-                error_log("🔐 EMPLOYER NOT IMPLEMENTED YET");
-                return null;
+                // For employers (future implementation)
+                $userData = null;
             }
             
             if (!$userData) {
-                error_log("🔐 USER NOT FOUND IN job_seekers: user_id=$userId");
                 return null;
             }
             
-            error_log("🔐 USER FOUND: " . json_encode($userData));
-            
-            // Step 3: Update last_used
+            // Update last_used timestamp
             $updateStmt = $conn->prepare("UPDATE api_tokens SET last_used = NOW() WHERE token = ?");
             $updateStmt->execute([$token]);
             
-            error_log("🔐 TOKEN VALIDATION SUCCESS");
             return $userData;
             
         } catch (Exception $e) {
-            error_log("🔐 TOKEN VALIDATION ERROR: " . $e->getMessage());
+            error_log("Token validation error: " . $e->getMessage());
             return null;
         }
     }

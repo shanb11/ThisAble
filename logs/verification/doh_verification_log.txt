@@ -136,3 +136,7 @@
 2025-06-30 00:14:26 | IP: ::1 | PWD ID: 001 | Result: ERROR | HTTP error: 403
 2025-06-30 00:17:12 | IP: ::1 | PWD ID: 002 | Result: ATTEMPT | Verification attempt started
 2025-06-30 00:17:13 | IP: ::1 | PWD ID: 002 | Result: ERROR | HTTP error: 403
+2025-09-10 15:49:27 | IP: ::1 | PWD ID: 234567865431298 | Result: ATTEMPT | Verification attempt started
+2025-09-10 15:49:28 | IP: ::1 | PWD ID: 234567865431298 | Result: ERROR | HTTP error: 403
+2025-09-14 14:21:57 | IP: ::1 | PWD ID: 234567865431298 | Result: ATTEMPT | Verification attempt started
+2025-09-14 14:21:57 | IP: ::1 | PWD ID: 234567865431298 | Result: ERROR | HTTP error: 403
