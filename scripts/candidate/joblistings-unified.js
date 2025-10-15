@@ -1362,8 +1362,13 @@ function showEmptyStateWithFilters() {
         <h3>No jobs match your filters</h3>
         <p>Try adjusting your filter criteria or clear all filters to see more opportunities.</p>
         <button class="clear-all-filters-btn" onclick="clearAllFiltersFromEmpty()">
+<<<<<<< HEAD
     Clear All Filters
 </button>
+=======
+            <i class="fas fa-times"></i> Clear All Filters
+        </button>
+>>>>>>> 17eeacee1a06b245234a1b87bb5c487e76e1e6f5
     `;
     
     container.appendChild(emptyDiv);

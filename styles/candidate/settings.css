@@ -918,6 +918,7 @@ body.reduce-motion * {
     --primary: #257180;
     --accent: #FD8B51;
 }
+<<<<<<< HEAD
 
 /* FAQ and Resource Styles */
 .faq-item, .resource-item {
@@ -984,3 +985,5 @@ body.reduce-motion * {
 .resource-content strong {
     color: var(--text-primary);
 }
+=======
+>>>>>>> 17eeacee1a06b245234a1b87bb5c487e76e1e6f5

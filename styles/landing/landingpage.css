@@ -625,6 +625,7 @@ footer {
 
 .no-jobs p {
     margin: 0;
+<<<<<<< HEAD
 }
 /* Custom Scrollbar Design */
 ::-webkit-scrollbar {
@@ -655,4 +656,6 @@ footer {
 :root {
     --primary: #257180;
     --accent: #FD8B51;
+=======
+>>>>>>> 17eeacee1a06b245234a1b87bb5c487e76e1e6f5
 }
