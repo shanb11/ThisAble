@@ -654,6 +654,68 @@ document.addEventListener('DOMContentLoaded', function() {
             chip.classList.toggle('selected');
         });
     });
+    
+    // FAQ Toggle Functionality
+    const faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const faqId = this.getAttribute('data-faq');
+            const answer = document.getElementById('faq-' + faqId);
+            const arrow = this.querySelector('.setting-arrow i');
+            
+            if (answer && (answer.style.display === 'none' || answer.style.display === '')) {
+                // Close all other FAQ answers
+                document.querySelectorAll('.faq-answer').forEach(ans => {
+                    ans.style.display = 'none';
+                });
+                document.querySelectorAll('.faq-item .setting-arrow i').forEach(arr => {
+                    arr.classList.remove('fa-chevron-down');
+                    arr.classList.add('fa-chevron-right');
+                });
+                
+                // Open this answer
+                answer.style.display = 'block';
+                arrow.classList.remove('fa-chevron-right');
+                arrow.classList.add('fa-chevron-down');
+            } else if (answer) {
+                // Close this answer
+                answer.style.display = 'none';
+                arrow.classList.remove('fa-chevron-down');
+                arrow.classList.add('fa-chevron-right');
+            }
+        });
+    });
+    
+    // Resource Items Toggle
+    const resourceItems = document.querySelectorAll('.resource-item');
+    resourceItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const resourceId = this.getAttribute('data-resource');
+            const content = document.getElementById('resource-' + resourceId);
+            const arrow = this.querySelector('.setting-arrow i');
+            
+            if (content && (content.style.display === 'none' || content.style.display === '')) {
+                // Close all other resource contents
+                document.querySelectorAll('.resource-content').forEach(cont => {
+                    cont.style.display = 'none';
+                });
+                document.querySelectorAll('.resource-item .setting-arrow i').forEach(arr => {
+                    arr.classList.remove('fa-chevron-down');
+                    arr.classList.add('fa-chevron-right');
+                });
+                
+                // Open this content
+                content.style.display = 'block';
+                arrow.classList.remove('fa-chevron-right');
+                arrow.classList.add('fa-chevron-down');
+            } else if (content) {
+                // Close this content
+                content.style.display = 'none';
+                arrow.classList.remove('fa-chevron-down');
+                arrow.classList.add('fa-chevron-right');
+            }
+        });
+    });
 });
 
 // Toggle switches with corresponding settings
@@ -905,4 +967,64 @@ function showToast(message, type = 'info') {
             document.getElementById('toast-container').removeChild(toast);
         }, 300);
     }, 3000);
+
+    // FAQ and Resource Toggle Functionality
+document.querySelectorAll('.faq-item').forEach(item => {
+    item.addEventListener('click', function() {
+        const faqId = this.getAttribute('data-faq');
+        const answer = document.getElementById('faq-' + faqId);
+        const arrow = this.querySelector('.setting-arrow i');
+        
+        if (answer.style.display === 'none' || answer.style.display === '') {
+            // Close all other FAQ answers
+            document.querySelectorAll('.faq-answer').forEach(ans => {
+                ans.style.display = 'none';
+            });
+            document.querySelectorAll('.faq-item .setting-arrow i').forEach(arr => {
+                arr.classList.remove('fa-chevron-down');
+                arr.classList.add('fa-chevron-right');
+            });
+            
+            // Open this answer
+            answer.style.display = 'block';
+            arrow.classList.remove('fa-chevron-right');
+            arrow.classList.add('fa-chevron-down');
+        } else {
+            // Close this answer
+            answer.style.display = 'none';
+            arrow.classList.remove('fa-chevron-down');
+            arrow.classList.add('fa-chevron-right');
+        }
+    });
+});
+
+// Resource Items Toggle
+document.querySelectorAll('.resource-item').forEach(item => {
+    item.addEventListener('click', function() {
+        const resourceId = this.getAttribute('data-resource');
+        const content = document.getElementById('resource-' + resourceId);
+        const arrow = this.querySelector('.setting-arrow i');
+        
+        if (content.style.display === 'none' || content.style.display === '') {
+            // Close all other resource contents
+            document.querySelectorAll('.resource-content').forEach(cont => {
+                cont.style.display = 'none';
+            });
+            document.querySelectorAll('.resource-item .setting-arrow i').forEach(arr => {
+                arr.classList.remove('fa-chevron-down');
+                arr.classList.add('fa-chevron-right');
+            });
+            
+            // Open this content
+            content.style.display = 'block';
+            arrow.classList.remove('fa-chevron-right');
+            arrow.classList.add('fa-chevron-down');
+        } else {
+            // Close this content
+            content.style.display = 'none';
+            arrow.classList.remove('fa-chevron-down');
+            arrow.classList.add('fa-chevron-right');
+        }
+    });
+});
 }

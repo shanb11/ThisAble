@@ -11,7 +11,6 @@
         </div>
         <div class="modal-footer">
             <button class="btn btn-outline" id="close-job-details">Close</button>
-            <button class="btn btn-primary" id="edit-job-details">Edit Job</button>
         </div>
     </div>
 </div>

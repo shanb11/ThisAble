@@ -87,26 +87,26 @@ async function loadProfileData() {
         console.log('📥 Backend response:', result);
         
         if (result.success) {
-            profileData = result.data;
-            industriesList = result.industries;
-            
-            console.log('📊 Loaded profile data:', profileData);
-            console.log('🏢 Loaded industries:', industriesList);
-            
-            // Populate all sections
-            populateProfileData();
-            showToast('Profile data loaded successfully');
-        } else {
-            console.error('❌ Backend error:', result);
-            showToast(result.message || 'Failed to load profile data', 'error');
+    profileData = result.data;
+    industriesList = result.industries;
+    
+    console.log('📊 Loaded profile data:', profileData);
+    console.log('🏢 Loaded industries:', industriesList);
+    
+    // Populate all sections
+    populateProfileData();
+    showToast('Profile loaded');  // <-- PINALITAN
+} else {
+    console.error('❌ Backend error:', result);
+    showToast(result.message || 'Load failed', 'error');  // <-- PINALITAN
             if (result.redirect) {
                 setTimeout(() => window.location.href = result.redirect, 2000);
             }
         }
     } catch (error) {
-        console.error('💥 Network error loading profile:', error);
-        showToast('Network error while loading profile data', 'error');
-    } finally {
+    console.error('💥 Network error loading profile:', error);
+    showToast('Network error', 'error');  // <-- PINALITAN
+} finally {
         setLoadingState(false);
     }
 }
@@ -214,17 +214,11 @@ function populateSocialLinks() {
     
     // Display values
     document.getElementById('display-website').textContent = social.website_url || 'Not provided';
-    document.getElementById('display-facebook').textContent = social.facebook_url || 'Not provided';
     document.getElementById('display-linkedin').textContent = social.linkedin_url || 'Not provided';
-    document.getElementById('display-twitter').textContent = social.twitter_url || 'Not provided';
-    document.getElementById('display-instagram').textContent = social.instagram_url || 'Not provided';
     
     // Modal form values
     document.getElementById('website').value = social.website_url || '';
-    document.getElementById('facebook').value = social.facebook_url || '';
     document.getElementById('linkedin').value = social.linkedin_url || '';
-    document.getElementById('twitter').value = social.twitter_url || '';
-    document.getElementById('instagram').value = social.instagram_url || '';
 }
 
 // Enhanced industry dropdown population
@@ -751,7 +745,7 @@ function initializeIdentitySaving() {
                 };
                 
                 closeModal('identity-modal');
-                showToast('Company identity updated successfully!');
+showToast('Identity updated');  // <-- PINALITAN
                 
             } else {
                 if (result.errors && result.errors.length > 0) {
@@ -867,12 +861,12 @@ function initializeContactSaving() {
                 document.getElementById('password').value = '';
                 
                 closeModal('contact-modal');
-                
-                let message = 'Contact information updated successfully!';
-                if (result.data.password_updated) {
-                    message += ' Password has been updated.';
-                }
-                showToast(message);
+
+let message = 'Contact updated';  // <-- PINALITAN
+if (result.data.password_updated) {
+    message = 'Contact & password updated';  // <-- PINALITAN
+}
+showToast(message);
                 
             } else {
                 if (result.errors && result.errors.length > 0) {
@@ -1561,14 +1555,14 @@ function initializeModals() {
                 logoRemovalFlag = false;
                 
                 closeModal('logo-description-modal');
-                
-                let message = 'Company description updated successfully!';
-                if (result.data.logo_uploaded) {
-                    message = 'Company description and logo updated successfully!';
-                } else if (result.data.logo_removed) {
-                    message = 'Company description updated and logo removed successfully!';
-                }
-                showToast(message);
+
+let message = 'Description updated';  // <-- PINALITAN
+if (result.data.logo_uploaded) {
+    message = 'Description & logo updated';  // <-- PINALITAN
+} else if (result.data.logo_removed) {
+    message = 'Description updated, logo removed';  // <-- PINALITAN
+}
+showToast(message);
                 
             } else {
                 if (result.errors && result.errors.length > 0) {
@@ -1731,106 +1725,91 @@ function initializeModals() {
     });
     
     // PHASE 4: Social Media Save Handler
-    document.getElementById('save-social')?.addEventListener('click', async function(e) {
-        e.preventDefault();
-        
-        const saveBtn = this;
-        const website = document.getElementById('website').value.trim();
-        const facebook = document.getElementById('facebook').value.trim();
-        const linkedin = document.getElementById('linkedin').value.trim();
-        const twitter = document.getElementById('twitter').value.trim();
-        const instagram = document.getElementById('instagram').value.trim();
-        
-        // Basic client-side URL validation
-        const errors = [];
-        const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
-        
-        const urls = {
-            'Website': website,
-            'Facebook': facebook,
-            'LinkedIn': linkedin,
-            'Twitter': twitter,
-            'Instagram': instagram
+document.getElementById('save-social')?.addEventListener('click', async function(e) {
+    e.preventDefault();
+    
+    const saveBtn = this;
+    const website = document.getElementById('website').value.trim();
+    const linkedin = document.getElementById('linkedin').value.trim();
+    
+    // Basic client-side URL validation
+    const errors = [];
+    const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+    
+    const urls = {
+        'Website': website,
+        'LinkedIn': linkedin
+    };
+    
+    for (const [name, url] of Object.entries(urls)) {
+        if (url && !urlPattern.test(url)) {
+            errors.push(`Please enter a valid ${name} URL`);
+            break;
+        }
+    }
+    
+    if (errors.length > 0) {
+        showToast(errors[0], 'error');
+        return;
+    }
+    
+    // Show loading state
+    saveBtn.classList.add('loading');
+    saveBtn.disabled = true;
+    
+    try {
+        const requestData = {
+            website_url: website,
+            linkedin_url: linkedin
         };
         
-        for (const [name, url] of Object.entries(urls)) {
-            if (url && !urlPattern.test(url)) {
-                errors.push(`Please enter a valid ${name} URL`);
-                break;
+        const response = await fetch('../../backend/employer/update_social_links.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            // Update displayed values
+            document.getElementById('display-website').textContent = result.data.website_url || 'Not provided';
+            document.getElementById('display-linkedin').textContent = result.data.linkedin_url || 'Not provided';
+            
+            // Update progress bar if provided
+            if (result.data.completion_percentage !== undefined) {
+                updateProgressBarWithValue(result.data.completion_percentage);
+                updateProgressItems();
             }
-        }
-        
-        if (errors.length > 0) {
-            showToast(errors[0], 'error');
-            return;
-        }
-        
-        // Show loading state
-        saveBtn.classList.add('loading');
-        saveBtn.disabled = true;
-        
-        try {
-            const requestData = {
-                website_url: website,
-                facebook_url: facebook,
-                linkedin_url: linkedin,
-                twitter_url: twitter,
-                instagram_url: instagram
+            
+            // Update local profile data
+            profileData.social_links = {
+                ...profileData.social_links,
+                website_url: result.data.website_url,
+                linkedin_url: result.data.linkedin_url
             };
             
-            const response = await fetch('../../backend/employer/update_social_links.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestData)
-            });
+            closeModal('social-modal');
+            showToast('Social links updated');
             
-            const result = await response.json();
-            
-            if (result.success) {
-                // Update displayed values
-                document.getElementById('display-website').textContent = result.data.website_url || 'Not provided';
-                document.getElementById('display-facebook').textContent = result.data.facebook_url || 'Not provided';
-                document.getElementById('display-linkedin').textContent = result.data.linkedin_url || 'Not provided';
-                document.getElementById('display-twitter').textContent = result.data.twitter_url || 'Not provided';
-                document.getElementById('display-instagram').textContent = result.data.instagram_url || 'Not provided';
-                
-                // Update progress bar if provided
-                if (result.data.completion_percentage !== undefined) {
-                    updateProgressBarWithValue(result.data.completion_percentage);
-                    updateProgressItems();
-                }
-                
-                // Update local profile data
-                profileData.social_links = {
-                    ...profileData.social_links,
-                    website_url: result.data.website_url,
-                    facebook_url: result.data.facebook_url,
-                    linkedin_url: result.data.linkedin_url,
-                    twitter_url: result.data.twitter_url,
-                    instagram_url: result.data.instagram_url
-                };
-                
-                closeModal('social-modal');
-                showToast('Social media links updated successfully!');
-                
+        } else {
+            if (result.errors && result.errors.length > 0) {
+                showToast(result.errors[0], 'error');
             } else {
-                if (result.errors && result.errors.length > 0) {
-                    showToast(result.errors[0], 'error');
-                } else {
-                    showToast(result.message || 'Failed to update social media links', 'error');
-                }
+                showToast(result.message || 'Failed to update', 'error');
             }
-            
-        } catch (error) {
-            console.error('Error updating social media links:', error);
-            showToast('Network error occurred. Please try again.', 'error');
-        } finally {
-            saveBtn.classList.remove('loading');
-            saveBtn.disabled = false;
         }
-    });
+        
+    } catch (error) {
+        console.error('Error updating social links:', error);
+        showToast('Network error', 'error');
+    } finally {
+        saveBtn.classList.remove('loading');
+        saveBtn.disabled = false;
+    }
+});
     
     // Close modals when clicking outside
     const modals = document.querySelectorAll('.modal');

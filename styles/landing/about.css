@@ -117,15 +117,35 @@ nav ul li {
     margin-left: 20px;
 }
 
+/* Complete navbar styles for About page */
 nav ul li a {
-    font-weight: 500;
-    padding: 5px 10px; /* Adjusted to match landing page */
-    border-radius: 5px;
-    transition: all 0.3s ease;
+    font-weight: 500 !important;
+    padding: 8px 16px !important;
+    border-radius: 8px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    position: relative !important;
+    color: #333 !important;
+    text-decoration: none !important;
 }
 
-nav ul li a:hover, nav ul li a.active {
-    background-color: #F2E5BF;
+nav ul li a:hover {
+    background: linear-gradient(135deg, #FD8B51, #FF9A65) !important;
+    color: white !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(253, 139, 81, 0.3) !important;
+}
+
+nav ul li a.active {
+    background: linear-gradient(135deg, #257180, #2B7A85) !important;
+    color: white !important;
+    box-shadow: 0 2px 8px rgba(37, 113, 128, 0.4) !important;
+    font-weight: 600 !important;
+}
+
+nav ul li a.active:hover {
+    background: linear-gradient(135deg, #2B7A85, #34858C) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 16px rgba(37, 113, 128, 0.4) !important;
 }
 
 /* About Hero Section */
@@ -364,13 +384,19 @@ nav ul li a:hover, nav ul li a.active {
 }
 
 .member-image {
-    height: 270px;
+    height: 290px;
     background-color: #e6f3f0;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
     overflow: hidden;
+}
+
+.member-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .member-image i {
@@ -712,4 +738,34 @@ footer {
     .timeline-content p {
         font-size: 0.9rem; /* Changed from 1rem to match landing page */
     }
+}
+/* Custom Scrollbar Design */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--primary);
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--accent);
+}
+
+/* For horizontal scrollbars */
+::-webkit-scrollbar:horizontal {
+    height: 8px;
+}
+
+/* CSS Variables needed (if hindi pa nyo meron) */
+:root {
+    --primary: #257180;
+    --accent: #FD8B51;
 }

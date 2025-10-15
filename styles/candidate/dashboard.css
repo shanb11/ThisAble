@@ -2319,3 +2319,34 @@ html {
         justify-content: center;
     }
 }
+
+/* Custom Scrollbar Design */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--primary);
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--accent);
+}
+
+/* For horizontal scrollbars */
+::-webkit-scrollbar:horizontal {
+    height: 8px;
+}
+
+/* CSS Variables needed (if hindi pa nyo meron) */
+:root {
+    --primary: #257180;
+    --accent: #FD8B51;
+}

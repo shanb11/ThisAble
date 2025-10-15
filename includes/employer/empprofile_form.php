@@ -156,54 +156,34 @@
     </div>
     
     <!-- Website and Social Media Links -->
-    <div class="profile-section">
-        <div class="section-header">
-            <h2 class="section-title">Website & Social Media</h2>
-            <button type="button" class="edit-btn" id="edit-social">
-                <i class="fas fa-edit"></i> Edit
-            </button>
+<div class="profile-section">
+    <div class="section-header">
+        <h2 class="section-title">Website & Social Media</h2>
+        <button type="button" class="edit-btn" id="edit-social">
+            <i class="fas fa-edit"></i> Edit
+        </button>
+    </div>
+    
+    <div class="section-content">
+        <div class="form-group">
+            <label>Company Website</label>
+            <div class="social-input">
+                <div class="social-icon-wrapper website-icon">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <div class="info-value" id="display-website">Loading...</div>
+            </div>
         </div>
         
-        <div class="section-content">
-            <div class="form-group">
-                <label>Company Website</label>
-                <div class="social-input">
-                    <div class="social-icon-wrapper website-icon">
-                        <i class="fas fa-globe"></i>
-                    </div>
-                    <div class="info-value" id="display-website">Loading...</div>
+        <div class="form-group">
+            <label>LinkedIn</label>
+            <div class="social-input">
+                <div class="social-icon-wrapper linkedin-icon">
+                    <i class="fab fa-linkedin-in"></i>
                 </div>
-            </div>
-            
-            <div class="social-section">
-                <div class="social-input">
-                    <div class="social-icon-wrapper facebook-icon">
-                        <i class="fab fa-facebook-f"></i>
-                    </div>
-                    <div class="info-value" id="display-facebook">Loading...</div>
-                </div>
-                
-                <div class="social-input">
-                    <div class="social-icon-wrapper linkedin-icon">
-                        <i class="fab fa-linkedin-in"></i>
-                    </div>
-                    <div class="info-value" id="display-linkedin">Loading...</div>
-                </div>
-                
-                <div class="social-input">
-                    <div class="social-icon-wrapper twitter-icon">
-                        <i class="fab fa-twitter"></i>
-                    </div>
-                    <div class="info-value" id="display-twitter">Loading...</div>
-                </div>
-                
-                <div class="social-input">
-                    <div class="social-icon-wrapper instagram-icon">
-                        <i class="fab fa-instagram"></i>
-                    </div>
-                    <div class="info-value" id="display-instagram">Loading...</div>
-                </div>
+                <div class="info-value" id="display-linkedin">Loading...</div>
             </div>
         </div>
     </div>
+</div>
 </form>

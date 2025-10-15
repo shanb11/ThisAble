@@ -1,10 +1,10 @@
-<div class="profile-section profile-completion-section">
+<div class="profile-completion-section">
     <div class="profile-header">
-        <h2 class="profile-completion-title">Profile Completion</h2>
+        <h2 class="profile-completion-title">📊 Profile Completion</h2>
     </div>
     
     <div class="profile-completion-container">
-        <!-- Main Progress Bar -->
+        <!-- Main Progress Section -->
         <div class="main-progress-section">
             <div class="completion-percentage" id="completion-percentage-display">0%</div>
             <div class="main-progress-bar">

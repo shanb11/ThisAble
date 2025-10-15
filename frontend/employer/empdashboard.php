@@ -64,15 +64,6 @@ logActivity('dashboard_access', 'Viewed employer dashboard');
         <!-- Post Job Modal -->
         <?php include('../../modals/employer/postjob_modal.php'); ?>
 
-        <!-- View Job Details Modal -->
-        <?php include('../../modals/employer/viewjob_modal.php'); ?>
-
-        <!-- Edit Job Modal -->
-        <?php include('../../modals/employer/editjob_modal.php'); ?>
-
-        <!-- View Applicant Profile Modal -->
-        <?php include('../../modals/employer/view_applicant_modal.php'); ?>
-
         <!-- Schedule Interview Modal -->
         <?php include('../../modals/employer/schedule_interview_modal.php'); ?>
 

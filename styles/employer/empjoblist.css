@@ -1,3 +1,25 @@
+/* ========================================
+   SIDEBAR FIX - Copy to ALL pages
+   ======================================== */
+
+html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.main-content {
+    flex: 1;
+    padding: 20px 20px 20px 20px !important;
+    min-height: 100vh;
+    margin-left: 250px;
+    transition: margin-left 0.3s ease;
+}
+
+.sidebar.collapsed ~ .main-content {
+    margin-left: 80px;
+}
+
+/* Delete .main-content.expanded if existing */
 :root {
     --primary: #257180;
     --secondary: #F2E5BF;
@@ -69,16 +91,68 @@ body {
     color: #777;
 }
 
+/* ========================================
+   NOTIFICATION BUTTON - DASHBOARD STYLE
+   Copy this to empapplicants.css
+   ======================================== */
+
+/* Notification Icons Container */
 .notification-icons {
     display: flex;
-    gap: 15px;
-    margin-left: 20px;
+    gap: 12px;
 }
 
+.notification-icons a {
+    text-decoration: none;
+}
+
+/* Notification Icon Button */
 .notification-icons i {
-    font-size: 20px;
-    color: #555;
+    font-size: 22px;
+    color: var(--text-medium);
     cursor: pointer;
+    padding: 10px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    background: var(--card-bg);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.notification-icons i:hover {
+    color: var(--accent);
+    background: rgba(253, 139, 81, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Active/Unread Notification Badge (Optional) */
+.notification-icons .fa-bell::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    background: var(--danger);
+    border-radius: 50%;
+    border: 2px solid white;
+    display: none;
+}
+
+.notification-icons .fa-bell.has-unread::after {
+    display: block;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.8;
+    }
 }
 
 /* Page Header Styles */
@@ -1744,3 +1818,33 @@ select.form-control {
     }
 }
 
+/* Custom Scrollbar Design */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--primary);
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--accent);
+}
+
+/* For horizontal scrollbars */
+::-webkit-scrollbar:horizontal {
+    height: 8px;
+}
+
+/* CSS Variables needed (if hindi pa nyo meron) */
+:root {
+    --primary: #257180;
+    --accent: #FD8B51;
+}

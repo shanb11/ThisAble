@@ -47,8 +47,6 @@
             echo '<i class="fas fa-briefcase"></i>';
             echo '<h3>No work experience added yet</h3>';
             echo '<p>Add your work experience to showcase your skills and expertise to potential employers.</p>';
-            echo '<button class="btn primary-btn" id="add-experience-empty-btn">';
-            echo '<i class="fas fa-plus"></i> Add Experience</button>';
             echo '</div>';
         }
         ?>

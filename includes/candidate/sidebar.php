@@ -1,6 +1,6 @@
 <!-- Sidebar -->
 <div class="sidebar" id="sidebar">
-    <a href="dashboard.php" class="logo">
+    <a href="index.html" class="logo">
         <img src="../../images/thisablelogo.png" alt="Opening Doors Logo">
     </a>
     <div class="sidebar-menu">

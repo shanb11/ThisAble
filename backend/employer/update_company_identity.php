@@ -1,7 +1,7 @@
 <?php
 /**
  * Update Company Identity
- * Handles company name, industry, and address updates
+ * Handles company name, industry, address, website, and size updates
  */
 
 require_once '../db.php';
@@ -40,6 +40,8 @@ try {
     $industry_id = $input['industry_id'] ?? '';
     $custom_industry = trim($input['custom_industry'] ?? '');
     $company_address = trim($input['company_address'] ?? '');
+    $company_website = trim($input['company_website'] ?? '');
+    $company_size = trim($input['company_size'] ?? '');
     
     // Validation array
     $errors = [];
@@ -61,10 +63,11 @@ try {
         $errors[] = 'Custom industry must be less than 100 characters';
     }
     
-    if (empty($company_address)) {
-        $errors[] = 'Company address is required';
-    } elseif (strlen($company_address) > 500) {
-        $errors[] = 'Company address must be less than 500 characters';
+    // Validate website URL if provided
+    if (!empty($company_website)) {
+        if (!filter_var($company_website, FILTER_VALIDATE_URL)) {
+            $errors[] = 'Please enter a valid website URL';
+        }
     }
     
     // Return validation errors
@@ -108,13 +111,15 @@ try {
     $conn->beginTransaction();
     
     try {
-        // Update employer record
+        // Update employer record with new fields
         $update_sql = "
             UPDATE employers 
             SET company_name = :company_name,
                 industry = :industry,
                 industry_id = :industry_id,
                 company_address = :company_address,
+                company_website = :company_website,
+                company_size = :company_size,
                 updated_at = NOW()
             WHERE employer_id = :employer_id
         ";
@@ -125,6 +130,8 @@ try {
             'industry' => $final_industry_name,
             'industry_id' => $final_industry_id,
             'company_address' => $company_address,
+            'company_website' => $company_website,
+            'company_size' => $company_size,
             'employer_id' => $employer_id
         ]);
         
@@ -179,6 +186,8 @@ try {
                 'industry' => $final_industry_name,
                 'industry_id' => $final_industry_id,
                 'company_address' => $company_address,
+                'company_website' => $company_website,
+                'company_size' => $company_size,
                 'completion_percentage' => $completion_percentage
             ]
         ]);
@@ -220,6 +229,7 @@ function calculateCompletionPercentage($conn, $employer_id) {
                 e.company_description,
                 e.why_join_us,
                 e.company_logo_path,
+                e.company_website,
                 ehp.open_to_pwd,
                 esl.website_url,
                 COUNT(ec.contact_id) as contact_count
@@ -263,7 +273,7 @@ function calculateCompletionPercentage($conn, $employer_id) {
         }
         
         // 4. Social Links (20%) - At least website
-        if (!empty($data['website_url'])) {
+        if (!empty($data['website_url']) || !empty($data['company_website'])) {
             $completed_sections++;
         }
         

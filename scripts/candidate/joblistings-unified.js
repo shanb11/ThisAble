@@ -1117,11 +1117,283 @@ async function trackJobView(jobId) {
         console.error('Error tracking view:', error);
     }
 }
-
 function initializeFilterModal() {
-    // Basic filter modal - can be expanded later
-    console.log('Filter modal initialized');
+    const filterBtn = document.getElementById('filter-btn');
+    let filterModal = document.querySelector('.filter-modal');
+    
+    if (!filterModal) {
+        filterModal = document.createElement('div');
+        filterModal.className = 'filter-modal';
+        filterModal.innerHTML = `
+            <div class="filter-modal-content">
+                <div class="filter-modal-header">
+                    <h3>Filter Jobs</h3>
+                    <button class="close-filter-modal" aria-label="Close filter options">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="filter-modal-body">
+                    <div class="filter-section">
+                        <h4>Job Type</h4>
+                        <div class="filter-options">
+                            <label>
+                                <input type="checkbox" name="job-type" value="full-time"> Full-time
+                            </label>
+                            <label>
+                                <input type="checkbox" name="job-type" value="part-time"> Part-time
+                            </label>
+                            <label>
+                                <input type="checkbox" name="job-type" value="contract"> Contract
+                            </label>
+                            <label>
+                                <input type="checkbox" name="job-type" value="internship"> Internship
+                            </label>
+                        </div>
+                    </div>
+                    <div class="filter-section">
+                        <h4>Work Mode</h4>
+                        <div class="filter-options">
+                            <label>
+                                <input type="checkbox" name="work-mode" value="remote"> Remote
+                            </label>
+                            <label>
+                                <input type="checkbox" name="work-mode" value="hybrid"> Hybrid
+                            </label>
+                            <label>
+                                <input type="checkbox" name="work-mode" value="on-site"> On-site
+                            </label>
+                        </div>
+                    </div>
+                    <div class="filter-section">
+                        <h4>Accessibility Features</h4>
+                        <div class="filter-options">
+                            <label>
+                                <input type="checkbox" name="accessibility" value="flexible-schedule"> Flexible Schedule
+                            </label>
+                            <label>
+                                <input type="checkbox" name="accessibility" value="assistive-tech"> Assistive Technology
+                            </label>
+                            <label>
+                                <input type="checkbox" name="accessibility" value="accessible-office"> Accessible Office
+                            </label>
+                            <label>
+                                <input type="checkbox" name="accessibility" value="transportation"> Transportation Assistance
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="filter-modal-footer">
+                    <button class="clear-filters-btn">Clear All</button>
+                    <button class="apply-filters-btn">Apply Filters</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(filterModal);
+    }
+    
+    const closeFilterModal = filterModal.querySelector('.close-filter-modal');
+    const clearFiltersBtn = filterModal.querySelector('.clear-filters-btn');
+    const applyFiltersBtn = filterModal.querySelector('.apply-filters-btn');
+    
+    // Open modal
+    if (filterBtn) {
+        filterBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            filterModal.style.display = 'flex';
+        });
+    }
+    
+    // Close modal
+    if (closeFilterModal) {
+        closeFilterModal.addEventListener('click', function() {
+            filterModal.style.display = 'none';
+        });
+    }
+    
+    if (clearFiltersBtn) {
+    clearFiltersBtn.addEventListener('click', function() {
+        const checkboxes = filterModal.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(cb => {
+            cb.checked = false;
+        });
+        
+        // Reset all job cards to visible
+        const allCards = document.querySelectorAll('.job-card');
+        allCards.forEach(card => {
+            card.style.display = 'block';
+        });
+        
+        // Update job count
+        updateJobStats(allCards.length, '');
+        
+        showNotification('Filters cleared!', 'info');
+    });
 }
+    
+    // Apply filters
+    if (applyFiltersBtn) {
+        applyFiltersBtn.addEventListener('click', function() {
+            const selectedFilters = {};
+            const checkboxes = filterModal.querySelectorAll('input[type="checkbox"]:checked');
+            
+            checkboxes.forEach(cb => {
+                const category = cb.getAttribute('name');
+                if (!selectedFilters[category]) {
+                    selectedFilters[category] = [];
+                }
+                selectedFilters[category].push(cb.value);
+            });
+            
+            // Apply filters to job listings
+            applyJobFilters(selectedFilters);
+            filterModal.style.display = 'none';
+            
+            // Show notification
+            showNotification('Filters applied successfully!', 'success');
+        });
+    }
+    
+    // Close when clicking outside
+    filterModal.addEventListener('click', function(event) {
+        if (event.target === filterModal) {
+            filterModal.style.display = 'none';
+        }
+    });
+}
+
+function applyJobFilters(filters) {
+    const allCards = document.querySelectorAll('.job-card');
+    let visibleCount = 0;
+    
+    allCards.forEach(card => {
+        let shouldShow = true;
+        
+        // Get job details from the card
+        const jobTags = card.querySelectorAll('.job-tag');
+        const jobTagsText = Array.from(jobTags).map(tag => tag.textContent.toLowerCase().trim()).join(' ');
+        const companyName = card.querySelector('.company-name')?.textContent.toLowerCase() || '';
+        const jobTitle = card.querySelector('.job-title')?.textContent.toLowerCase() || '';
+        const features = card.querySelectorAll('.feature-badge');
+        const featuresText = Array.from(features).map(feature => feature.textContent.toLowerCase().trim()).join(' ');
+        
+        // Check each filter category
+        Object.keys(filters).forEach(category => {
+            if (filters[category].length > 0 && shouldShow) {
+                let categoryMatch = false;
+                
+                if (category === 'job-type') {
+                    // Check employment type in job tags
+                    categoryMatch = filters[category].some(value => {
+                        const searchTerm = value.replace('-', ' ').toLowerCase();
+                        return jobTagsText.includes(searchTerm) || 
+                               jobTagsText.includes(value.toLowerCase()) ||
+                               (value === 'full-time' && jobTagsText.includes('full time')) ||
+                               (value === 'part-time' && jobTagsText.includes('part time'));
+                    });
+                }
+                
+                else if (category === 'work-mode') {
+                    // Check work mode in job tags  
+                    categoryMatch = filters[category].some(value => {
+                        const searchTerm = value.replace('-', ' ').toLowerCase();
+                        return jobTagsText.includes(searchTerm) ||
+                               jobTagsText.includes(value.toLowerCase()) ||
+                               (value === 'on-site' && (jobTagsText.includes('onsite') || jobTagsText.includes('on site')));
+                    });
+                }
+                
+                else if (category === 'accessibility') {
+                    // Check accessibility features
+                    categoryMatch = filters[category].some(value => {
+                        const searchTerm = value.replace('-', ' ').toLowerCase();
+                        return featuresText.includes(searchTerm) ||
+                               featuresText.includes(value.toLowerCase()) ||
+                               (value === 'flexible-schedule' && featuresText.includes('flexible')) ||
+                               (value === 'assistive-tech' && (featuresText.includes('assistive') || featuresText.includes('technology'))) ||
+                               (value === 'accessible-office' && featuresText.includes('accessible')) ||
+                               (value === 'transportation' && featuresText.includes('transport'));
+                    });
+                }
+                
+                if (!categoryMatch) {
+                    shouldShow = false;
+                }
+            }
+        });
+        
+        if (shouldShow) {
+            card.style.display = 'block';
+            visibleCount++;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+    
+    // Show empty state if no results
+    if (visibleCount === 0) {
+        showEmptyStateWithFilters();
+    } else {
+        // Remove empty state if it exists
+        const emptyState = document.querySelector('.jobs-empty');
+        if (emptyState) {
+            emptyState.remove();
+        }
+    }
+    
+    // Update job count
+    updateJobStats(visibleCount, '');
+}
+
+// ADD this new function for empty state with filters
+function showEmptyStateWithFilters() {
+    const container = document.getElementById('jobs-container');
+    
+    // Remove existing empty state
+    const existingEmpty = container.querySelector('.jobs-empty');
+    if (existingEmpty) {
+        existingEmpty.remove();
+    }
+    
+    const emptyDiv = document.createElement('div');
+    emptyDiv.className = 'jobs-empty';
+    emptyDiv.innerHTML = `
+        <i class="fas fa-filter"></i>
+        <h3>No jobs match your filters</h3>
+        <p>Try adjusting your filter criteria or clear all filters to see more opportunities.</p>
+        <button class="clear-all-filters-btn" onclick="clearAllFiltersFromEmpty()">
+    Clear All Filters
+</button>
+    `;
+    
+    container.appendChild(emptyDiv);
+}
+
+// ADD this global function for clearing filters from empty state
+window.clearAllFiltersFromEmpty = function() {
+    // Clear all checkboxes
+    const checkboxes = document.querySelectorAll('.filter-modal input[type="checkbox"]');
+    checkboxes.forEach(cb => {
+        cb.checked = false;
+    });
+    
+    // Show all cards
+    const allCards = document.querySelectorAll('.job-card');
+    allCards.forEach(card => {
+        card.style.display = 'block';
+    });
+    
+    // Remove empty state
+    const emptyState = document.querySelector('.jobs-empty');
+    if (emptyState) {
+        emptyState.remove();
+    }
+    
+    // Update job count
+    updateJobStats(allCards.length, '');
+    
+    showNotification('All filters cleared!', 'success');
+};
 
 function initializeShareModal() {
     // Basic share modal - can be expanded later
@@ -1920,4 +2192,7 @@ window.showApplicationModal = showApplicationModal;
 window.toggleSaveJob = toggleSaveJob;
 window.viewResume = viewResume;
 
+
+
 console.log('ThisAble Job Listings - Unified Version Loaded! 🚀');
+
