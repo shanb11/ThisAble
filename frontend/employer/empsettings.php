@@ -18,7 +18,7 @@
         <div class="settings-header">
             <h1>Company Settings</h1>
             <div class="notification-icons">
-                <a href="../components/empnotifications.html">
+                <a href="../employer/empnotifications.php">
                     <i class="far fa-bell"></i>
                 </a>
             </div>
@@ -61,19 +61,6 @@
                     <div class="setting-content">
                         <div class="setting-title">Hiring Team Management</div>
                         <div class="setting-description">Add or remove team members and manage their permissions</div>
-                    </div>
-                    <div class="setting-arrow">
-                        <i class="fas fa-chevron-right"></i>
-                    </div>
-                </div>
-                
-                <div class="setting-item" data-setting="applicant-management">
-                    <div class="setting-icon">
-                        <i class="fas fa-user-check"></i>
-                    </div>
-                    <div class="setting-content">
-                        <div class="setting-title">Applicant Management Preferences</div>
-                        <div class="setting-description">Configure applicant tracking and interview pipeline settings</div>
                     </div>
                     <div class="setting-arrow">
                         <i class="fas fa-chevron-right"></i>
@@ -190,76 +177,26 @@
         </div>
         
         <!-- Hiring Team Management Detail -->
-        <div class="setting-detail-container" id="hiring-team-detail">
-            <div class="detail-header">
-                <div class="back-btn" data-target="settings-main"><i class="fas fa-arrow-left"></i></div>
-                <div class="detail-title">Hiring Team Management</div>
+<div class="setting-detail-container" id="hiring-team-detail">
+    <div class="detail-header">
+        <div class="back-btn" data-target="settings-main"><i class="fas fa-arrow-left"></i></div>
+        <div class="detail-title">Hiring Team Management</div>
+    </div>
+    <form id="hiring-team-form">
+        <div class="form-group">
+            <label class="form-label">Current Team Members</label>
+            <div class="team-members-list" id="team-members-list">
+                <!-- Team members will be loaded here dynamically -->
             </div>
-            <form id="hiring-team-form">
-                <div class="form-group">
-                    <label class="form-label">Current Team Members</label>
-                    <div class="team-members-list">
-                        <div class="team-member">
-                            <div class="team-member-avatar">JS</div>
-                            <div class="team-member-info">
-                                <div class="team-member-name">Jane Smith</div>
-                                <div class="team-member-role">HR Manager (Admin)</div>
-                            </div>
-                            <div class="team-member-actions">
-                                <button type="button" class="edit-member" data-id="1"><i class="fas fa-pen"></i></button>
-                                <button type="button" class="delete-member" data-id="1"><i class="fas fa-trash"></i></button>
-                            </div>
-                        </div>
-                        <div class="team-member">
-                            <div class="team-member-avatar">RM</div>
-                            <div class="team-member-info">
-                                <div class="team-member-name">Robert Martinez</div>
-                                <div class="team-member-role">Recruiter</div>
-                            </div>
-                            <div class="team-member-actions">
-                                <button type="button" class="edit-member" data-id="2"><i class="fas fa-pen"></i></button>
-                                <button type="button" class="delete-member" data-id="2"><i class="fas fa-trash"></i></button>
-                            </div>
-                        </div>
-                        <div class="team-member">
-                            <div class="team-member-avatar">KL</div>
-                            <div class="team-member-info">
-                                <div class="team-member-name">Kelly Lee</div>
-                                <div class="team-member-role">Hiring Manager (View Only)</div>
-                            </div>
-                            <div class="team-member-actions">
-                                <button type="button" class="edit-member" data-id="3"><i class="fas fa-pen"></i></button>
-                                <button type="button" class="delete-member" data-id="3"><i class="fas fa-trash"></i></button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <button type="button" class="btn btn-primary add-btn" id="add-team-member-btn">
-                        <i class="fas fa-plus"></i> Add Team Member
-                    </button>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Role Permissions</label>
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="admin-full-access" checked>
-                        <label class="form-check-label" for="admin-full-access">Admin: Full access to all features</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="recruiter-posting" checked>
-                        <label class="form-check-label" for="recruiter-posting">Recruiter: Can post jobs and manage applicants</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="hiring-manager-view" checked>
-                        <label class="form-check-label" for="hiring-manager-view">Hiring Manager: View-only access to applications</label>
-                    </div>
-                </div>
-                
-                <button type="submit" class="btn btn-primary">Save Changes</button>
-            </form>
         </div>
+        
+        <div class="form-group">
+            <button type="button" class="btn btn-primary add-btn" id="add-team-member-btn">
+                <i class="fas fa-plus"></i> Add Team Member
+            </button>
+        </div>
+    </form>
+</div>
         
         <!-- Applicant Management Preferences Detail -->
         <div class="setting-detail-container" id="applicant-management-detail">
@@ -891,18 +828,22 @@
     <form id="company-info-form">
         <div class="form-group">
             <label class="form-label" for="company-name">Company Name</label>
-            <input type="text" class="form-control" id="company-name" value="TechLabs Inc.">
+            <input type="text" class="form-control" id="company-name" value="TechLabs Inc." required>
         </div>
         <div class="form-group">
             <label class="form-label" for="company-industry">Industry</label>
-            <select class="select-control" id="company-industry">
+            <select class="select-control" id="company-industry" required>
                 <option value="">Loading industries...</option>
             </select>
         </div>
         <div class="form-group">
             <label class="form-label" for="company-description">Company Description</label>
-            <textarea class="form-control" id="company-description" rows="4">TechLabs Inc. is a leading technology company specializing in accessibility-focused software solutions. We believe in creating innovative products that are usable by everyone, regardless of their abilities.</textarea>
+            <textarea class="form-control" id="company-description" rows="4" required>TechLabs Inc. is a leading technology company specializing in accessibility-focused software solutions. We believe in creating innovative products that are usable by everyone, regardless of their abilities.</textarea>
         </div>
+        <div class="form-group">
+    <label class="form-label" for="company-address">Company Address</label>
+    <input type="text" class="form-control" id="company-address" placeholder="Enter company address">
+</div>
         <div class="form-group">
             <label class="form-label" for="company-website">Company Website</label>
             <input type="url" class="form-control" id="company-website" value="https://techlabs-example.com">
@@ -917,37 +858,6 @@
                 <option value="501-1000">501-1000 employees</option>
                 <option value="1001+">1001+ employees</option>
             </select>
-        </div>
-        <div class="form-group">
-            <label class="form-label">Company Logo</label>
-            <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                <div style="width: 100px; height: 100px; background-color: var(--light-gray); display: flex; align-items: center; justify-content: center; margin-right: 20px; border-radius: 5px; overflow: hidden;">
-                    <img id="logo-preview-img" src="company-logo-placeholder.png" alt="Company Logo" style="max-width: 100%; max-height: 100%;">
-                </div>
-                <div class="file-upload">
-                    <label for="logo-upload" class="file-upload-btn">
-                        <i class="fas fa-cloud-upload-alt"></i> Upload Logo
-                    </label>
-                    <input type="file" id="logo-upload" accept="image/*">
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="form-label">Social Media Links</label>
-            <div style="margin-bottom: 10px;">
-                <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                    <i class="fab fa-linkedin" style="font-size: 20px; min-width: 30px;"></i>
-                    <input type="url" class="form-control" placeholder="LinkedIn URL" value="https://linkedin.com/company/techlabs-example">
-                </div>
-                <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                    <i class="fab fa-twitter" style="font-size: 20px; min-width: 30px;"></i>
-                    <input type="url" class="form-control" placeholder="Twitter URL" value="https://twitter.com/techlabs_example">
-                </div>
-                <div style="display: flex; align-items: center;">
-                    <i class="fab fa-facebook" style="font-size: 20px; min-width: 30px;"></i>
-                    <input type="url" class="form-control" placeholder="Facebook URL" value="https://facebook.com/techlabs_example">
-                </div>
-            </div>
         </div>
         <button type="submit" class="btn btn-primary">Save Changes</button>
     </form>

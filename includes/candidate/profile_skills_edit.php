@@ -1,50 +1,112 @@
-<div class="edit-form" id="skills-edit-form">
-    <form id="skills-form">
-        <?php
-        // Fetch all skill categories
-        $cat_query = "SELECT * FROM skill_categories ORDER BY category_name";
-        $cat_stmt = $conn->query($cat_query);
-        
-        // Fetch user's current skills
-        $user_skills_query = "SELECT skill_id FROM seeker_skills WHERE seeker_id = :seeker_id";
-        $user_skills_stmt = $conn->prepare($user_skills_query);
-        $user_skills_stmt->bindParam(':seeker_id', $seeker_id, PDO::PARAM_INT);
-        $user_skills_stmt->execute();
-        
-        $user_skills = [];
-        while ($skill = $user_skills_stmt->fetch(PDO::FETCH_ASSOC)) {
-            $user_skills[] = $skill['skill_id'];
-        }
-        
-        // Display skills by category
-        while ($category = $cat_stmt->fetch(PDO::FETCH_ASSOC)) {
-            echo '<div class="form-group">';
-            echo '<label>' . htmlspecialchars($category['category_name']) . '</label>';
-            echo '<div class="skills-checkbox-container">';
-            
-            // Fetch skills for this category
-            $skills_query = "SELECT * FROM skills WHERE category_id = :category_id ORDER BY skill_name";
-            $skills_stmt = $conn->prepare($skills_query);
-            $skills_stmt->bindParam(':category_id', $category['category_id'], PDO::PARAM_INT);
-            $skills_stmt->execute();
-            
-            while ($skill = $skills_stmt->fetch(PDO::FETCH_ASSOC)) {
-                $checked = in_array($skill['skill_id'], $user_skills) ? 'checked' : '';
-                
-                echo '<div class="checkbox-item">';
-                echo '<input type="checkbox" id="skill-' . $skill['skill_id'] . '" name="skills[]" value="' . $skill['skill_id'] . '" ' . $checked . '>';
-                echo '<label for="skill-' . $skill['skill_id'] . '">' . htmlspecialchars($skill['skill_name']) . '</label>';
-                echo '</div>';
-            }
-            
-            echo '</div>'; // Close skills-checkbox-container
-            echo '</div>'; // Close form-group
-        }
-        ?>
-        
-        <div class="form-actions">
-            <button type="button" class="btn cancel-btn" data-section="skills">Cancel</button>
-            <button type="submit" class="btn save-btn" data-section="skills">Save Changes</button>
+<!-- Skills Edit Modal -->
+<div class="modal-overlay" id="skills-modal" style="display: none;">
+    <div class="modal-content skills-modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-tools"></i> Edit Skills</h3>
+            <button type="button" class="close-modal-btn" onclick="closeSkillsModal()">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
-    </form>
+        
+        <div class="modal-body">
+            <form id="skills-form">
+                
+                <!-- Search Skills -->
+                <div class="skills-search-container">
+                    <div class="search-input-group">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="skills-search" placeholder="Search skills or add your own..." autocomplete="off">
+                        <button type="button" id="add-custom-skill-btn" class="add-custom-btn">
+                            <i class="fas fa-plus"></i> Add
+                        </button>
+                    </div>
+                    <div class="search-results" id="skills-search-results" style="display: none;"></div>
+                </div>
+                
+                <!-- Selected Skills -->
+                <div class="selected-skills-section">
+                    <h4><i class="fas fa-check-circle"></i> Your Skills</h4>
+                    <div class="selected-skills-container" id="selected-skills-container">
+                        <!-- Selected skills will appear here -->
+                    </div>
+                </div>
+                
+                <!-- Popular Skills by Category -->
+                <div class="popular-skills-section">
+                    <h4><i class="fas fa-star"></i> Popular Skills</h4>
+                    
+                    <div class="skills-tabs">
+                        <button type="button" class="skills-tab active" data-category="technical">
+                            <i class="fas fa-code"></i> Technical
+                        </button>
+                        <button type="button" class="skills-tab" data-category="soft">
+                            <i class="fas fa-heart"></i> Soft Skills
+                        </button>
+                        <button type="button" class="skills-tab" data-category="language">
+                            <i class="fas fa-globe"></i> Languages
+                        </button>
+                    </div>
+                    
+                    <div class="skills-tab-content">
+                        <!-- Technical Skills -->
+                        <div class="skills-category-content active" data-category="technical">
+                            <div class="popular-skills-grid">
+                                <?php
+                                $technical_skills = [
+                                    'JavaScript', 'PHP', 'Python', 'Java', 'HTML/CSS', 'React',
+                                    'Node.js', 'MySQL', 'WordPress', 'Photoshop', 'Excel',
+                                    'Data Entry', 'Web Development', 'Database Management'
+                                ];
+                                foreach($technical_skills as $skill) {
+                                    echo '<button type="button" class="popular-skill-btn" data-skill="'.$skill.'">'.$skill.'</button>';
+                                }
+                                ?>
+                            </div>
+                        </div>
+                        
+                        <!-- Soft Skills -->
+                        <div class="skills-category-content" data-category="soft">
+                            <div class="popular-skills-grid">
+                                <?php
+                                $soft_skills = [
+                                    'Communication', 'Problem Solving', 'Team Work', 'Leadership',
+                                    'Time Management', 'Adaptability', 'Critical Thinking', 'Creativity',
+                                    'Customer Service', 'Attention to Detail', 'Organization', 'Multitasking'
+                                ];
+                                foreach($soft_skills as $skill) {
+                                    echo '<button type="button" class="popular-skill-btn" data-skill="'.$skill.'">'.$skill.'</button>';
+                                }
+                                ?>
+                            </div>
+                        </div>
+                        
+                        <!-- Languages -->
+                        <div class="skills-category-content" data-category="language">
+                            <div class="popular-skills-grid">
+                                <?php
+                                $languages = [
+                                    'Filipino', 'English', 'Spanish', 'Mandarin', 'Japanese',
+                                    'Korean', 'French', 'German', 'Arabic', 'Sign Language'
+                                ];
+                                foreach($languages as $skill) {
+                                    echo '<button type="button" class="popular-skill-btn" data-skill="'.$skill.'">'.$skill.'</button>';
+                                }
+                                ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </form>
+        </div>
+        
+        <div class="modal-footer">
+<button type="button" class="close-modal-btn" onclick="closeSkillsModal()">
+    <i class="fas fa-times"></i>
+</button>
+            <button type="button" class="btn primary-btn" onclick="saveSkills()">
+                <i class="fas fa-save"></i> Save Skills
+            </button>
+        </div>
+    </div>
 </div>

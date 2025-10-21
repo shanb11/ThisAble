@@ -1,4 +1,41 @@
+
+
 // Toggle sidebar
+
+// Sidebar Toggle - Clean Version
+function initializeSidebarToggle() {
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.getElementById('toggle-btn');
+    const toggleIcon = document.getElementById('toggle-icon');
+
+    if (toggleBtn && sidebar && toggleIcon) {
+        toggleBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            sidebar.classList.toggle('collapsed');
+            
+            if (sidebar.classList.contains('collapsed')) {
+                toggleIcon.classList.remove('fa-chevron-left');
+                toggleIcon.classList.add('fa-chevron-right');
+            } else {
+                toggleIcon.classList.remove('fa-chevron-right');
+                toggleIcon.classList.add('fa-chevron-left');
+            }
+        });
+        
+        console.log('Sidebar toggle initialized successfully');
+    } else {
+        console.error('Sidebar toggle elements not found');
+    }
+}
+
+// Call immediately when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeSidebarToggle);
+} else {
+    initializeSidebarToggle();
+}
 document.addEventListener('DOMContentLoaded', function() {
     // Add this at the beginning - Check if account setup is complete
     const setupComplete = localStorage.getItem('accountSetupComplete');

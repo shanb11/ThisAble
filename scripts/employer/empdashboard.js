@@ -202,20 +202,6 @@ function updateRecentJobs() {
                 </div>
                 <span class="job-status ${job.status}">${capitalizeFirst(job.status)}</span>
             </div>
-            <div class="job-footer">
-                <div class="job-meta">
-                    <span><i class="fas fa-map-marker-alt"></i> ${escapeHtml(job.location)}</span>
-                    <span><i class="fas fa-user"></i> ${job.applicant_count} Applicant${job.applicant_count !== 1 ? 's' : ''}</span>
-                </div>
-                <div class="job-actions">
-                    <button title="View Details" onclick="viewJobDetails(${job.job_id})">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button title="Edit" onclick="editJob(${job.job_id})">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                </div>
-            </div>
         </li>
     `).join('');
 }
@@ -247,9 +233,6 @@ function updateRecentApplicants() {
             </div>
             <div class="applicant-date">${applicant.time_ago}</div>
             <div class="applicant-actions">
-                <button title="View Profile" onclick="viewApplicantProfile(${applicant.application_id})">
-                    <i class="fas fa-eye"></i>
-                </button>
             </div>
         </li>
     `).join('');
@@ -494,6 +477,9 @@ function setupModals() {
     // Post job modal
     setupPostJobModal();
     
+    // Edit job modal
+    setupEditJobModal();
+    
     // Other modals
     setupOtherModals();
 }
@@ -522,6 +508,46 @@ function setupPostJobModal() {
         const submitBtn = document.getElementById('submit-post-job');
         if (submitBtn) {
             submitBtn.addEventListener('click', handlePostJob);
+        }
+    }
+}
+/**
+ * Setup edit job modal
+ */
+function setupEditJobModal() {
+    const editJobModal = document.getElementById('edit-job-modal');
+    
+    if (editJobModal) {
+        // Close buttons
+        const closeButtons = editJobModal.querySelectorAll('#close-edit-job, #cancel-edit-job');
+        closeButtons.forEach(btn => {
+            btn.addEventListener('click', () => hideModal('edit-job-modal'));
+        });
+        
+        // Update button
+        const updateBtn = document.getElementById('update-job');
+        if (updateBtn) {
+            updateBtn.addEventListener('click', handleUpdateJob);
+        }
+    }
+}
+/**
+ * Setup edit job modal
+ */
+function setupEditJobModal() {
+    const editJobModal = document.getElementById('edit-job-modal');
+    
+    if (editJobModal) {
+        // Close buttons
+        const closeButtons = editJobModal.querySelectorAll('#close-edit-job, #cancel-edit-job');
+        closeButtons.forEach(btn => {
+            btn.addEventListener('click', () => hideModal('edit-job-modal'));
+        });
+        
+        // Update button
+        const updateBtn = document.getElementById('update-job');
+        if (updateBtn) {
+            updateBtn.addEventListener('click', handleUpdateJob);
         }
     }
 }
@@ -723,6 +749,123 @@ async function handlePostJob() {
 }
 
 /**
+ * Handle update job form submission
+ */
+async function handleUpdateJob() {
+    const form = document.getElementById('edit-job-form');
+    if (!form) {
+        showNotification('Edit form not found', 'error');
+        return;
+    }
+    
+    // Get form data
+    const jobId = document.getElementById('edit-job-id')?.value;
+    const formData = {
+        job_id: jobId,
+        job_title: document.getElementById('edit-job-title')?.value?.trim(),
+        department: document.getElementById('edit-job-department')?.value,
+        location: document.getElementById('edit-job-location')?.value?.trim(),
+        employment_type: document.getElementById('edit-job-type')?.value,
+        job_status: document.getElementById('edit-job-status')?.value,
+        job_description: document.getElementById('edit-job-description')?.value?.trim(),
+        job_requirements: document.getElementById('edit-job-requirements')?.value?.trim(),
+        salary_range: document.getElementById('edit-job-salary')?.value?.trim(),
+        application_deadline: document.getElementById('edit-job-deadline')?.value
+    };
+    
+    // Basic validation
+    const required = ['job_title', 'department', 'location', 'employment_type', 'job_description', 'job_requirements'];
+    const missing = required.filter(field => !formData[field]);
+    
+    if (missing.length > 0) {
+        showNotification(`Please fill in: ${missing.join(', ')}`, 'error');
+        return;
+    }
+    
+    if (!jobId) {
+        showNotification('Job ID is missing', 'error');
+        return;
+    }
+    
+    try {
+        showLoading();
+        
+        const response = await fetch(`${API_BASE}../../backend/shared/job_system.php?action=update_job`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            hideModal('edit-job-modal');
+            form.reset();
+            showNotification('Job updated successfully! 🎉', 'success');
+            
+            // Refresh dashboard
+            setTimeout(loadDashboardData, 1000);
+            
+        } else {
+            showNotification(result.message || 'Failed to update job', 'error');
+        }
+    } catch (error) {
+        console.error('Update job error:', error);
+        showNotification('Error updating job. Please try again.', 'error');
+    } finally {
+        hideLoading();
+    }
+}
+
+/**
+ * Edit job - Load job data and show edit modal
+ */
+window.editJob = async function(jobId) {
+    console.log('Editing job ID:', jobId);
+    
+    try {
+        showLoading();
+        
+        // Fetch job details
+        const response = await fetch(`${API_BASE}../../backend/shared/job_system.php?action=get_job&job_id=${jobId}`);
+        const result = await response.json();
+        
+        if (result.success && result.data) {
+            const job = result.data;
+            
+            // Populate edit form
+            document.getElementById('edit-job-id').value = job.job_id;
+            document.getElementById('edit-job-title').value = job.job_title || '';
+            document.getElementById('edit-job-department').value = job.department || '';
+            document.getElementById('edit-job-location').value = job.location || '';
+            document.getElementById('edit-job-type').value = job.employment_type || '';
+            document.getElementById('edit-job-status').value = job.job_status || 'active';
+            document.getElementById('edit-job-salary').value = job.salary_range || '';
+            document.getElementById('edit-job-description').value = job.job_description || '';
+            document.getElementById('edit-job-requirements').value = job.job_requirements || '';
+            
+            if (job.application_deadline) {
+                document.getElementById('edit-job-deadline').value = job.application_deadline;
+            }
+            
+            // Show modal
+            showModal('edit-job-modal');
+            
+        } else {
+            showNotification(result.message || 'Failed to load job details', 'error');
+        }
+        
+    } catch (error) {
+        console.error('Error loading job:', error);
+        showNotification('Error loading job details. Please try again.', 'error');
+    } finally {
+        hideLoading();
+    }
+};
+
+/**
  * View job details - Uses existing styled modal
  */
 window.viewJobDetails = function(jobId) {
@@ -746,85 +889,6 @@ window.viewJobDetails = function(jobId) {
     showModal('view-job-modal');
 };
 
-/**
- * Display job details in existing styled modal
- */
-function displayJobDetails(job) {
-    const jobDetailsContent = document.getElementById('job-details-content');
-    if (!jobDetailsContent) return;
-    
-    jobDetailsContent.innerHTML = `
-        <div class="job-details">
-            <div class="job-details-header">
-                <div class="job-details-title">${escapeHtml(job.job_title)}</div>
-                <span class="job-details-status ${job.job_status}">${capitalizeFirst(job.job_status)}</span>
-            </div>
-            <div class="job-details-info">
-                <div class="job-detail-item">
-                    <i class="fas fa-building"></i>
-                    <span>${escapeHtml(job.department)}</span>
-                </div>
-                <div class="job-detail-item">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span>${escapeHtml(job.location)}</span>
-                </div>
-                <div class="job-detail-item">
-                    <i class="fas fa-user"></i>
-                    <span>${job.total_applications || 0} Applications</span>
-                </div>
-                <div class="job-detail-item">
-                    <i class="fas fa-clock"></i>
-                    <span>${escapeHtml(job.employment_type)}</span>
-                </div>
-                ${job.salary_range ? `
-                <div class="job-detail-item">
-                    <i class="fas fa-money-bill-wave"></i>
-                    <span>${escapeHtml(job.salary_range)}</span>
-                </div>
-                ` : ''}
-            </div>
-            <div class="job-description">
-                <div class="job-description-title">Job Description</div>
-                <div class="job-description-content">
-                    ${escapeHtml(job.job_description).replace(/\n/g, '<br>')}
-                </div>
-            </div>
-            <div class="job-requirements">
-                <div class="job-requirements-title">Requirements</div>
-                <div class="job-requirements-content">
-                    ${escapeHtml(job.job_requirements).replace(/\n/g, '<br>')}
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-/**
- * View interview details - Uses existing styled modal
- */
-window.viewInterviewDetails = function(interviewId) {
-    console.log('Viewing interview details for ID:', interviewId);
-    
-    // Sample interview data
-    const sampleInterview = {
-        interview_id: interviewId,
-        candidate_name: "This Able",
-        job_title: "Dev",
-        interview_type: "online",
-        scheduled_date: "2025-06-02",
-        scheduled_time: "10:00:00",
-        duration_minutes: 60,
-        interview_platform: "Zoom",
-        meeting_link: "https://zoom.us/j/1234567890",
-        interview_status: "scheduled",
-        disability_name: "Visual Impairment",
-        accommodations_needed: "Screen reader compatible materials needed",
-        interviewer_notes: "First interview for this position. Candidate seems promising based on application."
-    };
-    
-    displayInterviewDetails(sampleInterview);
-    showModal('view-interview-modal');
-};
 
 /**
  * Display interview details in existing styled modal
@@ -1002,17 +1066,6 @@ function handleRescheduleSubmit(interviewId) {
         newTime
     });
 }
-
-/**
- * Other action functions
- */
-window.editJob = function(jobId) {
-    showNotification('Edit job functionality will be implemented soon', 'info');
-};
-
-window.viewApplicantProfile = function(applicationId) {
-    showNotification('View applicant profile functionality will be implemented soon', 'info');
-};
 
 /**
  * Sidebar toggle

@@ -425,11 +425,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const editSectionBtns = document.querySelectorAll('.edit-section-btn');
         
         editSectionBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                const section = this.getAttribute('data-section');
-                toggleEditForm(section);
-            });
-        });
+    btn.addEventListener('click', function() {
+        const section = this.getAttribute('data-section');
+        
+if (section === 'skills') {
+    openSkillsModal();
+} else if (section === 'accessibility') {
+    openAccessibilityModal();
+} else {
+    toggleEditForm(section);
+}
+    });
+});
         
         // Cancel buttons
         const cancelBtns = document.querySelectorAll('.cancel-btn');
@@ -1612,4 +1619,312 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 300);
         }
     }
+
+/**
+ * Skills Modal Functions
+ */
+let selectedSkills = [];
+
+// Make sure these functions are globally available
+window.openSkillsModal = function() {
+    const modal = document.getElementById('skills-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+        loadCurrentSkills();
+        initializeSkillsModal();
+    }
+}
+
+window.closeSkillsModal = function() {
+    console.log('Closing skills modal...'); // Debug log
+    const modal = document.getElementById('skills-modal');
+    if (modal) {
+        modal.style.display = 'none';
+        console.log('Modal closed'); // Debug log
+    }
+}
+
+window.removeSkill = function(skillName) {
+    selectedSkills = selectedSkills.filter(skill => skill !== skillName);
+    updateSelectedSkillsDisplay();
+    updatePopularSkillButtons();
+}
+
+window.saveSkills = function() {
+    // Show loading
+    const saveBtn = document.querySelector('.modal-footer .primary-btn');
+    const originalText = saveBtn.innerHTML;
+    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+    saveBtn.disabled = true;
+    
+    // Send to backend (simplified for demo)
+    const formData = new FormData();
+    selectedSkills.forEach(skill => {
+        formData.append('skills[]', skill);
+    });
+    
+    fetch('../../backend/candidate/update_skills.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('Skills updated successfully!', 'success');
+            closeSkillsModal();
+            setTimeout(() => window.location.reload(), 1500);
+        } else {
+            showNotification(data.message || 'Error updating skills', 'error');
+        }
+    })
+    .catch(error => {
+        showNotification('Error updating skills', 'error');
+    })
+    .finally(() => {
+        saveBtn.innerHTML = originalText;
+        saveBtn.disabled = false;
+    });
+}
+// Escape key to close
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        const modal = document.getElementById('skills-modal');
+        if (modal && modal.style.display === 'flex') {
+            closeSkillsModal();
+        }
+    }
+});
+
+function loadCurrentSkills() {
+    // Load current skills from the display
+    selectedSkills = [];
+    const skillTags = document.querySelectorAll('.skill-tags .skill-tag');
+    skillTags.forEach(tag => {
+        const skillName = tag.textContent.trim();
+        if (skillName) {
+            selectedSkills.push(skillName);
+        }
+    });
+    updateSelectedSkillsDisplay();
+}
+
+function initializeSkillsModal() {
+    // Tab switching
+    const tabs = document.querySelectorAll('.skills-tab');
+    const contents = document.querySelectorAll('.skills-category-content');
+    
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            const category = this.getAttribute('data-category');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.classList.remove('active'));
+            
+            this.classList.add('active');
+            document.querySelector(`[data-category="${category}"].skills-category-content`).classList.add('active');
+        });
+    });
+    
+    // Popular skill buttons
+    const popularBtns = document.querySelectorAll('.popular-skill-btn');
+    popularBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const skill = this.getAttribute('data-skill');
+            addSkill(skill);
+        });
+    });
+    
+    // Add custom skill
+    const addBtn = document.getElementById('add-custom-skill-btn');
+    const searchInput = document.getElementById('skills-search');
+    
+    if (addBtn && searchInput) {
+        addBtn.addEventListener('click', function() {
+            const skill = searchInput.value.trim();
+            if (skill) {
+                addSkill(skill);
+                searchInput.value = '';
+            }
+        });
+        
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addBtn.click();
+            }
+        });
+    }
+}
+
+function addSkill(skillName) {
+    if (!skillName || selectedSkills.includes(skillName)) {
+        return;
+    }
+    
+    selectedSkills.push(skillName);
+    updateSelectedSkillsDisplay();
+    updatePopularSkillButtons();
+}
+
+function removeSkill(skillName) {
+    selectedSkills = selectedSkills.filter(skill => skill !== skillName);
+    updateSelectedSkillsDisplay();
+    updatePopularSkillButtons();
+}
+
+function updateSelectedSkillsDisplay() {
+    const container = document.getElementById('selected-skills-container');
+    if (!container) return;
+    
+    if (selectedSkills.length === 0) {
+        container.innerHTML = '<div class="empty-skills-message">No skills selected yet. Search or select from popular skills below.</div>';
+        container.classList.remove('has-skills');
+    } else {
+        container.innerHTML = selectedSkills.map(skill => 
+            `<span class="selected-skill-tag">
+                ${skill}
+                <span class="remove-skill" onclick="removeSkill('${skill}')">
+                    <i class="fas fa-times"></i>
+                </span>
+            </span>`
+        ).join('');
+        container.classList.add('has-skills');
+    }
+}
+
+function updatePopularSkillButtons() {
+    const popularBtns = document.querySelectorAll('.popular-skill-btn');
+    popularBtns.forEach(btn => {
+        const skill = btn.getAttribute('data-skill');
+        if (selectedSkills.includes(skill)) {
+            btn.classList.add('selected');
+        } else {
+            btn.classList.remove('selected');
+        }
+    });
+}
+
+function saveSkills() {
+    // Show loading
+    const saveBtn = document.querySelector('.modal-footer .primary-btn');
+    const originalText = saveBtn.innerHTML;
+    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+    saveBtn.disabled = true;
+    
+    // Send to backend (simplified for demo)
+    const formData = new FormData();
+    selectedSkills.forEach(skill => {
+        formData.append('skills[]', skill);
+    });
+    
+    fetch('../../backend/candidate/update_skills.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('Skills updated successfully!', 'success');
+            closeSkillsModal();
+            setTimeout(() => window.location.reload(), 1500);
+        } else {
+            showNotification(data.message || 'Error updating skills', 'error');
+        }
+    })
+    .catch(error => {
+        showNotification('Error updating skills', 'error');
+    })
+    .finally(() => {
+        saveBtn.innerHTML = originalText;
+        saveBtn.disabled = false;
+    });
+}
+/**
+ * Accessibility Modal Functions
+ */
+window.openAccessibilityModal = function() {
+    const modal = document.getElementById('accessibility-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+        initializeAccessibilityModal();
+    }
+}
+
+window.closeAccessibilityModal = function() {
+    const modal = document.getElementById('accessibility-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+window.saveAccessibilityNeeds = function() {
+    const form = document.getElementById('accessibility-form');
+    const saveBtn = document.querySelector('#accessibility-modal .primary-btn');
+    const originalText = saveBtn.innerHTML;
+    
+    // Show loading
+    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+    saveBtn.disabled = true;
+    
+    // Prepare form data
+    const formData = new FormData(form);
+    
+    // Send to backend
+    fetch('../../backend/candidate/update_accessibility.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('Accessibility needs updated successfully!', 'success');
+            closeAccessibilityModal();
+            setTimeout(() => window.location.reload(), 1500);
+        } else {
+            showNotification(data.message || 'Error updating accessibility needs', 'error');
+        }
+    })
+    .catch(error => {
+        showNotification('Error updating accessibility needs', 'error');
+    })
+    .finally(() => {
+        saveBtn.innerHTML = originalText;
+        saveBtn.disabled = false;
+    });
+}
+
+function initializeAccessibilityModal() {
+    // Close button event
+    const closeBtn = document.getElementById('close-accessibility-modal-btn');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            closeAccessibilityModal();
+        });
+    }
+    
+    // No accommodations checkbox logic
+    const noAccommodationsCheckbox = document.getElementById('no-accommodations');
+    const accommodationCheckboxes = document.querySelectorAll('input[name="accommodations[]"]');
+    
+    if (noAccommodationsCheckbox) {
+        noAccommodationsCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                // Uncheck all accommodation checkboxes
+                accommodationCheckboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+            }
+        });
+    }
+    
+    // If any accommodation is checked, uncheck "no accommodations"
+    accommodationCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            if (this.checked && noAccommodationsCheckbox) {
+                noAccommodationsCheckbox.checked = false;
+            }
+        });
+    });
+}
 });

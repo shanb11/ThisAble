@@ -1353,19 +1353,9 @@ body.reduce-motion * {
 }
 
 /* Notification */
+/* HIDE ALL NOTIFICATIONS COMPLETELY */
 .notification {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background-color: rgba(47, 138, 153, 0.9);
-    color: white;
-    padding: 12px 20px;
-    border-radius: 30px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s;
-    z-index: 1000;
-    font-family: 'Inter', sans-serif;
+    display: none !important;
 }
 
 .notification.show {
@@ -1501,9 +1491,7 @@ body.reduce-motion * {
     }
 }
 
-.notification.show {
-    animation: pulse 2s infinite;
-}
+
 
 /* Smooth modal transitions */
 .filter-modal,
@@ -2079,3 +2067,20 @@ body.high-contrast .compatibility-badge.low {
 /* ===================================================================
    END COMPATIBILITY STYLES
    ================================================================= */
+
+   .clear-all-filters-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    margin-top: 10px;
+    transition: all 0.2s ease;
+}
+
+.clear-all-filters-btn:hover {
+    background: var(--accent-secondary);
+}

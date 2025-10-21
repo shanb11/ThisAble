@@ -24,7 +24,6 @@ class NotificationManager {
     init() {
         this.setupEventListeners();
         this.loadNotifications();
-        this.showWelcomeToast();
     }
     
     setupEventListeners() {
@@ -55,8 +54,6 @@ class NotificationManager {
         // Mark all as read (simple implementation)
         if (this.markAllReadBtn) {
             this.markAllReadBtn.addEventListener('click', () => {
-                // For now, just show a message - we'll implement the full functionality later
-                this.showToast('Mark all as read feature will be implemented in the next update', 'info');
             });
         }
         
@@ -109,7 +106,6 @@ class NotificationManager {
                 this.notifications = data.notifications;
                 this.renderNotifications();
                 this.updateUnreadCount(data.unread_count);
-                this.showToast(`Loaded ${data.notifications.length} notifications`, 'success');
             } else {
                 throw new Error(data.message || 'Failed to load notifications');
             }
@@ -280,11 +276,6 @@ class NotificationManager {
         return container;
     }
     
-    showWelcomeToast() {
-        setTimeout(() => {
-            this.showToast('Notifications system connected successfully!', 'success', 3000);
-        }, 500);
-    }
 }
 
 // Initialize notification manager when DOM is loaded

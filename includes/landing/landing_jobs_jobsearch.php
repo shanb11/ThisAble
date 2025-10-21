@@ -33,6 +33,6 @@
     </div>
     <div class="search-actions">
         <button id="search-jobs-btn" class="btn btn-secondary">Search Jobs</button>
-        <div class="search-count"><span id="jobs-count">18</span> jobs found</div>
+        <div class="search-count"><span id="jobs-count">0</span> jobs found</div>
     </div>
 </section>

@@ -46,10 +46,7 @@
         </div>
     </div>
 
-    <!-- Toast Notifications -->
-    <div class="toast-container" id="toast-container">
-        <!-- Toasts will be added dynamically -->
-    </div>
+
 
         <script src="../../scripts/employer/empnotifications.js"></script>
        

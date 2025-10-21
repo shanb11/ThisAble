@@ -20,3 +20,5 @@
 2025-05-21 22:46:07 | Google Auth | Seeker ID: 27 | Email: smbacs02@gmail.com | Registration completed | Verified: No
 2025-06-02 08:28:12 | Google Auth | Seeker ID: 30 | Email: smbacs02@gmail.com | Registration completed | Verified: No
 2025-06-10 06:41:45 | Google Auth | Seeker ID: 2 | Email: baccayshan@gmail.com | Registration completed | Verified: No
+2025-09-10 15:49:46 | Google Auth | Seeker ID: 7 | Email: lewejpaira@gmail.com | Registration completed | Verified: No
+2025-09-14 14:22:13 | Google Auth | Seeker ID: 8 | Email: jewelramospaira@gmail.com | Registration completed | Verified: No

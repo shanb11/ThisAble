@@ -55,8 +55,7 @@ try {
         $data_retention = '1-year';
     }
     
-    // For now, we'll store this in a simple format in the employers table
-    // In a real application, you might want a separate analytics_settings table
+    // Create JSON for settings
     $settings_json = json_encode([
         'enable_analytics' => $enable_analytics,
         'kpis' => [
@@ -79,8 +78,22 @@ try {
     ]);
     
     // Update employer record with analytics settings
-    // Note: You might want to add an analytics_settings column to employers table
-    // For now, we'll just return success
+    $update_sql = "
+        UPDATE employers 
+        SET analytics_settings = :analytics_settings,
+            updated_at = NOW()
+        WHERE employer_id = :employer_id
+    ";
+    
+    $update_stmt = $conn->prepare($update_sql);
+    $update_result = $update_stmt->execute([
+        'analytics_settings' => $settings_json,
+        'employer_id' => $employer_id
+    ]);
+    
+    if (!$update_result) {
+        throw new Exception('Failed to update analytics settings');
+    }
     
     echo json_encode([
         'success' => true,

@@ -22,40 +22,59 @@ const confirmCloseAccount = document.getElementById('confirm-close-account');
 // Global data storage
 let companyValuesData = [];
 let feedbackTemplatesData = [];
+let hiringTeamData = [];
 
-// Create a loader element if it doesn't exist
-if (!document.getElementById('loader')) {
-    const loader = document.createElement('div');
-    loader.id = 'loader';
-    loader.className = 'loader';
-    loader.innerHTML = '<div class="loader-spinner"></div>';
-    loader.style.position = 'fixed';
-    loader.style.top = '0';
-    loader.style.left = '0';
-    loader.style.width = '100%';
-    loader.style.height = '100%';
-    loader.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-    loader.style.display = 'flex';
-    loader.style.justifyContent = 'center';
-    loader.style.alignItems = 'center';
-    loader.style.zIndex = '2000';
-    loader.style.display = 'none';
-    
-    const spinner = document.createElement('div');
-    spinner.className = 'spinner';
-    spinner.style.border = '5px solid #f3f3f3';
-    spinner.style.borderTop = '5px solid var(--primary)';
-    spinner.style.borderRadius = '50%';
-    spinner.style.width = '50px';
-    spinner.style.height = '50px';
-    spinner.style.animation = 'spin 1s linear infinite';
-    
-    const style = document.createElement('style');
-    style.innerHTML = '@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }';
-    
-    document.head.appendChild(style);
-    loader.appendChild(spinner);
-    document.body.appendChild(loader);
+// Single loader instance
+let loaderInstance = null;
+
+// Create loader once
+function initLoader() {
+    if (!loaderInstance) {
+        loaderInstance = document.createElement('div');
+        loaderInstance.id = 'global-loader';
+        loaderInstance.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        `;
+        
+        const spinner = document.createElement('div');
+        spinner.style.cssText = `
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #257180;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        `;
+        
+        const style = document.createElement('style');
+        style.innerHTML = '@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }';
+        
+        document.head.appendChild(style);
+        loaderInstance.appendChild(spinner);
+        document.body.appendChild(loaderInstance);
+    }
+}
+
+// Show/hide loader
+function showLoader() {
+    if (loaderInstance) {
+        loaderInstance.style.display = 'flex';
+    }
+}
+
+function hideLoader() {
+    if (loaderInstance) {
+        loaderInstance.style.display = 'none';
+    }
 }
 
 // ========== DATA LOADING FUNCTIONS ==========
@@ -73,16 +92,12 @@ async function loadCompanyProfileData() {
         const data = await response.json();
         
         if (data.success) {
-            // Populate industries dropdown first
             if (data.industries) {
                 populateIndustriesDropdown(data.industries);
             }
             
-            // Then populate all form fields with real data
             populateContactInfoForm(data.data.contact_person);
             populateCompanyInfoForm(data.data.company_identity, data.data.company_description);
-            populateSocialLinksForm(data.data.social_links);
-            populateHiringPreferencesForm(data.data.hiring_preferences);
             
             console.log('Profile data loaded successfully');
         } else {
@@ -98,14 +113,11 @@ async function loadCompanyProfileData() {
     }
 }
 
-// ========== POPULATE INDUSTRIES DROPDOWN ==========
 function populateIndustriesDropdown(industries) {
     const industrySelect = document.getElementById('company-industry');
     if (industrySelect && industries) {
-        // Clear existing options except the first one
         industrySelect.innerHTML = '<option value="">Select Industry</option>';
         
-        // Add industries from database
         industries.forEach(industry => {
             const option = document.createElement('option');
             option.value = industry.industry_id;
@@ -113,7 +125,6 @@ function populateIndustriesDropdown(industries) {
             industrySelect.appendChild(option);
         });
         
-        // Add "Others" option
         const othersOption = document.createElement('option');
         othersOption.value = 'others';
         othersOption.textContent = 'Others';
@@ -121,7 +132,6 @@ function populateIndustriesDropdown(industries) {
     }
 }
 
-// Helper functions to populate forms
 function populateContactInfoForm(contactData) {
     if (contactData) {
         const repName = document.getElementById('rep-name');
@@ -148,9 +158,7 @@ function populateCompanyInfoForm(companyData, descriptionData) {
         if (companyWebsite) companyWebsite.value = companyData.company_website || '';
         if (companySize) companySize.value = companyData.company_size || '';
         
-        // Set industry after dropdown is populated
         if (companyIndustry && companyData.industry_id) {
-            // Use setTimeout to ensure dropdown is populated first
             setTimeout(() => {
                 companyIndustry.value = companyData.industry_id;
             }, 100);
@@ -163,43 +171,202 @@ function populateCompanyInfoForm(companyData, descriptionData) {
     }
 }
 
-function populateSocialLinksForm(socialData) {
-    if (socialData) {
-        const inputs = document.querySelectorAll('#company-info-detail input[type="url"]');
-        
-        inputs.forEach(input => {
-            const placeholder = input.placeholder.toLowerCase();
-            if (placeholder.includes('linkedin') && socialData.linkedin_url) {
-                input.value = socialData.linkedin_url;
-            } else if (placeholder.includes('twitter') && socialData.twitter_url) {
-                input.value = socialData.twitter_url;
-            } else if (placeholder.includes('facebook') && socialData.facebook_url) {
-                input.value = socialData.facebook_url;
+// ========== HIRING TEAM MANAGEMENT ==========
+async function loadHiringTeam() {
+    try {
+        const response = await fetch('../../backend/employer/get_hiring_team.php', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
             }
         });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            hiringTeamData = data.data || [];
+            populateHiringTeamDisplay();
+            return data.data;
+        } else {
+            console.log('No team members found');
+            hiringTeamData = [];
+            populateHiringTeamDisplay();
+            return [];
+        }
+        
+    } catch (error) {
+        console.error('Error loading hiring team:', error);
+        return [];
     }
 }
 
-function populateHiringPreferencesForm(hiringData) {
-    if (hiringData) {
-        const openToPwd = document.getElementById('auto-tag-pwd');
-        if (openToPwd) openToPwd.checked = hiringData.open_to_pwd || false;
+function populateHiringTeamDisplay() {
+    const teamList = document.getElementById('team-members-list');
+    if (!teamList) return;
+    
+    teamList.innerHTML = '';
+    
+    if (hiringTeamData.length === 0) {
+        teamList.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No team members yet. Add your first team member!</p>';
+        return;
+    }
+    
+    hiringTeamData.forEach(member => {
+        const initials = `${member.first_name.charAt(0)}${member.last_name.charAt(0)}`.toUpperCase();
         
-        // Populate disability types checkboxes
-        if (hiringData.disability_types && Array.isArray(hiringData.disability_types)) {
-            hiringData.disability_types.forEach(type => {
-                const checkbox = document.querySelector(`input[value="${type}"]`);
-                if (checkbox) checkbox.checked = true;
-            });
+        const memberElement = document.createElement('div');
+        memberElement.className = 'team-member';
+        memberElement.dataset.id = member.team_member_id;
+        
+        memberElement.innerHTML = `
+            <div class="team-member-avatar">${initials}</div>
+            <div class="team-member-info">
+                <div class="team-member-name">${member.first_name} ${member.last_name}</div>
+                <div class="team-member-role">${member.role}</div>
+            </div>
+            <div class="team-member-actions">
+                <button type="button" class="edit-member" data-id="${member.team_member_id}"><i class="fas fa-pen"></i></button>
+                <button type="button" class="delete-member" data-id="${member.team_member_id}"><i class="fas fa-trash"></i></button>
+            </div>
+        `;
+        
+        teamList.appendChild(memberElement);
+    });
+    
+    setupTeamMemberButtons();
+}
+
+function setupTeamMemberButtons() {
+    document.querySelectorAll('.edit-member').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const id = parseInt(this.getAttribute('data-id'));
+            const member = hiringTeamData.find(m => m.team_member_id == id);
+            
+            if (member) {
+                document.getElementById('edit-member-name').value = `${member.first_name} ${member.last_name}`;
+                document.getElementById('edit-member-role').value = member.role;
+                document.getElementById('edit-member-id').value = id;
+                
+                openModal('edit-team-member-modal');
+            }
+        });
+    });
+    
+    document.querySelectorAll('.delete-member').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const id = parseInt(this.getAttribute('data-id'));
+            const member = hiringTeamData.find(m => m.team_member_id == id);
+            
+            if (member) {
+                document.getElementById('delete-member-name').textContent = `${member.first_name} ${member.last_name}`;
+                document.getElementById('delete-member-id').value = id;
+                
+                openModal('delete-team-member-modal');
+            }
+        });
+    });
+}
+
+async function addTeamMember(name, email, role) {
+    try {
+        const nameParts = name.trim().split(' ');
+        const firstName = nameParts[0] || '';
+        const lastName = nameParts.slice(1).join(' ') || '';
+        
+        const response = await fetch('../../backend/employer/add_team_member.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                first_name: firstName,
+                last_name: lastName,
+                email: email,
+                role: role
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('Team member added successfully!');
+            await loadHiringTeam();
+            return true;
+        } else {
+            throw new Error(data.message || 'Failed to add team member');
         }
         
-        // Populate accessibility options checkboxes
-        if (hiringData.accessibility_options && Array.isArray(hiringData.accessibility_options)) {
-            hiringData.accessibility_options.forEach(option => {
-                const checkbox = document.querySelector(`input[value="${option}"]`);
-                if (checkbox) checkbox.checked = true;
-            });
+    } catch (error) {
+        console.error('Error adding team member:', error);
+        showToast('Error: ' + error.message);
+        return false;
+    }
+}
+
+async function updateTeamMember(memberId, name, role) {
+    try {
+        const nameParts = name.trim().split(' ');
+        const firstName = nameParts[0] || '';
+        const lastName = nameParts.slice(1).join(' ') || '';
+        
+        const response = await fetch('../../backend/employer/update_team_member.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                team_member_id: memberId,
+                first_name: firstName,
+                last_name: lastName,
+                role: role
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('Team member updated successfully!');
+            await loadHiringTeam();
+            return true;
+        } else {
+            throw new Error(data.message || 'Failed to update team member');
         }
+        
+    } catch (error) {
+        console.error('Error updating team member:', error);
+        showToast('Error: ' + error.message);
+        return false;
+    }
+}
+
+async function deleteTeamMember(memberId) {
+    try {
+        const response = await fetch('../../backend/employer/delete_team_member.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                team_member_id: memberId
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('Team member removed successfully!');
+            await loadHiringTeam();
+            return true;
+        } else {
+            throw new Error(data.message || 'Failed to remove team member');
+        }
+        
+    } catch (error) {
+        console.error('Error removing team member:', error);
+        showToast('Error: ' + error.message);
+        return false;
     }
 }
 
@@ -234,7 +401,6 @@ function handleAccountTypeUI(accountData) {
     if (!passwordForm) return;
     
     if (accountData.is_google_account) {
-        // Hide password change fields
         const passwordFields = passwordForm.querySelectorAll('input[type="password"]');
         passwordFields.forEach(field => {
             const formGroup = field.closest('.form-group');
@@ -243,13 +409,11 @@ function handleAccountTypeUI(accountData) {
             }
         });
         
-        // Hide password update button
         const submitButton = passwordForm.querySelector('button[type="submit"]');
         if (submitButton) {
             submitButton.style.display = 'none';
         }
         
-        // Add Google account info message
         if (!passwordForm.querySelector('.google-account-info')) {
             const googleMessage = document.createElement('div');
             googleMessage.className = 'google-account-info alert alert-info';
@@ -274,28 +438,10 @@ function handleAccountTypeUI(accountData) {
             
             passwordForm.insertBefore(googleMessage, passwordForm.firstChild);
         }
-        
-        // Show only security preferences
-        const securitySection = passwordForm.querySelector('.form-group');
-        if (securitySection) {
-            const twoFactorGroup = Array.from(passwordForm.querySelectorAll('.form-group')).find(group => 
-                group.textContent.includes('Two-Factor') || group.textContent.includes('Login Session')
-            );
-            if (twoFactorGroup) {
-                twoFactorGroup.style.display = 'block';
-            }
-        }
-        
-    } else {
-        // Regular account - show all fields
-        const allFields = passwordForm.querySelectorAll('.form-group');
-        allFields.forEach(group => {
-            group.style.display = 'block';
-        });
     }
 }
 
-// ========== NOTIFICATION SETTINGS FUNCTIONS ==========
+// ========== NOTIFICATION SETTINGS ==========
 async function loadNotificationSettings() {
     try {
         const response = await fetch('../../backend/employer/get_notification_settings.php', {
@@ -324,7 +470,6 @@ async function loadNotificationSettings() {
 function populateNotificationSettingsForm(notificationData) {
     if (!notificationData) return;
     
-    // Notification methods
     const emailNotifications = document.getElementById('email-notifications');
     const smsNotifications = document.getElementById('sms-notifications');
     const pushNotifications = document.getElementById('push-notifications');
@@ -333,7 +478,6 @@ function populateNotificationSettingsForm(notificationData) {
     if (smsNotifications) smsNotifications.checked = notificationData.sms_notifications || false;
     if (pushNotifications) pushNotifications.checked = notificationData.push_notifications || false;
     
-    // Notification categories
     const newApplications = document.getElementById('new-applications');
     const applicationStatus = document.getElementById('application-status');
     const messageNotifications = document.getElementById('message-notifications');
@@ -346,11 +490,9 @@ function populateNotificationSettingsForm(notificationData) {
     if (systemUpdates) systemUpdates.checked = notificationData.system_updates || false;
     if (marketingNotifications) marketingNotifications.checked = notificationData.marketing_notifications || false;
     
-    // Email frequency
     const emailFrequency = document.getElementById('email-frequency');
     if (emailFrequency) emailFrequency.value = notificationData.email_frequency || 'immediate';
     
-    // Quiet hours
     const enableQuietHours = document.getElementById('enable-quiet-hours');
     const quietFrom = document.getElementById('quiet-from');
     const quietTo = document.getElementById('quiet-to');
@@ -360,7 +502,7 @@ function populateNotificationSettingsForm(notificationData) {
     if (quietTo) quietTo.value = notificationData.quiet_to ? notificationData.quiet_to.substring(0, 5) : '08:00';
 }
 
-// ========== PRIVACY SETTINGS FUNCTIONS ==========
+// ========== PRIVACY SETTINGS ==========
 async function loadPrivacySettings() {
     try {
         const response = await fetch('../../backend/employer/get_privacy_settings.php', {
@@ -389,22 +531,18 @@ async function loadPrivacySettings() {
 function populatePrivacySettingsForm(privacyData) {
     if (!privacyData) return;
     
-    // Profile visibility
     const profileVisibility = document.getElementById('profile-visibility');
     if (profileVisibility) profileVisibility.checked = privacyData.profile_visibility || false;
     
-    // Information sharing
     const shareCompanyInfo = document.getElementById('share-company-info');
     const shareContactInfo = document.getElementById('share-contact-info');
     
     if (shareCompanyInfo) shareCompanyInfo.checked = privacyData.share_company_info || false;
     if (shareContactInfo) shareContactInfo.checked = privacyData.share_contact_info || false;
     
-    // Job visibility
     const jobVisibility = document.getElementById('job-visibility');
     if (jobVisibility) jobVisibility.value = privacyData.job_visibility || 'public';
     
-    // Data collection
     const allowDataCollection = document.getElementById('allow-data-collection');
     const allowMarketing = document.getElementById('allow-marketing');
     const allowThirdParty = document.getElementById('allow-third-party');
@@ -414,7 +552,7 @@ function populatePrivacySettingsForm(privacyData) {
     if (allowThirdParty) allowThirdParty.checked = privacyData.allow_third_party || false;
 }
 
-// ========== DISPLAY SETTINGS FUNCTIONS ==========
+// ========== DISPLAY SETTINGS ==========
 async function loadDisplaySettings() {
     try {
         const response = await fetch('../../backend/employer/get_display_settings.php', {
@@ -443,23 +581,19 @@ async function loadDisplaySettings() {
 function populateDisplaySettingsForm(displayData) {
     if (!displayData) return;
     
-    // Theme selection
     const themeRadios = document.querySelectorAll('input[name="theme"]');
     themeRadios.forEach(radio => {
         radio.checked = radio.value === displayData.theme;
     });
     
-    // Font size selection
     const fontSizeRadios = document.querySelectorAll('input[name="font-size"]');
     fontSizeRadios.forEach(radio => {
         radio.checked = radio.value === displayData.font_size;
     });
     
-    // Color scheme
     const colorScheme = document.getElementById('color-scheme');
     if (colorScheme) colorScheme.value = displayData.color_scheme || 'default';
     
-    // Accessibility features
     const highContrast = document.getElementById('high-contrast');
     const reduceMotion = document.getElementById('reduce-motion');
     const screenReaderSupport = document.getElementById('screen-reader-support');
@@ -468,7 +602,6 @@ function populateDisplaySettingsForm(displayData) {
     if (reduceMotion) reduceMotion.checked = displayData.reduce_motion || false;
     if (screenReaderSupport) screenReaderSupport.checked = displayData.screen_reader_support || false;
     
-    // Default view
     const defaultView = document.getElementById('default-view');
     if (defaultView) defaultView.value = displayData.default_view || 'dashboard';
 }
@@ -530,7 +663,6 @@ function populateCompanyValuesDisplay() {
 }
 
 function setupCompanyValueButtons() {
-    // Edit buttons
     document.querySelectorAll('.edit-value').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -547,7 +679,6 @@ function setupCompanyValueButtons() {
         });
     });
     
-    // Delete buttons
     document.querySelectorAll('.delete-value').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -620,7 +751,6 @@ function populateFeedbackTemplatesDisplay() {
 }
 
 function setupFeedbackTemplateButtons() {
-    // Edit buttons
     document.querySelectorAll('.edit-template').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -637,7 +767,6 @@ function setupFeedbackTemplateButtons() {
         });
     });
     
-    // Delete buttons
     document.querySelectorAll('.delete-template').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -668,9 +797,9 @@ async function submitContactInfoForm() {
             position: document.getElementById('position')?.value || '',
             contact_number: document.getElementById('phone')?.value || '',
             email: document.getElementById('email')?.value || ''
+            // Note: password is not included - settings has separate password form
         };
         
-        // Validation
         if (!requestData.first_name) {
             throw new Error('First name is required');
         }
@@ -708,9 +837,8 @@ async function submitCompanyInfoForm() {
         const companyIndustry = document.getElementById('company-industry')?.value || '';
         const companyDescription = document.getElementById('company-description')?.value || '';
         const companyWebsite = document.getElementById('company-website')?.value || '';
-        const companyAddress = document.getElementById('address')?.value || 'Default Address';
+        const companySize = document.getElementById('company-size')?.value || '';
         
-        // Validation
         if (!companyName) {
             throw new Error('Company name is required');
         }
@@ -718,29 +846,51 @@ async function submitCompanyInfoForm() {
             throw new Error('Please select an industry');
         }
         
-        const requestData = {
-            company_name: companyName,
-            industry_id: companyIndustry,
-            company_address: companyAddress,
-            custom_industry: ''
-        };
-        
-        const response = await fetch('../../backend/employer/update_company_identity.php', {
+        // Step 1: Update company identity (name, industry, website, size)
+        // Note: company_address is not in settings form, so we send empty string
+        const identityResponse = await fetch('../../backend/employer/update_company_identity.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(requestData)
+            body: JSON.stringify({
+                company_name: companyName,
+                industry_id: companyIndustry,
+                custom_industry: '', // Settings doesn't have custom industry field
+                company_address: companyAddress, 
+                company_website: companyWebsite,
+                company_size: companySize
+            })
         });
         
-        const data = await response.json();
-        
-        if (data.success) {
-            showToast('Company information updated successfully!');
-            return true;
-        } else {
-            throw new Error(data.message || 'Failed to update company information');
+        const identityData = await identityResponse.json();
+        if (!identityData.success) {
+            throw new Error(identityData.message || 'Failed to update company identity');
         }
+        
+        // Step 2: Update company description if provided
+        // Note: The existing backend expects FormData (not JSON) because it handles file uploads
+        // For settings, we only update description via direct SQL since no logo upload here
+        if (companyDescription) {
+            const descResponse = await fetch('../../backend/employer/update_company_description_text.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    company_description: companyDescription
+                })
+            });
+            
+            const descData = await descResponse.json();
+            if (!descData.success) {
+                // Don't fail if description update fails, just log it
+                console.warn('Description update failed:', descData.message);
+            }
+        }
+        
+        showToast('Company information updated successfully!');
+        return true;
         
     } catch (error) {
         console.error('Error updating company info:', error);
@@ -749,102 +899,8 @@ async function submitCompanyInfoForm() {
     }
 }
 
-async function submitSocialLinksForm() {
-    try {
-        const inputs = document.querySelectorAll('#company-info-detail input[type="url"]');
-        const requestData = {
-            website_url: '',
-            facebook_url: '',
-            linkedin_url: '',
-            twitter_url: '',
-            instagram_url: ''
-        };
-        
-        inputs.forEach(input => {
-            const placeholder = input.placeholder.toLowerCase();
-            if (placeholder.includes('linkedin')) {
-                requestData.linkedin_url = input.value;
-            } else if (placeholder.includes('twitter')) {
-                requestData.twitter_url = input.value;
-            } else if (placeholder.includes('facebook')) {
-                requestData.facebook_url = input.value;
-            }
-        });
-        
-        const response = await fetch('../../backend/employer/update_social_links.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestData)
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            showToast('Social media links updated successfully!');
-            return true;
-        } else {
-            throw new Error(data.message || 'Failed to update social media links');
-        }
-        
-    } catch (error) {
-        console.error('Error updating social links:', error);
-        showToast('Error: ' + error.message);
-        return false;
-    }
-}
-
-async function submitHiringPreferencesForm() {
-    try {
-        const openToPwd = document.getElementById('auto-tag-pwd')?.checked || false;
-        
-        // Collect disability types
-        const disabilityTypes = [];
-        document.querySelectorAll('input[name="disability-types"]:checked').forEach(checkbox => {
-            disabilityTypes.push(checkbox.value);
-        });
-        
-        // Collect accessibility options
-        const accessibilityOptions = [];
-        document.querySelectorAll('input[name="accessibility-options"]:checked').forEach(checkbox => {
-            accessibilityOptions.push(checkbox.value);
-        });
-        
-        const requestData = {
-            open_to_pwd: openToPwd,
-            disability_types: disabilityTypes,
-            accessibility_options: accessibilityOptions,
-            additional_accommodations: ''
-        };
-        
-        const response = await fetch('../../backend/employer/update_hiring_preferences.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestData)
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            showToast('Hiring preferences updated successfully!');
-            return true;
-        } else {
-            throw new Error(data.message || 'Failed to update hiring preferences');
-        }
-        
-    } catch (error) {
-        console.error('Error updating hiring preferences:', error);
-        showToast('Error: ' + error.message);
-        return false;
-    }
-}
-
 async function submitPasswordForm() {
     try {
-        // Check account type first
         const accountData = await checkAccountType();
         
         if (accountData && accountData.is_google_account) {
@@ -852,14 +908,12 @@ async function submitPasswordForm() {
             return false;
         }
         
-        // Get form values
         const currentPassword = document.getElementById('current-password')?.value || '';
         const newPassword = document.getElementById('new-password')?.value || '';
         const confirmPassword = document.getElementById('confirm-password')?.value || '';
         const twoFactor = document.getElementById('two-factor')?.checked || false;
         const rememberLogin = document.getElementById('remember-login')?.checked || false;
         
-        // Client-side validation
         if (!currentPassword) {
             throw new Error('Current password is required');
         }
@@ -897,7 +951,6 @@ async function submitPasswordForm() {
         if (data.success) {
             showToast('Password updated successfully!');
             
-            // Clear password fields
             document.getElementById('current-password').value = '';
             document.getElementById('new-password').value = '';
             document.getElementById('confirm-password').value = '';
@@ -916,7 +969,6 @@ async function submitPasswordForm() {
 
 async function submitNotificationSettingsForm() {
     try {
-        // Get form values
         const emailNotifications = document.getElementById('email-notifications')?.checked || false;
         const smsNotifications = document.getElementById('sms-notifications')?.checked || false;
         const pushNotifications = document.getElementById('push-notifications')?.checked || false;
@@ -971,7 +1023,6 @@ async function submitNotificationSettingsForm() {
 
 async function submitPrivacySettingsForm() {
     try {
-        // Get form values
         const profileVisibility = document.getElementById('profile-visibility')?.checked || false;
         const shareCompanyInfo = document.getElementById('share-company-info')?.checked || false;
         const shareContactInfo = document.getElementById('share-contact-info')?.checked || false;
@@ -1016,13 +1067,8 @@ async function submitPrivacySettingsForm() {
 
 async function submitDisplaySettingsForm() {
     try {
-        // Get theme selection
         const selectedTheme = document.querySelector('input[name="theme"]:checked')?.value || 'light';
-        
-        // Get font size selection
         const selectedFontSize = document.querySelector('input[name="font-size"]:checked')?.value || 'medium';
-        
-        // Get other form values
         const colorScheme = document.getElementById('color-scheme')?.value || 'default';
         const highContrast = document.getElementById('high-contrast')?.checked || false;
         const reduceMotion = document.getElementById('reduce-motion')?.checked || false;
@@ -1065,7 +1111,6 @@ async function submitDisplaySettingsForm() {
 
 async function submitAnalyticsSettingsForm() {
     try {
-        // Get form values
         const enableAnalytics = document.getElementById('enable-analytics')?.checked || false;
         const trackTimeToHire = document.getElementById('track-time-to-hire')?.checked || false;
         const trackCostPerHire = document.getElementById('track-cost-per-hire')?.checked || false;
@@ -1136,7 +1181,7 @@ async function createCompanyValue(title, description) {
         
         if (data.success) {
             showToast('Company value added successfully!');
-            await loadCompanyValues(); // Reload values
+            await loadCompanyValues();
             return true;
         } else {
             throw new Error(data.message || 'Failed to create company value');
@@ -1167,7 +1212,7 @@ async function updateCompanyValue(valueId, title, description) {
         
         if (data.success) {
             showToast('Company value updated successfully!');
-            await loadCompanyValues(); // Reload values
+            await loadCompanyValues();
             return true;
         } else {
             throw new Error(data.message || 'Failed to update company value');
@@ -1196,7 +1241,7 @@ async function deleteCompanyValue(valueId) {
         
         if (data.success) {
             showToast('Company value deleted successfully!');
-            await loadCompanyValues(); // Reload values
+            await loadCompanyValues();
             return true;
         } else {
             throw new Error(data.message || 'Failed to delete company value');
@@ -1228,7 +1273,7 @@ async function createFeedbackTemplate(title, content, type = 'rejection') {
         
         if (data.success) {
             showToast('Feedback template added successfully!');
-            await loadFeedbackTemplates(); // Reload templates
+            await loadFeedbackTemplates();
             return true;
         } else {
             throw new Error(data.message || 'Failed to create feedback template');
@@ -1259,7 +1304,7 @@ async function updateFeedbackTemplate(templateId, title, content) {
         
         if (data.success) {
             showToast('Feedback template updated successfully!');
-            await loadFeedbackTemplates(); // Reload templates
+            await loadFeedbackTemplates();
             return true;
         } else {
             throw new Error(data.message || 'Failed to update feedback template');
@@ -1288,7 +1333,7 @@ async function deleteFeedbackTemplate(templateId) {
         
         if (data.success) {
             showToast('Feedback template deleted successfully!');
-            await loadFeedbackTemplates(); // Reload templates
+            await loadFeedbackTemplates();
             return true;
         } else {
             throw new Error(data.message || 'Failed to delete feedback template');
@@ -1301,17 +1346,21 @@ async function deleteFeedbackTemplate(templateId) {
     }
 }
 
+// ========== EVENT LISTENERS ==========
+
 // Toggle sidebar
-toggleBtn.addEventListener('click', () => {
-    sidebar.classList.toggle('collapsed');
-    if (sidebar.classList.contains('collapsed')) {
-        toggleIcon.classList.remove('fa-chevron-left');
-        toggleIcon.classList.add('fa-chevron-right');
-    } else {
-        toggleIcon.classList.remove('fa-chevron-right');
-        toggleIcon.classList.add('fa-chevron-left');
-    }
-});
+if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('collapsed');
+        if (sidebar.classList.contains('collapsed')) {
+            toggleIcon.classList.remove('fa-chevron-left');
+            toggleIcon.classList.add('fa-chevron-right');
+        } else {
+            toggleIcon.classList.remove('fa-chevron-right');
+            toggleIcon.classList.add('fa-chevron-left');
+        }
+    });
+}
 
 // Show specific setting detail
 settingItems.forEach(item => {
@@ -1325,8 +1374,11 @@ settingItems.forEach(item => {
             settingsMain.style.display = 'none';
             window.scrollTo(0, 0);
             saveActiveTab(detailContainer.id);
-        } else {
-            console.warn(`Detail container for ${settingId} not found`);
+            
+            // Load hiring team when clicking on hiring team management
+            if (settingId === 'hiring-team') {
+                loadHiringTeam();
+            }
         }
     });
 });
@@ -1345,26 +1397,20 @@ backButtons.forEach(button => {
     });
 });
 
-// Form submission with real backend integration (COMPLETE)
+// Form submission
 forms.forEach(form => {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        // Show loader
         showLoader();
         
         let success = false;
         
         try {
-            // Determine which form is being submitted and call appropriate handler
             if (form.id === 'contact-info-form') {
                 success = await submitContactInfoForm();
             } else if (form.id === 'company-info-form') {
                 success = await submitCompanyInfoForm();
-            } else if (form.closest('#company-info-detail')) {
-                success = await submitSocialLinksForm();
-            } else if (form.id === 'applicant-management-form') {
-                success = await submitHiringPreferencesForm();
             } else if (form.id === 'password-security-form') {
                 success = await submitPasswordForm();
             } else if (form.id === 'notification-settings-form') {
@@ -1374,24 +1420,20 @@ forms.forEach(form => {
             } else if (form.id === 'display-form') {
                 success = await submitDisplaySettingsForm();
             } else if (form.id === 'company-values-form') {
-                // Company values are handled by modals, not direct form submission
                 success = true;
                 showToast('Company values updated successfully!');
             } else if (form.id === 'feedback-settings-form') {
-                // Feedback templates are handled by modals, not direct form submission  
                 success = true;
                 showToast('Feedback settings updated successfully!');
             } else if (form.id === 'analytics-form') {
                 success = await submitAnalyticsSettingsForm();
             } else {
-                // For other forms, use dummy functionality for now
                 await new Promise(resolve => setTimeout(resolve, 800));
                 success = true;
                 showToast('Settings updated successfully!');
             }
             
             if (success) {
-                // Go back to main menu after delay
                 setTimeout(() => {
                     hideAllDetailContainers();
                     settingsMain.style.display = 'block';
@@ -1425,21 +1467,6 @@ function showToast(message) {
     }, 3000);
 }
 
-// Show/hide loader
-function showLoader() {
-    const loader = document.getElementById('loader');
-    if (loader) {
-        loader.style.display = 'flex';
-    }
-}
-
-function hideLoader() {
-    const loader = document.getElementById('loader');
-    if (loader) {
-        loader.style.display = 'none';
-    }
-}
-
 // Modal utility functions
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
@@ -1462,59 +1489,69 @@ function closeAllModals() {
 }
 
 // Sign Out functionality
-signOutBtn.addEventListener('click', () => {
-    openModal('sign-out-modal');
-});
+if (signOutBtn) {
+    signOutBtn.addEventListener('click', () => {
+        openModal('sign-out-modal');
+    });
+}
 
-cancelSignOut.addEventListener('click', () => {
-    closeModal('sign-out-modal');
-});
-
-confirmSignOut.addEventListener('click', () => {
-    showLoader();
-    
-    setTimeout(() => {
-        hideLoader();
-        showToast('Signed out successfully.');
+if (cancelSignOut) {
+    cancelSignOut.addEventListener('click', () => {
         closeModal('sign-out-modal');
+    });
+}
+
+if (confirmSignOut) {
+    confirmSignOut.addEventListener('click', () => {
+        showLoader();
         
-        // Redirect to login page
         setTimeout(() => {
-            window.location.href = '../employer/emplogin.php';
-        }, 1000);
-    }, 800);
-});
+            hideLoader();
+            showToast('Signed out successfully.');
+            closeModal('sign-out-modal');
+            
+            setTimeout(() => {
+                window.location.href = '../employer/emplogin.php';
+            }, 1000);
+        }, 800);
+    });
+}
 
 // Close Account functionality
-closeAccountBtn.addEventListener('click', () => {
-    openModal('close-account-modal');
-});
+if (closeAccountBtn) {
+    closeAccountBtn.addEventListener('click', () => {
+        openModal('close-account-modal');
+    });
+}
 
-cancelCloseAccount.addEventListener('click', () => {
-    closeModal('close-account-modal');
-});
-
-confirmCloseAccount.addEventListener('click', () => {
-    const password = document.getElementById('confirm-password').value;
-    
-    if (!password) {
-        alert('Please enter your password to confirm account closure.');
-        return;
-    }
-    
-    showLoader();
-    
-    setTimeout(() => {
-        hideLoader();
-        showToast('Account closed successfully.');
+if (cancelCloseAccount) {
+    cancelCloseAccount.addEventListener('click', () => {
         closeModal('close-account-modal');
+    });
+}
+
+if (confirmCloseAccount) {
+    confirmCloseAccount.addEventListener('click', () => {
+        const password = document.getElementById('confirm-password').value;
         
-        // Redirect to login page
+        if (!password) {
+            alert('Please enter your password to confirm account closure.');
+            return;
+        }
+        
+        showLoader();
+        
         setTimeout(() => {
-            window.location.href = '../employer/emplogin.php';
-        }, 1000);
-    }, 800);
-});
+            hideLoader();
+            showToast('Account closed successfully.');
+            closeModal('close-account-modal');
+            
+            setTimeout(() => {
+                window.location.href = '../employer/emplogin.php';
+            }, 1000);
+        }, 800);
+    });
+}
 
 // Close modal buttons
 document.querySelectorAll('.modal-close').forEach(closeBtn => {
@@ -1539,6 +1576,82 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
 });
 
 // ========== MODAL EVENT HANDLERS ==========
+
+// Hiring Team Modal Handlers
+const addTeamMemberBtn = document.getElementById('add-team-member-btn');
+if (addTeamMemberBtn) {
+    addTeamMemberBtn.addEventListener('click', () => {
+        document.getElementById('member-name').value = '';
+        document.getElementById('member-email').value = '';
+        document.getElementById('member-role').value = 'HR Manager (Admin)';
+        openModal('add-team-member-modal');
+    });
+}
+
+const addMemberSubmit = document.getElementById('add-member-submit');
+if (addMemberSubmit) {
+    addMemberSubmit.addEventListener('click', async () => {
+        const name = document.getElementById('member-name').value.trim();
+        const email = document.getElementById('member-email').value.trim();
+        const role = document.getElementById('member-role').value;
+        
+        if (!name || !email) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+        
+        showLoader();
+        
+        const success = await addTeamMember(name, email, role);
+        
+        hideLoader();
+        
+        if (success) {
+            closeModal('add-team-member-modal');
+        }
+    });
+}
+
+const editMemberSubmit = document.getElementById('edit-member-submit');
+if (editMemberSubmit) {
+    editMemberSubmit.addEventListener('click', async function() {
+        const id = parseInt(document.getElementById('edit-member-id').value);
+        const name = document.getElementById('edit-member-name').value.trim();
+        const role = document.getElementById('edit-member-role').value;
+        
+        if (!name) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+        
+        showLoader();
+        
+        const success = await updateTeamMember(id, name, role);
+        
+        hideLoader();
+        
+        if (success) {
+            closeModal('edit-team-member-modal');
+        }
+    });
+}
+
+const deleteMemberSubmit = document.getElementById('delete-member-submit');
+if (deleteMemberSubmit) {
+    deleteMemberSubmit.addEventListener('click', async function() {
+        const id = parseInt(document.getElementById('delete-member-id').value);
+        
+        showLoader();
+        
+        const success = await deleteTeamMember(id);
+        
+        hideLoader();
+        
+        if (success) {
+            closeModal('delete-team-member-modal');
+        }
+    });
+}
 
 // Company Values Modal Handlers
 const addValueBtn = document.getElementById('add-value-btn');
@@ -1688,96 +1801,6 @@ if (deleteTemplateSubmit) {
     });
 }
 
-// ========== FORM VALIDATION ==========
-function validateForm(form) {
-    let isValid = true;
-    
-    // Check required fields
-    form.querySelectorAll('[required]').forEach(field => {
-        if (!field.value.trim()) {
-            markInvalid(field, 'This field is required');
-            isValid = false;
-        } else {
-            markValid(field);
-        }
-    });
-    
-    // Validate email fields
-    form.querySelectorAll('input[type="email"]').forEach(field => {
-        if (field.value.trim() && !validateEmail(field.value.trim())) {
-            markInvalid(field, 'Please enter a valid email address');
-            isValid = false;
-        }
-    });
-    
-    // Validate phone fields
-    form.querySelectorAll('input[type="tel"]').forEach(field => {
-        if (field.value.trim() && !validatePhone(field.value.trim())) {
-            markInvalid(field, 'Please enter a valid phone number');
-            isValid = false;
-        }
-    });
-    
-    // Validate URL fields
-    form.querySelectorAll('input[type="url"]').forEach(field => {
-        if (field.value.trim() && !validateURL(field.value.trim())) {
-            markInvalid(field, 'Please enter a valid URL (e.g., https://example.com)');
-            isValid = false;
-        }
-    });
-    
-    return isValid;
-}
-
-function markInvalid(field, message) {
-    field.classList.add('invalid');
-    
-    // Remove existing error message if any
-    const existingError = field.parentElement.querySelector('.error-message');
-    if (existingError) {
-        existingError.remove();
-    }
-    
-    // Create error message element
-    const errorElement = document.createElement('div');
-    errorElement.className = 'error-message';
-    errorElement.textContent = message;
-    errorElement.style.color = 'var(--danger)';
-    errorElement.style.fontSize = '12px';
-    errorElement.style.marginTop = '5px';
-    field.parentElement.appendChild(errorElement);
-}
-
-function markValid(field) {
-    field.classList.remove('invalid');
-    
-    // Remove error message if exists
-    const errorElement = field.parentElement.querySelector('.error-message');
-    if (errorElement) {
-        errorElement.remove();
-    }
-}
-
-// Utility validation functions
-function validateEmail(email) {
-    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
-}
-
-function validatePhone(phone) {
-    const re = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
-    return re.test(String(phone));
-}
-
-function validateURL(url) {
-    try {
-        new URL(url);
-        return true;
-    } catch (_) {
-        return false;
-    }
-}
-
 // Session storage functions
 function saveActiveTab(tabId) {
     sessionStorage.setItem('activeSettingTab', tabId);
@@ -1795,8 +1818,11 @@ function restoreActiveTab() {
     }
 }
 
-// Initialize page (FINAL VERSION)
+// Initialize page
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize loader
+    initLoader();
+    
     // Load company profile data when page loads
     loadCompanyProfileData();
     
@@ -1816,9 +1842,11 @@ document.addEventListener('DOMContentLoaded', function() {
     restoreActiveTab();
     
     // Mobile responsiveness
-    if (window.innerWidth <= 768) {
+    if (window.innerWidth <= 768 && sidebar) {
         sidebar.classList.add('collapsed');
-        toggleIcon.classList.remove('fa-chevron-left');
-        toggleIcon.classList.add('fa-chevron-right');
+        if (toggleIcon) {
+            toggleIcon.classList.remove('fa-chevron-left');
+            toggleIcon.classList.add('fa-chevron-right');
+        }
     }
 });

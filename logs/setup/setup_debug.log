@@ -243,3 +243,72 @@
 2025-06-30 00:18:18 | Setup marked as complete for seeker_id: 6
 2025-06-30 00:18:18 | Transaction committed successfully
 2025-06-30 00:18:18 | Setup process completed successfully
+2025-09-10 15:50:30 | save_setup_data.php received data: Array
+(
+    [seeker_id] => 7
+    [skills] => ["Basic Coding","Digital Literacy","Cybersecurity Awareness","Social Media Management","Microsoft Office"]
+    [work_style] => hybrid
+    [job_type] => parttime
+    [disability_type] => non-apparent
+    [accommodation_list] => []
+    [no_accommodations_needed] => 0
+)
+
+2025-09-10 15:50:30 | Processing setup for seeker_id: 7
+2025-09-10 15:50:30 | Transaction started
+2025-09-10 15:50:30 | Processing skills: Array
+(
+    [0] => Basic Coding
+    [1] => Digital Literacy
+    [2] => Cybersecurity Awareness
+    [3] => Social Media Management
+    [4] => Microsoft Office
+)
+
+2025-09-10 15:50:30 | Cleared existing skills
+2025-09-10 15:50:30 | Added 5 skills
+2025-09-10 15:50:30 | Saving preferences - work_style: hybrid, job_type: parttime
+2025-09-10 15:50:30 | Inserted new preferences
+2025-09-10 15:50:30 | Saving accommodations - type: non-apparent, list: [], no_needs: 0
+2025-09-10 15:50:30 | Inserted new accommodations
+2025-09-10 15:50:30 | Setup marked as complete for seeker_id: 7
+2025-09-10 15:50:30 | Transaction committed successfully
+2025-09-10 15:50:30 | Setup process completed successfully
+2025-09-14 14:23:16 | save_setup_data.php received data: Array
+(
+    [seeker_id] => 8
+    [skills] => ["Document Management","Office Equipment Operation","Transcription","Scheduling","Proofreading","Problem Resolution","Complaint Management","Virtual Assistant Skills","Basic Coding","Data Entry","Basic AI Understanding","Filing and Record Keeping"]
+    [work_style] => onsite
+    [job_type] => fulltime
+    [disability_type] => apparent
+    [accommodation_list] => []
+    [no_accommodations_needed] => 0
+)
+
+2025-09-14 14:23:16 | Processing setup for seeker_id: 8
+2025-09-14 14:23:16 | Transaction started
+2025-09-14 14:23:16 | Processing skills: Array
+(
+    [0] => Document Management
+    [1] => Office Equipment Operation
+    [2] => Transcription
+    [3] => Scheduling
+    [4] => Proofreading
+    [5] => Problem Resolution
+    [6] => Complaint Management
+    [7] => Virtual Assistant Skills
+    [8] => Basic Coding
+    [9] => Data Entry
+    [10] => Basic AI Understanding
+    [11] => Filing and Record Keeping
+)
+
+2025-09-14 14:23:16 | Cleared existing skills
+2025-09-14 14:23:16 | Added 12 skills
+2025-09-14 14:23:16 | Saving preferences - work_style: onsite, job_type: fulltime
+2025-09-14 14:23:16 | Inserted new preferences
+2025-09-14 14:23:16 | Saving accommodations - type: apparent, list: [], no_needs: 0
+2025-09-14 14:23:16 | Inserted new accommodations
+2025-09-14 14:23:16 | Setup marked as complete for seeker_id: 8
+2025-09-14 14:23:16 | Transaction committed successfully
+2025-09-14 14:23:16 | Setup process completed successfully
