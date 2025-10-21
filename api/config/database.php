@@ -1,11 +1,35 @@
 <?php
 /**
- * BULLETPROOF Database Wrapper - ULTRA SIMPLE VERSION
- * This WILL work - no complex queries, no complex logic
+ * API Database Configuration - Standalone for Vercel deployment
+ * Works on both localhost and Vercel
  */
 
-// Include your existing database connection
-require_once 'C:/xampp/htdocs/ThisAble/backend/db.php';
+// Database credentials (works on both environments)
+$host = getenv('DB_HOST') ?: 'db.jxllnfnzossijeidzhrq.supabase.co';
+$port = getenv('DB_PORT') ?: '5432';
+$dbname = getenv('DB_NAME') ?: 'postgres';
+$username = getenv('DB_USER') ?: 'postgres';
+$password = getenv('DB_PASSWORD') ?: '082220EthanDrake';
+
+try {
+    $conn = new PDO(
+        "pgsql:host=$host;port=$port;dbname=$dbname;sslmode=require", 
+        $username, 
+        $password,
+        [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES => false,
+        ]
+    );
+} catch(PDOException $e) {
+    error_log("❌ API Database Connection Error: " . $e->getMessage());
+    http_response_code(500);
+    die(json_encode([
+        'success' => false,
+        'message' => 'Database connection failed. Please try again later.'
+    ]));
+}
 
 class ApiDatabase {
     
