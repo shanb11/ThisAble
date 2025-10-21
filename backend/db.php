@@ -1,15 +1,15 @@
 <?php
 /**
- * Database Connection - Now using Supabase PostgreSQL
- * Backup of original MySQL connection: db_mysql_backup.php
+ * Database Connection - Supabase PostgreSQL
+ * Works on both localhost (XAMPP) and Vercel
  */
 
-// Supabase PostgreSQL credentials
-$host = "db.jxllnfnzossijeidzhrq.supabase.co";
-$port = "5432";
-$dbname = "postgres";
-$username = "postgres";
-$password = "082220EthanDrake";
+// Get credentials from environment variables (Vercel) or use defaults (localhost)
+$host = getenv('DB_HOST') ?: 'db.jxllnfnzossijeidzhrq.supabase.co';
+$port = getenv('DB_PORT') ?: '5432';
+$dbname = getenv('DB_NAME') ?: 'postgres';
+$username = getenv('DB_USER') ?: 'postgres';
+$password = getenv('DB_PASSWORD') ?: '082220EthanDrake';
 
 try {
     $conn = new PDO(
@@ -23,11 +23,12 @@ try {
         ]
     );
     
-    // Optional: Log successful connection (remove in production)
-    // error_log("✅ Connected to Supabase PostgreSQL at " . date('Y-m-d H:i:s'));
-    
 } catch(PDOException $e) {
-    error_log("❌ Supabase Connection Error: " . $e->getMessage());
-    die("Database connection failed. Check error logs.");
+    error_log("❌ Database Connection Error: " . $e->getMessage());
+    http_response_code(500);
+    die(json_encode([
+        'success' => false,
+        'message' => 'Database connection failed. Please try again later.'
+    ]));
 }
 ?>

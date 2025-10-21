@@ -1,0 +1,21 @@
+# Environment variables (DO NOT COMMIT THESE!)
+.env
+.env.local
+.env.production
+
+# Local development
+.vscode/
+.idea/
+
+# Logs
+*.log
+error.log
+debug.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# System files
+.DS_Store
+Thumbs.db
