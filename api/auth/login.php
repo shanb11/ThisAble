@@ -1,7 +1,7 @@
 <?php
 /**
  * Mobile Login API for ThisAble
- * Wraps existing backend/candidate/login_process.php with mobile-friendly response
+ * ✅ FIXED: PostgreSQL/Supabase compatible (case-insensitive email)
  */
 
 // Include required files
@@ -45,7 +45,7 @@ try {
     // Get database connection
     $conn = ApiDatabase::getConnection();
     
-    // Use your existing login logic
+    // ✅ FIXED: Case-insensitive email lookup for PostgreSQL
     $stmt = $conn->prepare("SELECT ua.account_id, ua.seeker_id, ua.email, ua.password_hash, ua.google_account,
                                   js.first_name, js.last_name, js.setup_complete, js.disability_id,
                                   dt.disability_name,
@@ -54,7 +54,7 @@ try {
                            JOIN job_seekers js ON ua.seeker_id = js.seeker_id 
                            LEFT JOIN disability_types dt ON js.disability_id = dt.disability_id
                            LEFT JOIN pwd_ids pwd ON js.seeker_id = pwd.seeker_id
-                           WHERE ua.email = :email");
+                           WHERE LOWER(ua.email) = LOWER(:email)");
     $stmt->bindParam(':email', $email);
     $stmt->execute();
     

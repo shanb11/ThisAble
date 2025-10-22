@@ -1,7 +1,7 @@
 <?php
 /**
  * Mobile Signup API for ThisAble
- * Wraps existing backend/candidate/signup_process.php with mobile-friendly response
+ * ✅ FIXED: PostgreSQL/Supabase compatible (case-insensitive email)
  */
 
 // Include required files
@@ -22,29 +22,28 @@ try {
         ApiResponse::validationError(['input' => 'Invalid JSON input']);
     }
     
-    // Extract form data (matching your existing signup form)
-    $firstName = trim($input['firstName'] ?? '');
-    $middleName = trim($input['middleName'] ?? '');
-    $lastName = trim($input['lastName'] ?? '');
+    // Extract input data
+    $firstName = trim($input['first_name'] ?? '');
+    $middleName = trim($input['middle_name'] ?? '');
+    $lastName = trim($input['last_name'] ?? '');
     $suffix = trim($input['suffix'] ?? '');
     $email = trim($input['email'] ?? '');
-    $phone = trim($input['phone'] ?? '');
-    $disability = intval($input['disability'] ?? 0);
+    $phone = trim($input['contact_number'] ?? '');
     $password = $input['password'] ?? '';
-    $confirmPassword = $input['confirmPassword'] ?? '';
-    $pwdIdNumber = trim($input['pwdIdNumber'] ?? '');
-    $pwdIdIssuedDate = trim($input['pwdIdIssuedDate'] ?? '');
-    $pwdIdIssuingLGU = trim($input['pwdIdIssuingLGU'] ?? '');
+    $disability = $input['disability_id'] ?? null;
+    $pwdIdNumber = trim($input['pwd_id_number'] ?? '');
+    $pwdIdIssuedDate = trim($input['pwd_id_issued_date'] ?? '');
+    $pwdIdIssuingLGU = trim($input['pwd_id_issuing_lgu'] ?? '');
     
-    // Validation (matching your web validation)
+    // Validation
     $errors = [];
     
     if (empty($firstName)) {
-        $errors['firstName'] = 'First name is required';
+        $errors['first_name'] = 'First name is required';
     }
     
     if (empty($lastName)) {
-        $errors['lastName'] = 'Last name is required';
+        $errors['last_name'] = 'Last name is required';
     }
     
     if (empty($email)) {
@@ -54,13 +53,7 @@ try {
     }
     
     if (empty($phone)) {
-        $errors['phone'] = 'Phone number is required';
-    } elseif (!preg_match('/^09\d{9}$/', $phone)) {
-        $errors['phone'] = 'Invalid Philippine phone number format (09XXXXXXXXX)';
-    }
-    
-    if ($disability <= 0) {
-        $errors['disability'] = 'Disability type is required';
+        $errors['contact_number'] = 'Contact number is required';
     }
     
     if (empty($password)) {
@@ -69,12 +62,12 @@ try {
         $errors['password'] = 'Password must be at least 8 characters';
     }
     
-    if ($password !== $confirmPassword) {
-        $errors['confirmPassword'] = 'Passwords do not match';
+    if (empty($disability)) {
+        $errors['disability_id'] = 'Disability type is required';
     }
     
     if (empty($pwdIdNumber)) {
-        $errors['pwdIdNumber'] = 'PWD ID number is required';
+        $errors['pwd_id_number'] = 'PWD ID number is required';
     }
     
     if (empty($pwdIdIssuedDate)) {
@@ -92,8 +85,8 @@ try {
     // Get database connection
     $conn = ApiDatabase::getConnection();
     
-    // Check if email already exists
-    $stmt = $conn->prepare("SELECT email FROM user_accounts WHERE email = :email");
+    // ✅ FIXED: Case-insensitive email check
+    $stmt = $conn->prepare("SELECT email FROM user_accounts WHERE LOWER(email) = LOWER(:email)");
     $stmt->bindParam(':email', $email);
     $stmt->execute();
     

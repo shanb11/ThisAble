@@ -1,0 +1,17 @@
+# Exclude web-only files
+backend/
+database_backups/
+frontend/
+images/
+includes/
+logs/
+modals/
+scripts/
+styles/
+uploads/
+vendor/
+
+# Exclude development files
+.git/
+*.log
+*.sql

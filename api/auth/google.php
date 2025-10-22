@@ -1,11 +1,10 @@
 <?php
 /**
- * FIXED Google OAuth API for ThisAble Mobile
- * ✅ CORRECTED to match your EXACT database schema
- * ✅ Handles both ID tokens (mobile) and Access tokens (web)
- * ✅ Uses your working authentication patterns
+ * Google Sign-In API for ThisAble Mobile
+ * ✅ FIXED: PostgreSQL/Supabase compatible (case-insensitive email)
  */
 
+// Include required files
 require_once '../config/cors.php';
 require_once '../config/response.php';
 require_once '../config/database.php';
@@ -19,78 +18,49 @@ try {
     // Get JSON input
     $input = json_decode(file_get_contents('php://input'), true);
     
-    if (!$input) {
-        ApiResponse::validationError(['input' => 'Invalid JSON input']);
+    if (!$input || empty($input['idToken'])) {
+        ApiResponse::validationError(['idToken' => 'Google ID token is required']);
     }
     
-    // FIXED: Enhanced token validation
-    $idToken = $input['idToken'] ?? null;
-    $accessToken = $input['accessToken'] ?? null;
-    $action = $input['action'] ?? 'login';
+    $idToken = $input['idToken'];
     
-    // Debug logging
-    error_log("=== FIXED GOOGLE AUTH DEBUG ===");
-    error_log("Has idToken: " . (!empty($idToken) ? 'YES' : 'NO'));
-    error_log("Has accessToken: " . (!empty($accessToken) ? 'YES' : 'NO'));
-    error_log("Action: " . $action);
+    // Verify Google ID token
+    $url = 'https://oauth2.googleapis.com/tokeninfo?id_token=' . $idToken;
+    $response = file_get_contents($url);
     
-    $userInfo = null;
-    
-    // FIXED: Try ID token first (mobile), then access token (web)
-    if (!empty($idToken)) {
-        error_log("Attempting ID token verification...");
-        $userInfo = verifyGoogleIdToken($idToken);
-        if ($userInfo) {
-            error_log("ID token verification successful");
-        }
+    if ($response === FALSE) {
+        ApiResponse::error("Failed to verify Google token", 401);
     }
     
-    // If no ID token or ID token failed, try access token
-    if (!$userInfo && !empty($accessToken)) {
-        error_log("Attempting access token verification...");
-        $userInfo = verifyGoogleAccessToken($accessToken);
-        if ($userInfo) {
-            error_log("Access token verification successful");
-        }
+    $userInfo = json_decode($response, true);
+    
+    if (!isset($userInfo['email'])) {
+        ApiResponse::error("Invalid Google token", 401);
     }
     
-    // FIXED: Better error handling
-    if (!$userInfo) {
-        error_log("All token verification methods failed");
-        if (empty($idToken) && empty($accessToken)) {
-            ApiResponse::validationError(['tokens' => 'No authentication tokens provided']);
-        } else {
-            ApiResponse::unauthorized("Token verification failed");
-        }
-    }
-    
-    if (empty($userInfo['email'])) {
-        ApiResponse::validationError(['email' => 'Email not found in Google response']);
-    }
-    
-    // ✅ FIXED: Use correct database connection method
-    $conn = ApiDatabase::getConnection();
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    
+    // Extract user information
     $email = $userInfo['email'];
     $firstName = $userInfo['given_name'] ?? '';
     $lastName = $userInfo['family_name'] ?? '';
     $profilePicture = $userInfo['picture'] ?? '';
     
-    error_log("Processing user: $email");
+    error_log("Processing Google user: $email");
     
-    // ✅ FIXED: Check if user exists using CORRECT column names
-    $stmt = $conn->prepare("SELECT account_id, seeker_id FROM user_accounts WHERE email = ?");
+    // Get database connection
+    $conn = ApiDatabase::getConnection();
+    
+    // ✅ FIXED: Case-insensitive email lookup
+    $stmt = $conn->prepare("SELECT account_id, seeker_id FROM user_accounts WHERE LOWER(email) = LOWER(?)");
     $stmt->execute([$email]);
     $existingUser = $stmt->fetch(PDO::FETCH_ASSOC);
     
     if ($existingUser) {
-        // ✅ EXISTING USER LOGIN - Use correct table structure
-        error_log("Existing user found, logging in");
+        // ✅ EXISTING USER LOGIN
+        error_log("Existing Google user found, logging in");
         
         $seekerId = $existingUser['seeker_id'];
         
-        // Get complete user data using WORKING query pattern from your other APIs
+        // Get complete user data
         $userStmt = $conn->prepare("
             SELECT 
                 js.seeker_id, js.first_name, js.middle_name, js.last_name, 
@@ -111,7 +81,7 @@ try {
             ApiResponse::serverError("User data not found");
         }
         
-        // Generate API token using your working method
+        // Generate API token
         $token = ApiDatabase::generateApiToken($seekerId, 'candidate');
         
         if (!$token) {
@@ -126,7 +96,7 @@ try {
             'setup_complete' => (bool)$user['setup_complete']
         ]);
         
-        // ✅ FIXED: Prepare user data matching your working APIs
+        // Prepare user data
         $userData = [
             'user_id' => $seekerId,
             'account_id' => $existingUser['account_id'],
@@ -137,227 +107,45 @@ try {
             'full_name' => trim($user['first_name'] . ' ' . $user['last_name']),
             'disability_type' => $user['disability_name'],
             'setup_complete' => (bool)$user['setup_complete'],
-            'pwd_verified' => false, // Will be checked separately
+            'pwd_verified' => false, // Will check separately if needed
             'google_account' => true,
-            'user_type' => 'candidate'
+            'user_type' => 'candidate',
+            'profile_picture' => $profilePicture
         ];
         
-        // Return success response with token
+        // Return success response
         ApiResponse::success([
             'user' => $userData,
             'token' => $token,
             'token_type' => 'Bearer',
-            'expires_in' => 30 * 24 * 60 * 60, // 30 days in seconds
+            'expires_in' => 30 * 24 * 60 * 60,
             'next_step' => $user['setup_complete'] ? 'dashboard' : 'account_setup'
-        ], "Login successful");
+        ], "Google login successful");
         
     } else {
-        // ✅ NEW USER REGISTRATION - Fixed to match your schema
-        error_log("New user registration");
+        // ✅ NEW USER - Return user info for PWD registration
+        error_log("New Google user, requires PWD ID registration");
         
-        $conn->beginTransaction();
-        
-        try {
-            // ✅ FIXED: Insert into job_seekers FIRST (correct order)
-            // Using default values for required fields that Google doesn't provide
-            $insertJobSeekerStmt = $conn->prepare("
-                INSERT INTO job_seekers (
-                    first_name, middle_name, last_name, suffix, 
-                    disability_id, contact_number, setup_complete
-                ) VALUES (?, '', ?, '', 1, '09000000000', 0)
-            ");
-            $insertJobSeekerStmt->execute([$firstName, $lastName]);
-            $seekerId = $conn->lastInsertId();
-            
-            error_log("Created job_seeker with ID: $seekerId");
-            
-            // ✅ FIXED: Insert into user_accounts with correct columns
-            $insertUserStmt = $conn->prepare("
-                INSERT INTO user_accounts (seeker_id, email, password_hash, google_account) 
-                VALUES (?, ?, '', 1)
-            ");
-            $insertUserStmt->execute([$seekerId, $email]);
-            $accountId = $conn->lastInsertId();
-            
-            error_log("Created user_account with ID: $accountId");
-            
-            $conn->commit();
-            
-            // Generate API token using your working method
-            $token = ApiDatabase::generateApiToken($seekerId, 'candidate');
-            
-            if (!$token) {
-                error_log("Failed to generate API token for new user");
-                ApiResponse::serverError("Failed to generate authentication token");
-            }
-            
-            // Log successful registration
-            ApiResponse::logActivity('google_registration', [
-                'user_id' => $seekerId,
-                'email' => $email
-            ]);
-            
-            // ✅ FIXED: Return new user data matching your working APIs
-            $userData = [
-                'user_id' => $seekerId,
-                'account_id' => $accountId,
+        // Return Google user data for registration flow
+        ApiResponse::success([
+            'is_new_user' => true,
+            'google_data' => [
                 'email' => $email,
                 'first_name' => $firstName,
-                'middle_name' => '',
                 'last_name' => $lastName,
-                'full_name' => trim($firstName . ' ' . $lastName),
-                'disability_type' => null, // Will be set during account setup
-                'setup_complete' => false,
-                'pwd_verified' => false,
-                'google_account' => true,
-                'user_type' => 'candidate'
-            ];
-            
-            ApiResponse::success([
-                'user' => $userData,
-                'token' => $token,
-                'token_type' => 'Bearer',
-                'expires_in' => 30 * 24 * 60 * 60, // 30 days in seconds
-                'next_step' => 'account_setup',
-                'is_new_user' => true
-            ], "Account created successfully");
-            
-        } catch (Exception $e) {
-            $conn->rollBack();
-            error_log("Registration error: " . $e->getMessage());
-            ApiResponse::serverError("Registration failed");
-        }
+                'profile_picture' => $profilePicture
+            ],
+            'next_step' => 'pwd_registration',
+            'message' => 'Please complete your registration with PWD ID details'
+        ], "New Google user detected");
     }
     
-} catch (PDOException $e) {
-    error_log("Database error: " . $e->getMessage());
+} catch(PDOException $e) {
+    error_log("Google Auth database error: " . $e->getMessage());
     ApiResponse::serverError("Database error occurred");
     
 } catch(Exception $e) {
-    error_log("Google OAuth API error: " . $e->getMessage());
+    error_log("Google Auth error: " . $e->getMessage());
     ApiResponse::serverError("An error occurred during Google authentication");
-}
-
-/**
- * Verify Google ID token - WORKING VERSION
- */
-function verifyGoogleIdToken($idToken) {
-    try {
-        $url = "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" . urlencode($idToken);
-        
-        $context = stream_context_create([
-            'http' => [
-                'timeout' => 10,
-                'user_agent' => 'ThisAble Mobile App'
-            ]
-        ]);
-        
-        $response = @file_get_contents($url, false, $context);
-        
-        if ($response === FALSE) {
-            error_log("ID token verification failed: Invalid response");
-            return null;
-        }
-        
-        $data = json_decode($response, true);
-        
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            error_log("ID token verification failed: Invalid JSON");
-            return null;
-        }
-        
-        // Verify the token is for your app
-        $expectedClientId = '83628564105-ebo9ng5modqfhkgepbm55rkv92d669l9.apps.googleusercontent.com';
-        
-        if (isset($data['aud']) && $data['aud'] === $expectedClientId && isset($data['email'])) {
-            return $data;
-        }
-        
-        error_log("ID token verification failed: Wrong client ID or missing email");
-        return null;
-        
-    } catch (Exception $e) {
-        error_log("ID token verification error: " . $e->getMessage());
-        return null;
-    }
-}
-
-/**
- * Verify Google Access Token (Web fallback) - WORKING VERSION
- */
-function verifyGoogleAccessToken($accessToken) {
-    try {
-        // First verify the token is valid
-        $tokenInfoUrl = "https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=" . urlencode($accessToken);
-        
-        $context = stream_context_create([
-            'http' => [
-                'timeout' => 10,
-                'user_agent' => 'ThisAble Mobile App'
-            ]
-        ]);
-        
-        $tokenResponse = @file_get_contents($tokenInfoUrl, false, $context);
-        
-        if ($tokenResponse === FALSE) {
-            error_log("Access token verification failed: Invalid response from tokeninfo");
-            return null;
-        }
-        
-        $tokenData = json_decode($tokenResponse, true);
-        
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            error_log("Access token verification failed: Invalid JSON from tokeninfo");
-            return null;
-        }
-        
-        // Verify the token is for your app
-        $expectedClientId = '83628564105-ebo9ng5modqfhkgepbm55rkv92d669l9.apps.googleusercontent.com';
-        
-        if (!isset($tokenData['aud']) || $tokenData['aud'] !== $expectedClientId) {
-            error_log("Access token verification failed: Wrong client ID");
-            return null;
-        }
-        
-        // Get user info using the access token
-        $userInfoUrl = "https://www.googleapis.com/oauth2/v2/userinfo";
-        $opts = [
-            'http' => [
-                'method' => 'GET',
-                'header' => "Authorization: Bearer " . $accessToken . "\r\n" .
-                           "User-Agent: ThisAble Mobile App\r\n",
-                'timeout' => 10
-            ]
-        ];
-        
-        $userContext = stream_context_create($opts);
-        $userResponse = @file_get_contents($userInfoUrl, false, $userContext);
-        
-        if ($userResponse === FALSE) {
-            error_log("Failed to get user info with access token");
-            return null;
-        }
-        
-        $userInfo = json_decode($userResponse, true);
-        
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            error_log("Failed to parse user info JSON");
-            return null;
-        }
-        
-        // Format to match ID token structure
-        return [
-            'email' => $userInfo['email'] ?? null,
-            'given_name' => $userInfo['given_name'] ?? '',
-            'family_name' => $userInfo['family_name'] ?? '',
-            'picture' => $userInfo['picture'] ?? '',
-            'sub' => $userInfo['id'] ?? null,
-            'email_verified' => $userInfo['verified_email'] ?? false
-        ];
-        
-    } catch (Exception $e) {
-        error_log("Access token verification error: " . $e->getMessage());
-        return null;
-    }
 }
 ?>
