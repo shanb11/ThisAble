@@ -1,6 +1,7 @@
 <?php
 /**
  * API Database Configuration - Railway + Supabase Compatible
+ * Uses Supabase Connection Pooler for cloud deployments
  * Works on Railway, Vercel, and localhost (XAMPP)
  */
 
@@ -22,8 +23,11 @@ function getEnvVar($key, $default = null) {
     return $default;
 }
 
-// Detect environment
-$isRailway = !empty($_ENV['RAILWAY_ENVIRONMENT']) || !empty(getenv('RAILWAY_ENVIRONMENT'));
+// Detect environment - Railway sets RAILWAY_ENVIRONMENT
+$isRailway = !empty($_ENV['RAILWAY_ENVIRONMENT']) || 
+             !empty(getenv('RAILWAY_ENVIRONMENT')) ||
+             !empty($_SERVER['RAILWAY_ENVIRONMENT'] ?? '');
+
 $isVercel = !empty($_ENV['VERCEL']) || !empty(getenv('VERCEL'));
 $isCloudEnvironment = $isRailway || $isVercel;
 
@@ -34,12 +38,14 @@ $password = getEnvVar('DB_PASSWORD', '082220EthanDrake');
 // Connection configuration based on environment
 if ($isCloudEnvironment) {
     // ===== CLOUD DEPLOYMENT: Use Supabase Connection Pooler =====
+    // Pooler is optimized for serverless/cloud platforms
     $host = 'aws-0-ap-southeast-1.pooler.supabase.com';
     $port = '6543'; // Transaction mode port
     $username = 'postgres.jxllnfnzossijeidzhrq'; // Note: postgres. prefix for pooler
     
-    error_log("🌐 Cloud environment detected (Railway/Vercel)");
-    error_log("🔧 Using Supabase pooler: $host:$port");
+    error_log("🌐 CLOUD ENVIRONMENT DETECTED");
+    error_log("🔧 Using Supabase Connection Pooler");
+    error_log("🔧 Host: $host:$port");
     
     $pdoOptions = [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -55,8 +61,9 @@ if ($isCloudEnvironment) {
     $port = getEnvVar('DB_PORT', '5432');
     $username = getEnvVar('DB_USER', 'postgres');
     
-    error_log("💻 Local environment detected");
-    error_log("🔧 Using direct connection: $host:$port");
+    error_log("💻 LOCAL ENVIRONMENT DETECTED");
+    error_log("🔧 Using Direct Connection");
+    error_log("🔧 Host: $host:$port");
     
     $pdoOptions = [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -70,16 +77,19 @@ if ($isCloudEnvironment) {
 try {
     $dsn = "pgsql:host=$host;port=$port;dbname=$dbname;sslmode=require";
     
-    error_log("🔧 Connecting to: $dsn as $username");
+    error_log("🔧 DSN: $dsn");
+    error_log("🔧 Username: $username");
     
     $conn = new PDO($dsn, $username, $password, $pdoOptions);
     
-    error_log("✅ Database connected successfully!");
+    error_log("✅ DATABASE CONNECTED SUCCESSFULLY!");
     
 } catch(PDOException $e) {
-    error_log("❌ Database Connection Error: " . $e->getMessage());
+    error_log("❌ DATABASE CONNECTION FAILED");
+    error_log("❌ Error: " . $e->getMessage());
     error_log("❌ DSN: $dsn");
     error_log("❌ Username: $username");
+    error_log("❌ Environment: " . ($isCloudEnvironment ? 'CLOUD' : 'LOCAL'));
     
     http_response_code(500);
     die(json_encode([
@@ -90,6 +100,7 @@ try {
             'environment' => $isCloudEnvironment ? 'cloud' : 'local',
             'host' => $host,
             'port' => $port,
+            'using_pooler' => $isCloudEnvironment
         ]
     ]));
 }
@@ -98,12 +109,18 @@ class ApiDatabase {
     
     private static $conn;
     
+    /**
+     * Get database connection
+     */
     public static function getConnection() {
         global $conn;
         self::$conn = $conn;
         return self::$conn;
     }
     
+    /**
+     * Generate secure API token
+     */
     public static function generateApiToken($userId, $userType) {
         try {
             error_log("🔐 GENERATING TOKEN: user=$userId, type=$userType");
@@ -111,17 +128,21 @@ class ApiDatabase {
             $conn = self::getConnection();
             
             $token = bin2hex(random_bytes(32));
-            $expiresAt = date('Y-m-d H:i:s', time() + (30 * 24 * 60 * 60));
+            $expiresAt = date('Y-m-d H:i:s', time() + (30 * 24 * 60 * 60)); // 30 days
             
+            error_log("🔐 GENERATED TOKEN: " . substr($token, 0, 20) . "...");
+            
+            // Insert token
             $stmt = $conn->prepare("INSERT INTO api_tokens (user_id, user_type, token, expires_at, is_active) VALUES (?, ?, ?, ?, true)");
             $result = $stmt->execute([$userId, $userType, $token, $expiresAt]);
             
             if ($result) {
                 error_log("🔐 TOKEN INSERTED SUCCESSFULLY");
                 return $token;
+            } else {
+                error_log("🔐 TOKEN INSERT FAILED");
+                return false;
             }
-            
-            return false;
             
         } catch (Exception $e) {
             error_log("🔐 TOKEN GENERATION ERROR: " . $e->getMessage());
@@ -129,8 +150,13 @@ class ApiDatabase {
         }
     }
     
+    /**
+     * Validate API token
+     */
     public static function validateToken($token) {
         try {
+            error_log("🔐 VALIDATING TOKEN: " . substr($token, 0, 20) . "...");
+            
             $conn = self::getConnection();
             
             $stmt = $conn->prepare("SELECT user_id, user_type FROM api_tokens 
@@ -138,7 +164,15 @@ class ApiDatabase {
                                    AND expires_at > NOW()");
             $stmt->execute([$token]);
             
-            return $stmt->fetch(PDO::FETCH_ASSOC);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($result) {
+                error_log("🔐 TOKEN VALID: user={$result['user_id']}, type={$result['user_type']}");
+            } else {
+                error_log("🔐 TOKEN INVALID OR EXPIRED");
+            }
+            
+            return $result;
             
         } catch (Exception $e) {
             error_log("🔐 TOKEN VALIDATION ERROR: " . $e->getMessage());
@@ -147,6 +181,9 @@ class ApiDatabase {
     }
 }
 
+/**
+ * Require authentication middleware
+ */
 function requireAuth() {
     $headers = getallheaders();
     $token = null;
