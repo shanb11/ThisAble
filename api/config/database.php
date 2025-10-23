@@ -1,15 +1,40 @@
 <?php
 /**
- * API Database Configuration - Standalone for Vercel deployment
- * Works on both localhost and Vercel
+ * API Database Configuration - Railway + Local Compatible
+ * Works on Railway, Vercel, and localhost (XAMPP)
  */
 
-// Database credentials (works on both environments)
-$host = getenv('DB_HOST') ?: 'db.jxllnfnzossijeidzhrq.supabase.co';
-$port = getenv('DB_PORT') ?: '5432';
-$dbname = getenv('DB_NAME') ?: 'postgres';
-$username = getenv('DB_USER') ?: 'postgres';
-$password = getenv('DB_PASSWORD') ?: '082220EthanDrake';
+// Enhanced environment variable reading for Railway
+function getEnvVar($key, $default = null) {
+    // Try $_ENV first (Railway)
+    if (isset($_ENV[$key]) && $_ENV[$key] !== '') {
+        return $_ENV[$key];
+    }
+    
+    // Try getenv() (some hosting)
+    $value = getenv($key);
+    if ($value !== false && $value !== '') {
+        return $value;
+    }
+    
+    // Try $_SERVER (alternative)
+    if (isset($_SERVER[$key]) && $_SERVER[$key] !== '') {
+        return $_SERVER[$key];
+    }
+    
+    // Return default
+    return $default;
+}
+
+// Database credentials with Railway support
+$host = getEnvVar('DB_HOST', 'db.jxllnfnzossijeidzhrq.supabase.co');
+$port = getEnvVar('DB_PORT', '5432');
+$dbname = getEnvVar('DB_NAME', 'postgres');
+$username = getEnvVar('DB_USER', 'postgres');
+$password = getEnvVar('DB_PASSWORD', '082220EthanDrake');
+
+// Debug logging (only log in production if needed)
+error_log("🔧 Attempting DB connection to: $host:$port/$dbname as $username");
 
 try {
     $conn = new PDO(
@@ -20,14 +45,26 @@ try {
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES => false,
+            PDO::ATTR_TIMEOUT => 5, // 5 second timeout
         ]
     );
+    
+    error_log("✅ Database connected successfully");
+    
 } catch(PDOException $e) {
-    error_log("❌ API Database Connection Error: " . $e->getMessage());
+    error_log("❌ Database Connection Error: " . $e->getMessage());
+    error_log("❌ Connection string: pgsql:host=$host;port=$port;dbname=$dbname");
+    
     http_response_code(500);
     die(json_encode([
         'success' => false,
-        'message' => 'Database connection failed. Please try again later.'
+        'message' => 'Database connection failed. Please try again later.',
+        'debug' => [
+            'error' => $e->getMessage(),
+            'host' => $host,
+            'port' => $port,
+            'database' => $dbname
+        ]
     ]));
 }
 
@@ -59,8 +96,8 @@ class ApiDatabase {
             
             error_log("🔐 GENERATED TOKEN: " . substr($token, 0, 20) . "...");
             
-            // Insert token (don't deactivate old ones for now)
-            $stmt = $conn->prepare("INSERT INTO api_tokens (user_id, user_type, token, expires_at, is_active) VALUES (?, ?, ?, ?, 1)");
+            // Insert token
+            $stmt = $conn->prepare("INSERT INTO api_tokens (user_id, user_type, token, expires_at, is_active) VALUES (?, ?, ?, ?, true)");
             $result = $stmt->execute([$userId, $userType, $token, $expiresAt]);
             
             if ($result) {
@@ -78,7 +115,7 @@ class ApiDatabase {
     }
     
     /**
-     * ULTRA SIMPLE TOKEN VALIDATION - NO COMPLEX QUERIES
+     * Validate API token
      */
     public static function validateToken($token) {
         try {
@@ -86,126 +123,45 @@ class ApiDatabase {
             
             $conn = self::getConnection();
             
-            // Step 1: Check token in api_tokens table
             $stmt = $conn->prepare("SELECT user_id, user_type FROM api_tokens 
-                                   WHERE token = ? 
-                                   AND is_active = 1 
+                                   WHERE token = ? AND is_active = true 
                                    AND expires_at > NOW()");
             $stmt->execute([$token]);
-            $tokenData = $stmt->fetch(PDO::FETCH_ASSOC);
             
-            if (!$tokenData) {
-                error_log("🔐 TOKEN NOT FOUND OR EXPIRED");
-                return null;
-            }
-            
-            $userId = $tokenData['user_id'];
-            $userType = $tokenData['user_type'];
-            
-            error_log("🔐 TOKEN VALID: user_id=$userId, type=$userType");
-            
-            // Step 2: Get user info with SIMPLE queries (no JOINs)
-            if ($userType === 'candidate') {
-                $userStmt = $conn->prepare("SELECT seeker_id as user_id, first_name, last_name FROM job_seekers WHERE seeker_id = ?");
-                $userStmt->execute([$userId]);
-                $userData = $userStmt->fetch(PDO::FETCH_ASSOC);
-                
-                if ($userData) {
-                    $userData['user_type'] = 'candidate';
-                    $userData['email'] = ''; // Will get from user_accounts if needed
-                }
-                
-            } else {
-                error_log("🔐 EMPLOYER NOT IMPLEMENTED YET");
-                return null;
-            }
-            
-            if (!$userData) {
-                error_log("🔐 USER NOT FOUND IN job_seekers: user_id=$userId");
-                return null;
-            }
-            
-            error_log("🔐 USER FOUND: " . json_encode($userData));
-            
-            // Step 3: Update last_used
-            $updateStmt = $conn->prepare("UPDATE api_tokens SET last_used = NOW() WHERE token = ?");
-            $updateStmt->execute([$token]);
-            
-            error_log("🔐 TOKEN VALIDATION SUCCESS");
-            return $userData;
+            return $stmt->fetch(PDO::FETCH_ASSOC);
             
         } catch (Exception $e) {
             error_log("🔐 TOKEN VALIDATION ERROR: " . $e->getMessage());
-            return null;
+            return false;
         }
-    }
-    
-    /**
-     * Get user by token (simple wrapper)
-     */
-    public static function getUserByToken($token) {
-        return self::validateToken($token);
     }
 }
 
 /**
- * ULTRA SIMPLE TOKEN EXTRACTION
- */
-function getAuthToken() {
-    error_log("🔐 EXTRACTING TOKEN...");
-    
-    // Method 1: Check Authorization header
-    if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-        $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
-        error_log("🔐 FOUND HTTP_AUTHORIZATION: " . substr($authHeader, 0, 30) . "...");
-        
-        if (strpos($authHeader, 'Bearer ') === 0) {
-            $token = substr($authHeader, 7);
-            error_log("🔐 EXTRACTED TOKEN: " . substr($token, 0, 20) . "...");
-            return trim($token);
-        }
-    }
-    
-    // Method 2: Try getallheaders
-    if (function_exists('getallheaders')) {
-        $headers = getallheaders();
-        foreach ($headers as $key => $value) {
-            if (strtolower($key) === 'authorization') {
-                error_log("🔐 FOUND Authorization in getallheaders: " . substr($value, 0, 30) . "...");
-                if (strpos($value, 'Bearer ') === 0) {
-                    $token = substr($value, 7);
-                    error_log("🔐 EXTRACTED TOKEN: " . substr($token, 0, 20) . "...");
-                    return trim($token);
-                }
-            }
-        }
-    }
-    
-    error_log("🔐 NO TOKEN FOUND");
-    return null;
-}
-
-/**
- * REQUIRE AUTHENTICATION - SIMPLE VERSION
+ * Require authentication middleware
  */
 function requireAuth() {
-    error_log("🔐 REQUIRE AUTH CALLED");
+    $headers = getallheaders();
+    $token = null;
     
-    $token = getAuthToken();
+    if (isset($headers['Authorization'])) {
+        $token = str_replace('Bearer ', '', $headers['Authorization']);
+    } elseif (isset($headers['X-API-Token'])) {
+        $token = $headers['X-API-Token'];
+    }
     
     if (!$token) {
-        error_log("🔐 NO TOKEN - UNAUTHORIZED");
-        ApiResponse::unauthorized("Authentication token required");
+        http_response_code(401);
+        die(json_encode(['success' => false, 'message' => 'Authentication required']));
     }
     
-    $user = ApiDatabase::getUserByToken($token);
+    $user = ApiDatabase::validateToken($token);
     
     if (!$user) {
-        error_log("🔐 INVALID TOKEN - UNAUTHORIZED");
-        ApiResponse::unauthorized("Invalid or expired token");
+        http_response_code(401);
+        die(json_encode(['success' => false, 'message' => 'Invalid or expired token']));
     }
     
-    error_log("🔐 AUTH SUCCESS: " . json_encode($user));
     return $user;
 }
 ?>

@@ -312,3 +312,53 @@
 2025-09-14 14:23:16 | Setup marked as complete for seeker_id: 8
 2025-09-14 14:23:16 | Transaction committed successfully
 2025-09-14 14:23:16 | Setup process completed successfully
+2025-10-23 09:27:42 | save_setup_data.php received data: Array
+(
+    [seeker_id] => 9
+    [skills] => []
+    [work_style] => onsite
+    [job_type] => fulltime
+    [disability_type] => apparent
+    [accommodation_list] => []
+    [no_accommodations_needed] => 1
+)
+
+2025-10-23 09:27:42 | Processing setup for seeker_id: 9
+2025-10-23 09:27:42 | Transaction started
+2025-10-23 09:27:42 | Processing skills: Array
+(
+)
+
+2025-10-23 09:27:42 | Cleared existing skills
+2025-10-23 09:27:42 | Saving preferences - work_style: onsite, job_type: fulltime
+2025-10-23 09:27:42 | Inserted new preferences
+2025-10-23 09:27:42 | Saving accommodations - type: apparent, list: [], no_needs: 1
+2025-10-23 09:27:42 | Inserted new accommodations
+2025-10-23 09:27:42 | Setup marked as complete for seeker_id: 9
+2025-10-23 09:27:42 | Transaction committed successfully
+2025-10-23 09:27:42 | Setup process completed successfully
+2025-10-23 09:27:52 | save_setup_data.php received data: Array
+(
+    [seeker_id] => 9
+    [skills] => []
+    [work_style] => onsite
+    [job_type] => fulltime
+    [disability_type] => apparent
+    [accommodation_list] => []
+    [no_accommodations_needed] => 1
+)
+
+2025-10-23 09:27:52 | Processing setup for seeker_id: 9
+2025-10-23 09:27:52 | Transaction started
+2025-10-23 09:27:52 | Processing skills: Array
+(
+)
+
+2025-10-23 09:27:52 | Cleared existing skills
+2025-10-23 09:27:52 | Saving preferences - work_style: onsite, job_type: fulltime
+2025-10-23 09:27:52 | Updated existing preferences
+2025-10-23 09:27:52 | Saving accommodations - type: apparent, list: [], no_needs: 1
+2025-10-23 09:27:52 | Updated existing accommodations
+2025-10-23 09:27:52 | Setup marked as complete for seeker_id: 9
+2025-10-23 09:27:52 | Transaction committed successfully
+2025-10-23 09:27:52 | Setup process completed successfully

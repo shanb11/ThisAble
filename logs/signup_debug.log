@@ -192,3 +192,12 @@ Transaction committed successfully
 2025-06-30 00:17:21 | File successfully moved to: ../../uploads/pwd_ids/6_6861bb7149100.jpg
 2025-06-30 00:17:21 | PWD ID inserted with image path: ../../uploads/pwd_ids/6_6861bb7149100.jpg
 2025-06-30 00:17:21 | Transaction committed successfully
+2025-10-23 09:21:20 | POST request received
+2025-10-23 09:21:20 | Form data received: {"firstName":"Test","lastName":"User","email":"test2@email.com","phone":"09664873735","disability":1,"pwdIdNumber":"48946548613"}
+2025-10-23 09:21:20 | File upload found: {"name":"Maria Santos - PWD ID.jpg","full_path":"Maria Santos - PWD ID.jpg","type":"image\/jpeg","tmp_name":"C:\\xampp\\tmp\\php8E14.tmp","error":0,"size":36273}
+2025-10-23 09:21:20 | Transaction started
+2025-10-23 09:21:20 | New seeker_id created: 9
+2025-10-23 09:21:20 | Attempting to move uploaded file to: ../../uploads/pwd_ids/9_68f9d770741e3.jpg
+2025-10-23 09:21:20 | File successfully moved to: ../../uploads/pwd_ids/9_68f9d770741e3.jpg
+2025-10-23 09:21:20 | PWD ID inserted with image path: ../../uploads/pwd_ids/9_68f9d770741e3.jpg
+2025-10-23 09:21:20 | Transaction committed successfully
