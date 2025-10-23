@@ -46,11 +46,11 @@ $dbname = 'postgres';
 $password = $_ENV['DB_PASSWORD'] ?? getenv('DB_PASSWORD') ?: '082220EthanDrake';
 
 if ($isCloudEnvironment) {
-    // Cloud: Use pooler
+    // Cloud: Use pooler with correct project reference
     $host = 'aws-0-ap-southeast-1.pooler.supabase.com';
     $port = '6543';
-    $username = 'postgres.jxllnfnzossijeidzhrq';
-    $connectionType = 'SUPABASE POOLER (Cloud)';
+    $username = 'postgres.jxllnfnzossijeidzhrq'; // Verified correct
+    $connectionType = 'SUPABASE POOLER (Cloud) - IPv4 Compatible';
 } else {
     // Local: Direct connection
     $host = $_ENV['DB_HOST'] ?? getenv('DB_HOST') ?: 'db.jxllnfnzossijeidzhrq.supabase.co';

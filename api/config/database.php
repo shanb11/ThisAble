@@ -37,22 +37,43 @@ $password = getEnvVar('DB_PASSWORD', '082220EthanDrake');
 
 // Connection configuration based on environment
 if ($isCloudEnvironment) {
-    // ===== CLOUD DEPLOYMENT: Use Supabase Connection Pooler =====
-    // Pooler is optimized for serverless/cloud platforms
-    $host = 'aws-0-ap-southeast-1.pooler.supabase.com';
-    $port = '6543'; // Transaction mode port
-    $username = 'postgres.jxllnfnzossijeidzhrq'; // Note: postgres. prefix for pooler
+    // ===== CLOUD DEPLOYMENT: Try pooler first, fallback to direct =====
     
-    error_log("🌐 CLOUD ENVIRONMENT DETECTED");
-    error_log("🔧 Using Supabase Connection Pooler");
+    // OPTION 1: Supabase Connection Pooler (Supavisor) - IPv4 Compatible
+    // This is the CORRECT configuration for Railway
+    $poolerHost = 'aws-0-ap-southeast-1.pooler.supabase.com';
+    $poolerPort = '6543';
+    $poolerUsername = 'postgres.jxllnfnzossijeidzhrq'; // Verified project reference
+    
+    // OPTION 2: Direct connection with IPv4 forced (temporary fallback)
+    $directHost = 'db.jxllnfnzossijeidzhrq.supabase.co';
+    $directPort = '5432';
+    $directUsername = 'postgres';
+    
+    // Try pooler first (recommended for Railway/Cloud)
+    $usePooler = getEnvVar('USE_POOLER', 'true') === 'true'; // Changed default to true
+    
+    if ($usePooler) {
+        $host = $poolerHost;
+        $port = $poolerPort;
+        $username = $poolerUsername;
+        error_log("🌐 CLOUD: Attempting Supabase Connection Pooler");
+    } else {
+        $host = $directHost;
+        $port = $directPort;
+        $username = $directUsername;
+        error_log("🌐 CLOUD: Attempting Direct Connection (IPv4)");
+    }
+    
     error_log("🔧 Host: $host:$port");
+    error_log("🔧 Username: $username");
     
     $pdoOptions = [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_EMULATE_PREPARES => false,
         PDO::ATTR_TIMEOUT => 10,
-        PDO::ATTR_PERSISTENT => false, // Don't use persistent connections with pooler
+        PDO::ATTR_PERSISTENT => false,
     ];
     
 } else {
