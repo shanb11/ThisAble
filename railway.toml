@@ -1,0 +1,13 @@
+[build]
+builder = "nixpacks"
+
+[build.nixpacksConfig]
+# Enable PHP with PostgreSQL support
+packages = ["php", "php82Extensions.pdo", "php82Extensions.pdo_pgsql", "php82Extensions.pgsql"]
+
+[deploy]
+startCommand = "php -S 0.0.0.0:$PORT -t ."
+healthcheckPath = "/api/test.php"
+healthcheckTimeout = 100
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
