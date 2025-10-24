@@ -46,11 +46,21 @@ $dbname = 'postgres';
 $password = $_ENV['DB_PASSWORD'] ?? getenv('DB_PASSWORD') ?: '082220EthanDrake';
 
 if ($isCloudEnvironment) {
-    // Cloud: Use pooler with correct project reference
-    $host = 'aws-0-ap-southeast-1.pooler.supabase.com';
-    $port = '6543';
-    $username = 'postgres.jxllnfnzossijeidzhrq'; // Verified correct
-    $connectionType = 'SUPABASE POOLER (Cloud) - IPv4 Compatible';
+    // Cloud: Try both session mode and transaction mode
+    // Session mode (port 5432) - more compatible, may work better
+    $useSessionMode = getEnvVar('USE_SESSION_MODE', 'true') === 'true';
+    
+    if ($useSessionMode) {
+        $host = 'aws-0-ap-southeast-1.pooler.supabase.com';
+        $port = '5432'; // Session mode
+        $username = 'postgres.jxllnfnzossijeidzhrq';
+        $connectionType = 'SUPABASE POOLER - SESSION MODE (Cloud) - IPv4';
+    } else {
+        $host = 'aws-0-ap-southeast-1.pooler.supabase.com';
+        $port = '6543'; // Transaction mode
+        $username = 'postgres.jxllnfnzossijeidzhrq';
+        $connectionType = 'SUPABASE POOLER - TRANSACTION MODE (Cloud) - IPv4';
+    }
 } else {
     // Local: Direct connection
     $host = $_ENV['DB_HOST'] ?? getenv('DB_HOST') ?: 'db.jxllnfnzossijeidzhrq.supabase.co';

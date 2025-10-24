@@ -40,10 +40,15 @@ if ($isCloudEnvironment) {
     // ===== CLOUD DEPLOYMENT: Try pooler first, fallback to direct =====
     
     // OPTION 1: Supabase Connection Pooler (Supavisor) - IPv4 Compatible
-    // This is the CORRECT configuration for Railway
+    // Try Session Mode first (port 5432) - more compatible
     $poolerHost = 'aws-0-ap-southeast-1.pooler.supabase.com';
-    $poolerPort = '6543';
+    $poolerPortSession = '5432'; // Session mode - behaves like direct connection
+    $poolerPortTransaction = '6543'; // Transaction mode - for serverless
     $poolerUsername = 'postgres.jxllnfnzossijeidzhrq'; // Verified project reference
+    
+    // Try session mode by default (more compatible)
+    $useSessionMode = getEnvVar('USE_SESSION_MODE', 'true') === 'true';
+    $poolerPort = $useSessionMode ? $poolerPortSession : $poolerPortTransaction;
     
     // OPTION 2: Direct connection with IPv4 forced (temporary fallback)
     $directHost = 'db.jxllnfnzossijeidzhrq.supabase.co';
@@ -57,7 +62,8 @@ if ($isCloudEnvironment) {
         $host = $poolerHost;
         $port = $poolerPort;
         $username = $poolerUsername;
-        error_log("🌐 CLOUD: Attempting Supabase Connection Pooler");
+        $mode = $useSessionMode ? 'SESSION' : 'TRANSACTION';
+        error_log("🌐 CLOUD: Attempting Supabase Connection Pooler ($mode mode)");
     } else {
         $host = $directHost;
         $port = $directPort;
