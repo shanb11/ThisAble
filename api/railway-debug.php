@@ -7,6 +7,24 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
+// Helper function to read environment variables
+function getEnvVar($key, $default = null) {
+    if (isset($_ENV[$key]) && $_ENV[$key] !== '') {
+        return $_ENV[$key];
+    }
+    
+    $value = getenv($key);
+    if ($value !== false && $value !== '') {
+        return $value;
+    }
+    
+    if (isset($_SERVER[$key]) && $_SERVER[$key] !== '') {
+        return $_SERVER[$key];
+    }
+    
+    return $default;
+}
+
 $debug = [
     'timestamp' => date('Y-m-d H:i:s'),
     'php_version' => phpversion(),
