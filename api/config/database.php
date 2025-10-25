@@ -40,11 +40,11 @@ if ($isCloudEnvironment) {
     // ===== CLOUD DEPLOYMENT: Try pooler first, fallback to direct =====
     
     // OPTION 1: Supabase Connection Pooler (Supavisor) - IPv4 Compatible
-    // Try Session Mode first (port 5432) - more compatible
-    $poolerHost = 'aws-0-ap-southeast-1.pooler.supabase.com';
+    // CORRECT configuration verified from Supabase dashboard
+    $poolerHost = 'aws-1-ap-southeast-1.pooler.supabase.com'; // CORRECTED: aws-1 not aws-0!
     $poolerPortSession = '5432'; // Session mode - behaves like direct connection
     $poolerPortTransaction = '6543'; // Transaction mode - for serverless
-    $poolerUsername = 'postgres.jxllnfnzossijeidzhrq'; // Verified project reference
+    $poolerUsername = 'postgres.jxllnfnzossijeidzhrq'; // Verified from dashboard
     
     // Try session mode by default (more compatible)
     $useSessionMode = getEnvVar('USE_SESSION_MODE', 'true') === 'true';
@@ -55,8 +55,8 @@ if ($isCloudEnvironment) {
     $directPort = '5432';
     $directUsername = 'postgres';
     
-    // Try pooler first (recommended for Railway/Cloud)
-    $usePooler = getEnvVar('USE_POOLER', 'true') === 'true'; // Changed default to true
+    // Use pooler (NOW CORRECT - verified from Supabase dashboard)
+    $usePooler = getEnvVar('USE_POOLER', 'true') === 'true'; // Re-enabled with correct host!
     
     if ($usePooler) {
         $host = $poolerHost;
