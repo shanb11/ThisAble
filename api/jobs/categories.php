@@ -1,9 +1,7 @@
 <?php
 /**
- * Job Categories API for ThisAble Landing Page  
- * File: C:\xampp\htdocs\ThisAble\api\jobs\categories.php
- * 
- * FIXED: Database connection issue resolved
+ * Job Categories API - FIXED FOR SUPABASE
+ * File: api/jobs/categories.php
  */
 
 header('Content-Type: application/json');
@@ -17,106 +15,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 try {
-    // FIXED: Database connection - try different approaches
-    $pdo = null;
+    // ✅ FIXED: Use proper Supabase database connection
+    require_once __DIR__ . '/../config/database.php';
     
-    // Method 1: Include your existing database file
-    if (file_exists(__DIR__ . '/../config/database.php')) {
-        include_once __DIR__ . '/../config/database.php';
-    }
-    
-    // Method 2: If $pdo still not available, create direct connection
-    if (!isset($pdo) || $pdo === null) {
-        $servername = "localhost";
-        $username = "root";
-        $password = "";
-        $dbname = "jobportal_db";
-        
-        $pdo = new PDO(
-            "mysql:host=$servername;dbname=$dbname;charset=utf8mb4", 
-            $username, 
-            $password,
-            [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                PDO::ATTR_EMULATE_PREPARES => false,
-            ]
-        );
-    }
-    
-    // Test connection
-    if (!$pdo) {
+    // ✅ FIXED: Use $conn from database.php (not $pdo)
+    if (!isset($conn) || $conn === null) {
         throw new Exception("Database connection failed");
     }
 
-    // Define categories that match your Flutter constants
+    // Define job categories
     $categories = [
-        [
-            'id' => 'education',
-            'name' => 'Education & Training',
-            'icon' => 'graduation-cap',
-            'departments' => ['Education', 'Training', 'Teaching', 'Academic']
-        ],
-        [
-            'id' => 'office',
-            'name' => 'Office Administration',
-            'icon' => 'briefcase',
-            'departments' => ['Administration', 'Office', 'Administrative', 'Clerical']
-        ],
-        [
-            'id' => 'customer',
-            'name' => 'Customer Service',
-            'icon' => 'headset',
-            'departments' => ['Customer Service', 'Support', 'Call Center', 'Help Desk']
-        ],
-        [
-            'id' => 'business',
-            'name' => 'Business Administration',
-            'icon' => 'chart-line',
-            'departments' => ['Business', 'Management', 'Operations', 'Strategy']
-        ],
-        [
-            'id' => 'healthcare',
-            'name' => 'Healthcare & Wellness',
-            'icon' => 'heartbeat',
-            'departments' => ['Healthcare', 'Medical', 'Wellness', 'Health', 'Nursing']
-        ],
-        [
-            'id' => 'finance',
-            'name' => 'Finance & Accounting',
-            'icon' => 'dollar-sign',
-            'departments' => ['Finance', 'Accounting', 'Banking', 'Financial']
-        ],
-        [
-            'id' => 'engineering',
-            'name' => 'Engineering & Technical',
-            'icon' => 'cog',
-            'departments' => ['Engineering', 'Technical', 'IT', 'Technology', 'Software']
-        ],
-        [
-            'id' => 'design',
-            'name' => 'Design & Creative',
-            'icon' => 'palette',
-            'departments' => ['Design', 'Creative', 'Art', 'Graphic', 'UI/UX']
-        ],
-        [
-            'id' => 'marketing',
-            'name' => 'Marketing & Sales',
-            'icon' => 'bullhorn',
-            'departments' => ['Marketing', 'Sales', 'Digital Marketing', 'Advertising']
-        ]
+        ['id' => 'education', 'name' => 'Education', 'icon' => 'school', 'departments' => ['Education', 'Training', 'Teaching']],
+        ['id' => 'office', 'name' => 'Office & Admin', 'icon' => 'business', 'departments' => ['Administration', 'Office', 'Administrative']],
+        ['id' => 'customer', 'name' => 'Customer Service', 'icon' => 'support_agent', 'departments' => ['Customer Service', 'Support', 'Call Center']],
+        ['id' => 'business', 'name' => 'Business', 'icon' => 'work', 'departments' => ['Business', 'Management', 'Operations']],
+        ['id' => 'healthcare', 'name' => 'Healthcare', 'icon' => 'local_hospital', 'departments' => ['Healthcare', 'Medical', 'Wellness', 'Health']],
+        ['id' => 'finance', 'name' => 'Finance', 'icon' => 'account_balance', 'departments' => ['Finance', 'Accounting', 'Banking']],
+        ['id' => 'engineering', 'name' => 'Engineering', 'icon' => 'engineering', 'departments' => ['Engineering', 'Technical', 'IT']],
+        ['id' => 'design', 'name' => 'Design', 'icon' => 'brush', 'departments' => ['Design', 'Creative', 'Art']],
+        ['id' => 'marketing', 'name' => 'Marketing', 'icon' => 'campaign', 'departments' => ['Marketing', 'Sales', 'Advertising']]
     ];
 
-    // Get real job counts for each category
     $categoriesWithCounts = [];
-    
+
     foreach ($categories as $category) {
-        // Build query for this category
+        // Build department conditions for PostgreSQL (case-insensitive)
         $deptConditions = [];
         $params = [];
         
         foreach ($category['departments'] as $dept) {
-            $deptConditions[] = "jp.department LIKE ?";
+            $deptConditions[] = "jp.department ILIKE ?";
             $params[] = "%{$dept}%";
         }
         
@@ -128,7 +56,7 @@ try {
             $sql .= " AND (" . implode(' OR ', $deptConditions) . ")";
         }
         
-        $stmt = $pdo->prepare($sql);
+        $stmt = $conn->prepare($sql);
         $stmt->execute($params);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         $count = (int)$result['job_count'];
@@ -145,19 +73,19 @@ try {
         ];
     }
 
-    // Get total statistics
+    // Get total statistics using PostgreSQL
     $totalSql = "SELECT COUNT(*) as total FROM job_posts WHERE job_status = 'active'";
-    $totalStmt = $pdo->prepare($totalSql);
+    $totalStmt = $conn->prepare($totalSql);
     $totalStmt->execute();
     $totalJobs = (int)$totalStmt->fetch(PDO::FETCH_ASSOC)['total'];
 
-    // Get recent jobs count (last 7 days)
+    // Get recent jobs count (last 7 days) - PostgreSQL compatible
     $recentSql = "SELECT COUNT(*) as recent 
                   FROM job_posts 
                   WHERE job_status = 'active' 
-                  AND (posted_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) 
-                       OR (posted_at IS NULL AND created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)))";
-    $recentStmt = $pdo->prepare($recentSql);
+                  AND (posted_at >= NOW() - INTERVAL '7 days' 
+                       OR (posted_at IS NULL AND created_at >= NOW() - INTERVAL '7 days'))";
+    $recentStmt = $conn->prepare($recentSql);
     $recentStmt->execute();
     $recentJobs = (int)$recentStmt->fetch(PDO::FETCH_ASSOC)['recent'];
 
