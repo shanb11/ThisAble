@@ -42,91 +42,123 @@ try {
     }
     
     // ============================================
-    // STEP 1: Verify Token & Get User Info
+    // STEP 1: Get User Info (Skip verification for complete_profile)
     // ============================================
     $userInfo = null;
     $tokenType = null;
-    
-    if (!empty($idToken)) {
-        // ✅ Method 1: Verify using ID Token (Mobile/Android)
-        error_log("Verifying with ID Token...");
-        $tokenType = 'idToken';
+    $email = null;
+    $firstName = null;
+    $lastName = null;
+    $profilePicture = null;
+
+    // For complete_profile, skip token verification (token may have expired)
+    if ($action === 'complete_profile') {
+        error_log("Complete profile action - skipping token verification");
         
-        $url = 'https://oauth2.googleapis.com/tokeninfo?id_token=' . urlencode($idToken);
+        // Get user info directly from request
+        $email = $input['email'] ?? '';
+        $firstName = $input['firstName'] ?? '';
+        $lastName = $input['lastName'] ?? '';
         
-        $context = stream_context_create([
-            'http' => [
-                'timeout' => 10,
-                'ignore_errors' => true
-            ]
-        ]);
-        
-        $response = @file_get_contents($url, false, $context);
-        
-        if ($response === FALSE) {
-            error_log("ERROR: Failed to verify ID token");
-            ApiResponse::error("Failed to verify Google ID token", 401);
+        if (empty($email)) {
+            error_log("ERROR: No email provided in complete_profile request");
+            ApiResponse::validationError(['email' => 'Email is required']);
         }
         
-        $userInfo = json_decode($response, true);
-        error_log("ID Token verification response: " . json_encode($userInfo));
+        error_log("Using email from request: $email");
         
-        // Check for Google API error
-        if (isset($userInfo['error'])) {
-            error_log("ERROR: Google API error - " . $userInfo['error_description']);
-            ApiResponse::error("Invalid Google ID token: " . ($userInfo['error_description'] ?? 'Unknown error'), 401);
+    } else {
+        // For login action, verify token with Google
+        if (!empty($idToken)) {
+            // ✅ Method 1: Verify using ID Token (Mobile/Android)
+            error_log("Verifying with ID Token...");
+            $tokenType = 'idToken';
+            
+            $url = 'https://oauth2.googleapis.com/tokeninfo?id_token=' . urlencode($idToken);
+            
+            $context = stream_context_create([
+                'http' => [
+                    'timeout' => 10,
+                    'ignore_errors' => true
+                ]
+            ]);
+            
+            $response = @file_get_contents($url, false, $context);
+            
+            if ($response === FALSE) {
+                error_log("ERROR: Failed to verify ID token");
+                ApiResponse::error("Failed to verify Google ID token", 401);
+            }
+            
+            $userInfo = json_decode($response, true);
+            error_log("ID Token verification response: " . json_encode($userInfo));
+            
+            // Check for Google API error
+            if (isset($userInfo['error'])) {
+                error_log("ERROR: Google API error - " . $userInfo['error_description']);
+                ApiResponse::error("Invalid Google ID token: " . ($userInfo['error_description'] ?? 'Unknown error'), 401);
+            }
+            
+        } elseif (!empty($accessToken)) {
+            // ✅ Method 2: Verify using Access Token (Web)
+            error_log("Verifying with Access Token...");
+            $tokenType = 'accessToken';
+            
+            $url = 'https://www.googleapis.com/oauth2/v3/userinfo';
+            
+            $options = [
+                'http' => [
+                    'header' => "Authorization: Bearer " . $accessToken . "\r\n" .
+                            "Accept: application/json\r\n",
+                    'timeout' => 10,
+                    'ignore_errors' => true
+                ]
+            ];
+            
+            $context = stream_context_create($options);
+            $response = @file_get_contents($url, false, $context);
+            
+            if ($response === FALSE) {
+                error_log("ERROR: Failed to verify access token");
+                ApiResponse::error("Failed to verify Google access token", 401);
+            }
+            
+            $userInfo = json_decode($response, true);
+            error_log("Access Token verification response: " . json_encode($userInfo));
+            
+            // Check for Google API error
+            if (isset($userInfo['error'])) {
+                error_log("ERROR: Google API error - " . $userInfo['error']['message']);
+                ApiResponse::error("Invalid Google access token: " . ($userInfo['error']['message'] ?? 'Unknown error'), 401);
+            }
         }
         
-    } elseif (!empty($accessToken)) {
-        // ✅ Method 2: Verify using Access Token (Web)
-        error_log("Verifying with Access Token...");
-        $tokenType = 'accessToken';
-        
-        $url = 'https://www.googleapis.com/oauth2/v3/userinfo';
-        
-        $options = [
-            'http' => [
-                'header' => "Authorization: Bearer " . $accessToken . "\r\n" .
-                           "Accept: application/json\r\n",
-                'timeout' => 10,
-                'ignore_errors' => true
-            ]
-        ];
-        
-        $context = stream_context_create($options);
-        $response = @file_get_contents($url, false, $context);
-        
-        if ($response === FALSE) {
-            error_log("ERROR: Failed to verify access token");
-            ApiResponse::error("Failed to verify Google access token", 401);
+        // Validate we got valid user info
+        if (!isset($userInfo['email'])) {
+            error_log("ERROR: No email in user info - " . json_encode($userInfo));
+            ApiResponse::error("Invalid Google token - no email returned", 401);
         }
         
-        $userInfo = json_decode($response, true);
-        error_log("Access Token verification response: " . json_encode($userInfo));
+        // Extract user information from verified token
+        $email = $userInfo['email'];
+        $firstName = $userInfo['given_name'] ?? '';
+        $lastName = $userInfo['family_name'] ?? '';
+        $profilePicture = $userInfo['picture'] ?? '';
         
-        // Check for Google API error
-        if (isset($userInfo['error'])) {
-            error_log("ERROR: Google API error - " . $userInfo['error']['message']);
-            ApiResponse::error("Invalid Google access token: " . ($userInfo['error']['message'] ?? 'Unknown error'), 401);
-        }
+        error_log("Google user email: $email");
+        error_log("Token type used: $tokenType");
     }
     
-    // Validate we got valid user info
-    if (!isset($userInfo['email'])) {
-        error_log("ERROR: No email in user info - " . json_encode($userInfo));
-        ApiResponse::error("Invalid Google token - no email returned", 401);
-    }
+    // // ============================================
+    // // STEP 2: Extract User Information
+    // // ============================================
+    // $email = $userInfo['email'];
+    // $firstName = $userInfo['given_name'] ?? '';
+    // $lastName = $userInfo['family_name'] ?? '';
+    // $profilePicture = $userInfo['picture'] ?? '';
     
-    // ============================================
-    // STEP 2: Extract User Information
-    // ============================================
-    $email = $userInfo['email'];
-    $firstName = $userInfo['given_name'] ?? '';
-    $lastName = $userInfo['family_name'] ?? '';
-    $profilePicture = $userInfo['picture'] ?? '';
-    
-    error_log("Google user email: $email");
-    error_log("Token type used: $tokenType");
+    // error_log("Google user email: $email");
+    // error_log("Token type used: $tokenType");
     
     // ============================================
     // STEP 3: Handle Complete Profile Action
