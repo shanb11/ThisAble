@@ -249,14 +249,13 @@ try {
             } else {
                 // No orphaned upload found - create new record without file
                 $stmt = $conn->prepare("
-                    INSERT INTO pwd_ids (seeker_id, pwd_id_number, date_issued, issuing_lgu, verified) 
-                    VALUES (?, ?, ?, ?, false)
+                    INSERT INTO pwd_ids (seeker_id, pwd_id_number, issued_at, is_verified, verification_status) 
+                    VALUES (?, ?, ?, false, 'pending')
                 ");
                 $stmt->execute([
                     $seekerId,
                     $pwdIdNumber,
-                    !empty($pwdIdIssuedDate) ? $pwdIdIssuedDate : null,
-                    !empty($pwdIdIssuingLGU) ? $pwdIdIssuingLGU : null
+                    !empty($pwdIdIssuedDate) ? $pwdIdIssuedDate : null
                 ]);
                 error_log("Created new PWD record (no file uploaded) for user: $seekerId");
             }
