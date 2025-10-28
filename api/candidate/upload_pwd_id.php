@@ -87,12 +87,19 @@ try {
         exit;
     }
 
-    // Require authentication (same as save_skills.php)
-    $user = requireAuth();
+    // Make authentication optional - allow uploads during signup
+    $seekerId = null;
 
-    if ($user['user_type'] !== 'candidate') {
-        echo json_encode(['success' => false, 'message' => 'Invalid user type']);
-        exit;
+    // Check if this is coming from an authenticated user
+    try {
+        $user = requireAuth();
+        if ($user && $user['user_type'] === 'candidate') {
+            $seekerId = $user['user_id'];
+            error_log("PWD Upload: Authenticated user - seeker_id: $seekerId");
+        }
+    } catch (Exception $e) {
+        // Not authenticated - this is OK during signup
+        error_log("PWD Upload: No authentication - signup mode");
     }
 
     $seekerId = $user['user_id'];

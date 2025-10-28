@@ -192,17 +192,42 @@ try {
             $stmt->execute([$seekerId, $email]);
             $accountId = $conn->lastInsertId();
             
-            // Insert into pwd_ids
-            $stmt = $conn->prepare("
-                INSERT INTO pwd_ids (seeker_id, pwd_id_number, date_issued, issuing_lgu, verified) 
-                VALUES (?, ?, ?, ?, false)
-            ");
-            $stmt->execute([
-                $seekerId,
-                $pwdIdNumber,
-                !empty($pwdIdIssuedDate) ? $pwdIdIssuedDate : null,
-                !empty($pwdIdIssuingLGU) ? $pwdIdIssuingLGU : null
-            ]);
+            // Check if PWD file was already uploaded (orphaned record)
+            $stmt = $conn->prepare("SELECT pwd_id, id_image_path FROM pwd_ids WHERE pwd_id_number = ? AND seeker_id IS NULL ORDER BY created_at DESC LIMIT 1");
+            $stmt->execute([$pwdIdNumber]);
+            $orphanedPwd = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($orphanedPwd) {
+                // Link the orphaned upload to this new user
+                $stmt = $conn->prepare("
+                    UPDATE pwd_ids 
+                    SET seeker_id = ?, 
+                        date_issued = ?, 
+                        issuing_lgu = ?,
+                        updated_at = NOW()
+                    WHERE pwd_id = ?
+                ");
+                $stmt->execute([
+                    $seekerId,
+                    !empty($pwdIdIssuedDate) ? $pwdIdIssuedDate : null,
+                    !empty($pwdIdIssuingLGU) ? $pwdIdIssuingLGU : null,
+                    $orphanedPwd['pwd_id']
+                ]);
+                error_log("Linked orphaned PWD upload (pwd_id: {$orphanedPwd['pwd_id']}) to new user: $seekerId");
+            } else {
+                // No orphaned upload found - create new record without file
+                $stmt = $conn->prepare("
+                    INSERT INTO pwd_ids (seeker_id, pwd_id_number, date_issued, issuing_lgu, verified) 
+                    VALUES (?, ?, ?, ?, false)
+                ");
+                $stmt->execute([
+                    $seekerId,
+                    $pwdIdNumber,
+                    !empty($pwdIdIssuedDate) ? $pwdIdIssuedDate : null,
+                    !empty($pwdIdIssuingLGU) ? $pwdIdIssuingLGU : null
+                ]);
+                error_log("Created new PWD record (no file uploaded) for user: $seekerId");
+            }
             
             // Commit transaction
             $conn->commit();
