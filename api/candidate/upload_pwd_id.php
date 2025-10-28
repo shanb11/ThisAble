@@ -87,22 +87,33 @@ try {
         exit;
     }
 
-    // Make authentication optional - allow uploads during signup
+    // Optional authentication - manually check without requireAuth() to avoid die()
     $seekerId = null;
+    $headers = getallheaders();
+    $token = null;
 
-    // Check if this is coming from an authenticated user
-    try {
-        $user = requireAuth();
+    // Try to get token from headers
+    if (isset($headers['Authorization'])) {
+        $token = str_replace('Bearer ', '', $headers['Authorization']);
+    } elseif (isset($headers['authorization'])) { // lowercase header name
+        $token = str_replace('Bearer ', '', $headers['authorization']);
+    } elseif (isset($headers['X-API-Token'])) {
+        $token = $headers['X-API-Token'];
+    }
+
+    // If token exists, validate it
+    if ($token) {
+        $user = ApiDatabase::validateToken($token);
+        
         if ($user && $user['user_type'] === 'candidate') {
             $seekerId = $user['user_id'];
             error_log("PWD Upload: Authenticated user - seeker_id: $seekerId");
+        } else {
+            error_log("PWD Upload: Invalid token provided");
         }
-    } catch (Exception $e) {
-        // Not authenticated - this is OK during signup
-        error_log("PWD Upload: No authentication - signup mode");
+    } else {
+        error_log("PWD Upload: No authentication - signup mode (this is OK)");
     }
-
-    $seekerId = $user['user_id'];
 
     // Create upload directory structure
     $uploadBaseDir = '../../uploads/pwd_ids/';
@@ -132,10 +143,12 @@ try {
     // Log the upload attempt
     logUploadAttempt($pwdIdNumber, 'SUCCESS', 'File uploaded: ' . $fileName);
 
-    // If we have a seeker_id, update the database
-    if ($seekerId) {
-        try {
-            // Check if PWD record exists
+    // Update database - handle both authenticated and signup uploads
+    try {
+        if ($seekerId) {
+            // AUTHENTICATED USER - update their existing record
+            error_log("PWD Upload: Updating database for authenticated user: $seekerId");
+            
             $stmt = $conn->prepare("SELECT pwd_id FROM pwd_ids WHERE seeker_id = ? AND pwd_id_number = ?");
             $stmt->execute([$seekerId, $pwdIdNumber]);
             $existingRecord = $stmt->fetch();
@@ -152,7 +165,7 @@ try {
                 ");
                 $stmt->execute([$relativePath, $seekerId, $pwdIdNumber]);
             } else {
-                // Create new record
+                // Create new record for authenticated user
                 $stmt = $conn->prepare("
                     INSERT INTO pwd_ids (seeker_id, pwd_id_number, issued_at, id_image_path, verification_status, is_verified)
                     VALUES (?, ?, ?, ?, 'pending', 0)
@@ -160,13 +173,41 @@ try {
                 $stmt->execute([$seekerId, $pwdIdNumber, $pwdIdIssuedDate, $relativePath]);
             }
             
-            // Create admin notification
             createAdminNotification($seekerId, $pwdIdNumber, $fileName);
             
-        } catch (PDOException $e) {
-            error_log("Database error in PWD upload: " . $e->getMessage());
-            // Continue without database update - file is still uploaded
+        } else {
+            // SIGNUP MODE - create orphaned record (seeker_id = NULL)
+            error_log("PWD Upload: Creating orphaned record for PWD ID: $pwdIdNumber");
+            
+            // Check if orphaned record already exists
+            $stmt = $conn->prepare("SELECT pwd_id FROM pwd_ids WHERE pwd_id_number = ? AND seeker_id IS NULL");
+            $stmt->execute([$pwdIdNumber]);
+            $orphaned = $stmt->fetch();
+            
+            if ($orphaned) {
+                // Update existing orphaned record
+                $stmt = $conn->prepare("
+                    UPDATE pwd_ids 
+                    SET id_image_path = ?, 
+                        issued_at = ?,
+                        verification_status = 'pending',
+                        updated_at = NOW()
+                    WHERE pwd_id = ?
+                ");
+                $stmt->execute([$relativePath, $pwdIdIssuedDate, $orphaned['pwd_id']]);
+            } else {
+                // Create new orphaned record
+                $stmt = $conn->prepare("
+                    INSERT INTO pwd_ids (seeker_id, pwd_id_number, issued_at, id_image_path, verification_status, is_verified, created_at)
+                    VALUES (NULL, ?, ?, ?, 'pending', 0, NOW())
+                ");
+                $stmt->execute([$pwdIdNumber, $pwdIdIssuedDate, $relativePath]);
+            }
         }
+            
+    } catch (PDOException $e) {
+        error_log("Database error in PWD upload: " . $e->getMessage());
+        // Don't fail - file is uploaded, just log the error
     }
 
     // Return success response
