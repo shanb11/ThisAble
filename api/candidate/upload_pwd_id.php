@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 // Include required files
 //require_once('../../backend/db.php');
-require_once('../config/ApiResponse.php');  // Instead of ../../backend/
+//require_once('../config/ApiResponse.php');  // Instead of ../../backend/
 
 // Only allow POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
