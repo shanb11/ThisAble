@@ -8,12 +8,12 @@
 // Footer navigation links
 document.getElementById('footer-browse-jobs').addEventListener('click', function(e) {
     e.preventDefault();
-    window.location.href = 'jobs.html';
+    window.location.href = 'landing_jobs.php';
 });
 
 document.getElementById('footer-post-job').addEventListener('click', function(e) {
     e.preventDefault();
-    window.location.href = 'landingpage.html';
+    window.location.href = 'landing_jobs.php';
 });
 
 // Accessibility feature - High contrast toggle

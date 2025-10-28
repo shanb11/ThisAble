@@ -36,30 +36,8 @@ require_login(); // Add this line to enforce login check
             <div class="settings-container" id="settings-main">
                 <?php include('../../includes/candidate/settings_section.php'); ?>
             </div>
-            
-            <!-- Contact and Password -->
+            <!-- Password & Security -->
             <?php include('../../includes/candidate/settings_contact.php'); ?>
-
-            <!-- Accessibility Preferences Settings Detail -->
-            <?php include('../../includes/candidate/settings_accessibility.php'); ?>
-
-            <!-- Privacy Preferences Settings Detail -->
-            <?php include('../../includes/candidate/settings_privacy.php'); ?>
-
-            <!-- Notification Settings Detail -->
-            <?php include('../../includes/candidate/settings_notif.php'); ?>
-
-            <!-- Display and Job Alerts -->
-            <?php include('../../includes/candidate/settings_display.php'); ?>
-            
-            <!-- Resume & Document Settings Detail -->
-            <?php include('../../includes/candidate/settings_resume.php'); ?>
-
-            <!-- Application Preferences Detail -->
-            <?php include('../../includes/candidate/settings_appPreferences.php'); ?>
-
-            <!-- Account Activity Detail -->
-            <?php include('../../includes/candidate/settings_activity.php'); ?>
             
             <!-- Support & Help Detail -->
             <?php include('../../includes/candidate/settings_support.php'); ?>

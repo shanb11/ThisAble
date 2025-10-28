@@ -51,7 +51,7 @@
     align-items: center;
     gap: 0.5rem;
     transition: all 0.3s ease;
-    background: var(--primary-color);
+    background: #6c757d;
     color: white;
 }
 
