@@ -234,15 +234,12 @@ try {
                 $stmt = $conn->prepare("
                     UPDATE pwd_ids 
                     SET seeker_id = ?, 
-                        date_issued = ?, 
-                        issuing_lgu = ?,
-                        updated_at = NOW()
+                        issued_at = ?
                     WHERE pwd_id = ?
                 ");
                 $stmt->execute([
                     $seekerId,
                     !empty($pwdIdIssuedDate) ? $pwdIdIssuedDate : null,
-                    !empty($pwdIdIssuingLGU) ? $pwdIdIssuingLGU : null,
                     $orphanedPwd['pwd_id']
                 ]);
                 error_log("Linked orphaned PWD upload (pwd_id: {$orphanedPwd['pwd_id']}) to new user: $seekerId");
