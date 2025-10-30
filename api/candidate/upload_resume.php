@@ -117,11 +117,11 @@ try {
             $updateOldStmt->execute([$seekerId]);
             error_log("OLD RESUMES MARKED AS NOT CURRENT");
             
-            // Insert new resume
-            $sql = "INSERT INTO resumes (seeker_id, file_name, file_path, file_size, file_type, is_current) 
-                    VALUES (?, ?, ?, ?, ?, 1)";
+            // Insert new resume - EXPLICITLY set upload_date for PostgreSQL compatibility
+            $sql = "INSERT INTO resumes (seeker_id, file_name, file_path, file_size, file_type, upload_date, is_current) 
+                    VALUES (?, ?, ?, ?, ?, NOW(), TRUE)";
             $stmt = $conn->prepare($sql);
-            
+
             if ($stmt->execute([$seekerId, $fileName, $relativePath, $fileSize, $fileType])) {
                 error_log("DATABASE INSERT: SUCCESS");
                 
@@ -146,10 +146,14 @@ try {
             } else {
                 // Rollback transaction
                 $conn->rollBack();
-                error_log("DATABASE ERROR: " . print_r($stmt->errorInfo(), true));
+                $errorInfo = $stmt->errorInfo();
+                error_log("DATABASE ERROR: " . print_r($errorInfo, true));
                 // Delete uploaded file since database failed
-                unlink($filePath);
-                ApiResponse::serverError('Database error occurred');
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                }
+                // Return detailed error for debugging
+                ApiResponse::serverError('Database error: ' . $errorInfo[2]);
             }
         } else {
             // Rollback transaction
