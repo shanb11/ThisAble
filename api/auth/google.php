@@ -225,8 +225,7 @@ try {
             $accountId = $conn->lastInsertId();
             
             // Check if PWD file was already uploaded (orphaned record)
-            $stmt = $conn->prepare("SELECT pwd_id, id_image_path FROM pwd_ids WHERE pwd_id_number = ? AND seeker_id IS NULL ORDER BY created_at DESC LIMIT 1");
-            $stmt->execute([$pwdIdNumber]);
+            $stmt = $conn->prepare("SELECT pwd_id, id_image_path FROM pwd_ids WHERE pwd_id_number = ? AND seeker_id IS NULL ORDER BY pwd_id DESC LIMIT 1");             $stmt->execute([$pwdIdNumber]);
             $orphanedPwd = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($orphanedPwd) {

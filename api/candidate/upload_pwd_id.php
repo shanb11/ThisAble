@@ -191,7 +191,6 @@ try {
                     SET id_image_path = ?, 
                         issued_at = ?,
                         verification_status = 'pending',
-                        updated_at = NOW()
                     WHERE pwd_id = ?
                 ");
                 $stmt->execute([$relativePath, $pwdIdIssuedDate, $orphaned['pwd_id']]);
