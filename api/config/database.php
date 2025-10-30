@@ -209,6 +209,28 @@ class ApiDatabase {
 }
 
 /**
+ * Extract authentication token from request headers
+ * This is a helper function used for debugging and logging
+ */
+function getAuthToken() {
+    $headers = getallheaders();
+    $token = null;
+    
+    // Try different header formats (case-insensitive for web compatibility)
+    if (isset($headers['Authorization'])) {
+        $token = str_replace('Bearer ', '', $headers['Authorization']);
+    } elseif (isset($headers['authorization'])) { // lowercase variant for some web servers
+        $token = str_replace('Bearer ', '', $headers['authorization']);
+    } elseif (isset($headers['X-API-Token'])) {
+        $token = $headers['X-API-Token'];
+    } elseif (isset($headers['x-api-token'])) { // lowercase variant
+        $token = $headers['x-api-token'];
+    }
+    
+    return $token;
+}
+
+/**
  * Require authentication middleware
  */
 function requireAuth() {
