@@ -1,9 +1,16 @@
+<?php
+// Load configuration first
+require_once '../../config/config.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>About Us - ThisAble</title>
+        
+        <?php output_js_config(); ?>
+        
         <link rel="stylesheet" href="../../styles/landing/about.css"> 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     </head>
@@ -32,6 +39,7 @@
         <!-- Footer -->
         <?php include('../../includes/landing/landing_footer.php'); ?>
 
+        <script src="../../scripts/api-config.js"></script>
         <script src="../../scripts/landing/about.js"></script>
     </body>
 </html>
