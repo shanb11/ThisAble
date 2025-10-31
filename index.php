@@ -1,4 +1,7 @@
 <?php
+// Load dynamic configuration FIRST
+require_once 'config/config.php';
+
 // Start the session
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -20,6 +23,9 @@ if (isset($_SESSION['setup_complete']) && $_SESSION['setup_complete']) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Landing Page</title>
+    
+    <?php output_js_config(); ?>
+    
     <link rel="stylesheet" href="styles/landing/landingpage.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -47,6 +53,7 @@ if (isset($_SESSION['setup_complete']) && $_SESSION['setup_complete']) {
     <?php include('modals/landing/landing_post_job_modal.php'); ?>
 </body>
 
+<script src="scripts/api-config.js"></script>
 <script src="scripts/landing/landingpage.js"></script>
 
 </html>

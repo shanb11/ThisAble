@@ -1,51 +1,36 @@
 <?php
 /**
- * ThisAble - Dynamic Base URL Configuration
- * 
- * Automatically detects whether running on:
- * - Railway Production: https://thisable-production.up.railway.app/
- * - Localhost XAMPP: http://localhost/thisable/
- * 
- * Usage in any PHP file:
- * require_once 'config/config.php';
- * echo BASE_URL; // Will be '/' on Railway, '/thisable/' on localhost
+ * ThisAble - Dynamic Configuration
+ * Auto-detects localhost vs Railway and sets paths accordingly
  */
 
-// Auto-detect environment based on hostname
-$hostname = $_SERVER['HTTP_HOST'] ?? '';
+// Detect environment based on hostname
+$hostname = $_SERVER['HTTP_HOST'] ?? 'localhost';
 
-// Check if running on Railway production
+// Check if running on Railway
 if (strpos($hostname, 'railway.app') !== false || 
     strpos($hostname, 'up.railway.app') !== false) {
-    // Production environment (Railway)
+    // Production (Railway)
     define('BASE_URL', '/');
     define('ENVIRONMENT', 'production');
 } else {
-    // Local development environment (XAMPP)
+    // Development (localhost/XAMPP)
     define('BASE_URL', '/thisable/');
     define('ENVIRONMENT', 'development');
 }
 
-// Optional: Define API base path for JavaScript
-// This will be output in your HTML head section
-define('API_BASE_PATH', BASE_URL);
-
 /**
- * Helper function to generate full URL
- * Usage: url('frontend/candidate/login.php')
- * Returns: '/thisable/frontend/candidate/login.php' (localhost)
- *       or '/frontend/candidate/login.php' (Railway)
+ * Helper function for URLs
  */
 function url($path) {
-    $path = ltrim($path, '/'); // Remove leading slash if present
-    return BASE_URL . $path;
+    return BASE_URL . ltrim($path, '/');
 }
 
 /**
  * Output JavaScript configuration
- * Include this in your HTML <head> section
+ * Call this in HTML <head> to make BASE_URL available in JavaScript
  */
 function output_js_config() {
-    echo '<script>const APP_BASE_URL = "' . BASE_URL . '";</script>';
+    echo '<script>window.APP_BASE_URL = "' . BASE_URL . '";</script>' . "\n";
 }
 ?>

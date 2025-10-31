@@ -1,4 +1,7 @@
 <?php
+// Load configuration first
+require_once '../../config/config.php';
+
 // Start the session if not already started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -11,6 +14,9 @@ if (session_status() === PHP_SESSION_NONE) {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Login-Candidate</title>
+        
+        <?php output_js_config(); ?>
+        
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
         <link rel="stylesheet" href="../../styles/candidate/login.css">
     </head>
@@ -47,6 +53,7 @@ if (session_status() === PHP_SESSION_NONE) {
         }
         ?>
 
+        <script src="../../scripts/api-config.js"></script>
         <script src="../../scripts/candidate/login.js"></script>
     </body>
 </html>

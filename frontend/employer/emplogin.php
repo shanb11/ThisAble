@@ -1,4 +1,7 @@
 <?php
+// Load configuration first
+require_once '../../config/config.php';
+
 // frontend/employer/login.php - Using same structure as candidate login
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -11,6 +14,9 @@ if (session_status() === PHP_SESSION_NONE) {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Login - Employer</title>
+        
+        <?php output_js_config(); ?>
+        
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
         <!-- Use the same CSS as candidate login -->
         <link rel="stylesheet" href="../../styles/candidate/login.css">
@@ -30,6 +36,7 @@ if (session_status() === PHP_SESSION_NONE) {
         <?php include('../../modals/candidate/selection_modal.php'); ?>
 
         <!-- Use employer-specific JavaScript -->
+        <script src="../../scripts/api-config.js"></script>
         <script src="../../scripts/employer/emplogin.js"></script>
     </body>
 </html>

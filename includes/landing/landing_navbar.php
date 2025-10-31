@@ -1,7 +1,6 @@
 <?php
-// Define the absolute base URL of your project
-// Change this to match your setup
-$base_url = '/thisable/';
+// Dynamic base URL from config
+$base_url = BASE_URL;
 
 // For the active class detection
 $current_file = basename($_SERVER['PHP_SELF']);

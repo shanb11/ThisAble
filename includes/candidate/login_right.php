@@ -33,7 +33,7 @@
 
         <button class="login-btn">Sign In</button>
         
-    <div class="signup">New to ThisAble? <a href="#" id="signupLink" onclick="event.preventDefault(); document.getElementById('selectionModal').style.display='flex'; return false;">Sign up</a></div>    
-    <div class="signup">Click here to <a href="/ThisAble/frontend/employer/emplogin.php" id="signupLink">Log in as employer</a>    
-
+        <div class="signup">New to ThisAble? <a href="#" id="signupLink" onclick="event.preventDefault(); document.getElementById('selectionModal').style.display='flex'; return false;">Sign up</a></div>    
+        <div class="signup">Click here to <a href="<?php echo BASE_URL; ?>frontend/employer/emplogin.php" id="signupLink">Log in as employer</a></div>
+    </div>
 </div>
