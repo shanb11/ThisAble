@@ -1,10 +1,10 @@
 <?php
 /**
- * Dynamic Database Connection
+ * Dynamic Database Connection - Updated for Railway MySQL
  * Auto-detects environment and connects to appropriate database
  * 
  * Localhost: MySQL (XAMPP)
- * Railway: Supabase PostgreSQL
+ * Railway: MySQL (Railway Database)
  */
 
 // Detect environment
@@ -14,29 +14,42 @@ $isProduction = (strpos($hostname, 'railway.app') !== false ||
 
 try {
     if ($isProduction) {
-        // PRODUCTION: Railway with Supabase PostgreSQL
-        // Railway automatically provides these environment variables if you linked a database
-        // Or use your Supabase credentials
+        // PRODUCTION: Railway MySQL
         
-        $host = getenv('PGHOST') ?: getenv('DB_HOST') ?: 'db.jxllnfnzossijeidzhrq.supabase.co';
-        $port = getenv('PGPORT') ?: getenv('DB_PORT') ?: '5432';
-        $dbname = getenv('PGDATABASE') ?: getenv('DB_NAME') ?: 'postgres';
-        $username = getenv('PGUSER') ?: getenv('DB_USER') ?: 'postgres';
-        $password = getenv('PGPASSWORD') ?: getenv('DB_PASSWORD') ?: '082220EthanDrake';
+        // Try to get from MYSQL_URL first (Railway's standard variable)
+        $mysql_url = getenv('MYSQL_URL');
         
-        // PostgreSQL connection with SSL for Supabase
+        if ($mysql_url) {
+            // Parse the MYSQL_URL
+            $parsed = parse_url($mysql_url);
+            $host = $parsed['host'] ?? 'localhost';
+            $port = $parsed['port'] ?? '3306';
+            $dbname = isset($parsed['path']) ? ltrim($parsed['path'], '/') : 'railway';
+            $username = $parsed['user'] ?? 'root';
+            $password = $parsed['pass'] ?? '';
+        } else {
+            // Fallback to individual environment variables
+            $host = getenv('MYSQLHOST') ?: getenv('MYSQL_HOST') ?: 'localhost';
+            $port = getenv('MYSQLPORT') ?: getenv('MYSQL_PORT') ?: '3306';
+            $dbname = getenv('MYSQLDATABASE') ?: getenv('MYSQL_DATABASE') ?: 'railway';
+            $username = getenv('MYSQLUSER') ?: getenv('MYSQL_USER') ?: 'root';
+            $password = getenv('MYSQLPASSWORD') ?: getenv('MYSQL_PASSWORD') ?: '';
+        }
+        
+        // MySQL connection for Railway
         $conn = new PDO(
-            "pgsql:host=$host;port=$port;dbname=$dbname;sslmode=require", 
-            $username, 
+            "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4",
+            $username,
             $password,
             [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES => false,
+                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
             ]
         );
         
-        error_log("✅ Connected to Supabase PostgreSQL (Production)");
+        error_log("✅ Connected to Railway MySQL (Production)");
         
     } else {
         // DEVELOPMENT: Localhost MySQL (XAMPP)
@@ -47,12 +60,13 @@ try {
         
         // MySQL connection
         $conn = new PDO(
-            "mysql:host=$host;dbname=$dbname", 
-            $username, 
+            "mysql:host=$host;dbname=$dbname;charset=utf8mb4",
+            $username,
             $password,
             [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
             ]
         );
         
