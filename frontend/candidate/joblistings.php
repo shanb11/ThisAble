@@ -423,5 +423,46 @@ require_login(); // Add this line to enforce login check
             }
         ?>
 
+
+<!-- Accessibility Features -->
+<button class="accessibility-toggle" aria-label="Toggle Accessibility Options">
+    <i class="fas fa-universal-access"></i>
+</button>
+
+<div class="accessibility-panel" style="display: none;">
+        <h3>Accessibility Options</h3>
+    
+    <!-- High Contrast Mode -->
+    <div class="accessibility-option">
+        <label for="high-contrast">High Contrast</label>
+        <label class="toggle-switch">
+            <input type="checkbox" id="high-contrast">
+            <span class="slider"></span>
+        </label>
+    </div>
+    
+    <!-- Reduce Motion -->
+    <div class="accessibility-option">
+        <label for="reduce-motion">Reduce Motion</label>
+        <label class="toggle-switch">
+            <input type="checkbox" id="reduce-motion">
+            <span class="slider"></span>
+        </label>
+    </div>
+    
+    <!-- Font Size Controls -->
+    <div class="accessibility-option">
+        <label>Font Size</label>
+    </div>
+    <div class="font-size-controls">
+        <button class="font-size-btn" id="decrease-font" aria-label="Decrease font size">
+            <i class="fas fa-minus"></i>
+        </button>
+        <span class="font-size-value">100%</span>
+        <button class="font-size-btn" id="increase-font" aria-label="Increase font size">
+            <i class="fas fa-plus"></i>
+        </button>
+    </div>
+</div>
     </body>
 </html>

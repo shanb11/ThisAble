@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeAccessibilityFeatures();
 });
 
+
 // Initialize sidebar toggle
 function initializeSidebar() {
     const sidebar = document.getElementById('sidebar');
@@ -1088,19 +1089,106 @@ function showSuccessMessage() {
     showNotification('Application submitted successfully! You\'ll receive a confirmation email shortly.');
 }
 
-// Initialize accessibility features
 function initializeAccessibilityFeatures() {
-    // Your existing accessibility features can be implemented here
+    const accessibilityToggle = document.querySelector('.accessibility-toggle');
+    const accessibilityPanel = document.querySelector('.accessibility-panel');
+    const highContrastToggle = document.getElementById('high-contrast');
+    const reduceMotionToggle = document.getElementById('reduce-motion');
+    const increaseFontBtn = document.getElementById('increase-font');
+    const decreaseFontBtn = document.getElementById('decrease-font');
+    const fontSizeValue = document.querySelector('.font-size-value');
+    
+    let currentFontSize = 100;
+    
+    // Toggle accessibility panel
+    if (accessibilityToggle && accessibilityPanel) {
+        accessibilityToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            accessibilityPanel.classList.toggle('active');
+        });
+        
+        // Close panel when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!accessibilityPanel.contains(e.target) && !accessibilityToggle.contains(e.target)) {
+                accessibilityPanel.classList.remove('active');
+            }
+        });
+    }
+    
+    // High contrast mode
+    if (highContrastToggle) {
+        highContrastToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('high-contrast');
+                localStorage.setItem('highContrast', 'true');
+            } else {
+                document.body.classList.remove('high-contrast');
+                localStorage.setItem('highContrast', 'false');
+            }
+        });
+        
+        // Load saved preference
+        if (localStorage.getItem('highContrast') === 'true') {
+            highContrastToggle.checked = true;
+            document.body.classList.add('high-contrast');
+        }
+    }
+    
+    // Reduce motion
+    if (reduceMotionToggle) {
+        reduceMotionToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('reduce-motion');
+                localStorage.setItem('reduceMotion', 'true');
+            } else {
+                document.body.classList.remove('reduce-motion');
+                localStorage.setItem('reduceMotion', 'false');
+            }
+        });
+        
+        // Load saved preference
+        if (localStorage.getItem('reduceMotion') === 'true') {
+            reduceMotionToggle.checked = true;
+            document.body.classList.add('reduce-motion');
+        }
+    }
+    
+    // Font size controls
+    if (increaseFontBtn) {
+        increaseFontBtn.addEventListener('click', function() {
+            if (currentFontSize < 150) {
+                currentFontSize += 10;
+                updateFontSize();
+            }
+        });
+    }
+    
+    if (decreaseFontBtn) {
+        decreaseFontBtn.addEventListener('click', function() {
+            if (currentFontSize > 80) {
+                currentFontSize -= 10;
+                updateFontSize();
+            }
+        });
+    }
+    
+    function updateFontSize() {
+        document.documentElement.style.fontSize = currentFontSize + '%';
+        if (fontSizeValue) {
+            fontSizeValue.textContent = currentFontSize + '%';
+        }
+        localStorage.setItem('fontSize', currentFontSize);
+    }
+    
+    // Load saved font size
+    const savedFontSize = localStorage.getItem('fontSize');
+    if (savedFontSize) {
+        currentFontSize = parseInt(savedFontSize);
+        updateFontSize();
+    }
+    
     console.log('Accessibility features initialized');
 }
-
-// added
-
-// ===================================================================
-// SAFE APPLIED STATUS ADD-ON
-// Just copy-paste this at the BOTTOM of your existing joblistings.js
-// This WON'T change any of your existing code!
-// ===================================================================
 
 // Wait for your existing code to load first
 setTimeout(function() {

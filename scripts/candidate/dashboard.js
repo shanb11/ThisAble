@@ -1,5 +1,4 @@
 
-
 // Toggle sidebar
 
 // Sidebar Toggle - Clean Version
@@ -222,35 +221,59 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeWalkthrough();
 });
 
-// Initialize accessibility features
+// Initialize accessibility features - COMPLETE VERSION
 function initializeAccessibilityFeatures() {
-    // Add event listener to accessibility toggle
-    const accessibilityToggle = document.querySelector('.accessibility-toggle');
-    if (accessibilityToggle) {
-        accessibilityToggle.addEventListener('click', function() {
-            const panel = document.querySelector('.accessibility-panel');
-            if (panel) {
-                if (panel.style.display === 'block') {
-                    panel.style.display = 'none';
-                } else {
-                    panel.style.display = 'block';
-                }
-            }
-        });
-        
-        // Close panel when clicking outside
-        document.addEventListener('click', function(e) {
-            const panel = document.querySelector('.accessibility-panel');
-            if (panel && !e.target.closest('.accessibility-panel') && !e.target.closest('.accessibility-toggle') && panel.style.display === 'block') {
-                panel.style.display = 'none';
-            }
-        });
+    console.log('Initializing accessibility features...');
+    
+    // Get elements
+    const accessibilityToggle = document.getElementById('accessibility-toggle');
+    const accessibilityPanel = document.getElementById('accessibility-panel');
+    const highContrastToggle = document.getElementById('high-contrast');
+    const reduceMotionToggle = document.getElementById('reduce-motion');
+    const largeTextToggle = document.getElementById('large-text');
+    const decreaseFontBtn = document.getElementById('decrease-font');
+    const increaseFontBtn = document.getElementById('increase-font');
+    const fontSizeValue = document.querySelector('.font-size-value');
+    
+    // Check if elements exist
+    if (!accessibilityToggle || !accessibilityPanel) {
+        console.error('Accessibility elements not found!');
+        return;
     }
     
+    console.log('Accessibility elements found!');
+    
+    // Initialize font size
+    let currentFontSize = parseInt(localStorage.getItem('fontSize')) || 100;
+    updateFontSize(currentFontSize);
+    
+    // Toggle panel visibility
+    accessibilityToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        console.log('Accessibility toggle clicked!');
+        
+        if (accessibilityPanel.style.display === 'block') {
+            accessibilityPanel.style.display = 'none';
+            console.log('Panel hidden');
+        } else {
+            accessibilityPanel.style.display = 'block';
+            console.log('Panel shown');
+        }
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!accessibilityPanel.contains(e.target) && !accessibilityToggle.contains(e.target)) {
+            if (accessibilityPanel.style.display === 'block') {
+                accessibilityPanel.style.display = 'none';
+                console.log('Panel closed by outside click');
+            }
+        }
+    });
+    
     // High contrast mode
-    const highContrastToggle = document.getElementById('high-contrast');
     if (highContrastToggle) {
-        // Check if high contrast mode is already enabled
+        // Load saved preference
         if (localStorage.getItem('highContrast') === 'true') {
             document.body.classList.add('high-contrast');
             highContrastToggle.checked = true;
@@ -260,17 +283,18 @@ function initializeAccessibilityFeatures() {
             if (this.checked) {
                 document.body.classList.add('high-contrast');
                 localStorage.setItem('highContrast', 'true');
+                console.log('High contrast enabled');
             } else {
                 document.body.classList.remove('high-contrast');
                 localStorage.setItem('highContrast', 'false');
+                console.log('High contrast disabled');
             }
         });
     }
     
     // Reduce motion
-    const reduceMotionToggle = document.getElementById('reduce-motion');
     if (reduceMotionToggle) {
-        // Check if reduce motion is already enabled
+        // Load saved preference
         if (localStorage.getItem('reduceMotion') === 'true') {
             document.body.classList.add('reduce-motion');
             reduceMotionToggle.checked = true;
@@ -280,30 +304,43 @@ function initializeAccessibilityFeatures() {
             if (this.checked) {
                 document.body.classList.add('reduce-motion');
                 localStorage.setItem('reduceMotion', 'true');
+                console.log('Reduce motion enabled');
             } else {
                 document.body.classList.remove('reduce-motion');
                 localStorage.setItem('reduceMotion', 'false');
+                console.log('Reduce motion disabled');
+            }
+        });
+    }
+    
+    // Large text
+    if (largeTextToggle) {
+        // Load saved preference
+        if (localStorage.getItem('largeText') === 'true') {
+            document.body.classList.add('large-text');
+            largeTextToggle.checked = true;
+        }
+        
+        largeTextToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('large-text');
+                localStorage.setItem('largeText', 'true');
+                console.log('Large text enabled');
+            } else {
+                document.body.classList.remove('large-text');
+                localStorage.setItem('largeText', 'false');
+                console.log('Large text disabled');
             }
         });
     }
     
     // Font size controls
-    const decreaseFontBtn = document.getElementById('decrease-font');
-    const increaseFontBtn = document.getElementById('increase-font');
-    const fontSizeValue = document.querySelector('.font-size-value');
-    
-    // Initialize font size
-    let currentFontSize = 100;
-    if (localStorage.getItem('fontSize')) {
-        currentFontSize = parseInt(localStorage.getItem('fontSize'));
-        updateFontSize(currentFontSize);
-    }
-    
     if (decreaseFontBtn) {
         decreaseFontBtn.addEventListener('click', function() {
             if (currentFontSize > 80) {
                 currentFontSize -= 10;
                 updateFontSize(currentFontSize);
+                console.log('Font size decreased to', currentFontSize);
             }
         });
     }
@@ -313,26 +350,36 @@ function initializeAccessibilityFeatures() {
             if (currentFontSize < 150) {
                 currentFontSize += 10;
                 updateFontSize(currentFontSize);
+                console.log('Font size increased to', currentFontSize);
             }
         });
     }
+    
+    // Update font size function
+    function updateFontSize(size) {
+        document.documentElement.style.fontSize = size + '%';
+        if (fontSizeValue) {
+            fontSizeValue.textContent = size + '%';
+        }
+        localStorage.setItem('fontSize', size);
+        currentFontSize = size;
+        
+        // Update body classes
+        document.body.classList.remove('large-text', 'larger-text');
+        if (size >= 120 && size < 140) {
+            document.body.classList.add('large-text');
+        } else if (size >= 140) {
+            document.body.classList.add('larger-text');
+        }
+    }
+    
+    console.log('Accessibility features initialized successfully!');
 }
 
-// Update font size
-function updateFontSize(size) {
-    document.documentElement.style.fontSize = size + '%';
-    const fontSizeValue = document.querySelector('.font-size-value');
-    if (fontSizeValue) fontSizeValue.textContent = size + '%';
-    localStorage.setItem('fontSize', size);
-    
-    // Update classes for specific size ranges
-    document.body.classList.remove('large-text', 'larger-text');
-    if (size >= 120 && size < 140) {
-        document.body.classList.add('large-text');
-    } else if (size >= 140) {
-        document.body.classList.add('larger-text');
-    }
-}
+// Make sure to call it when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    initializeAccessibilityFeatures();
+});
 
 // Initialize walkthrough functionality
 function initializeWalkthrough() {

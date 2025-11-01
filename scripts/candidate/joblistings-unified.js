@@ -679,7 +679,7 @@ function addFloatingTTSControl() {
     
     floatingBtn.style.cssText = `
         position: fixed;
-        bottom: 80px;
+        top: 110px;
         right: 20px;
         width: 56px;
         height: 56px;
@@ -2196,3 +2196,253 @@ window.viewResume = viewResume;
 
 console.log('ThisAble Job Listings - Unified Version Loaded! 🚀');
 
+// ========================================
+// ACCESSIBILITY FEATURES INITIALIZATION
+// ========================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializeAccessibilityFeatures();
+});
+
+function initializeAccessibilityFeatures() {
+    // Toggle accessibility panel
+    const accessibilityToggle = document.querySelector('.accessibility-toggle');
+    if (accessibilityToggle) {
+        accessibilityToggle.addEventListener('click', function() {
+            const panel = document.querySelector('.accessibility-panel');
+            if (panel) {
+                if (panel.style.display === 'block') {
+                    panel.style.display = 'none';
+                } else {
+                    panel.style.display = 'block';
+                }
+            }
+        });
+        
+        // Close panel when clicking outside
+        document.addEventListener('click', function(e) {
+            const panel = document.querySelector('.accessibility-panel');
+            if (panel && 
+                !e.target.closest('.accessibility-panel') && 
+                !e.target.closest('.accessibility-toggle') && 
+                panel.style.display === 'block') {
+                panel.style.display = 'none';
+            }
+        });
+    }
+    
+    // High contrast mode
+    const highContrastToggle = document.getElementById('high-contrast');
+    if (highContrastToggle) {
+        // Load saved preference
+        if (localStorage.getItem('highContrast') === 'true') {
+            document.body.classList.add('high-contrast');
+            highContrastToggle.checked = true;
+        }
+        
+        highContrastToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('high-contrast');
+                localStorage.setItem('highContrast', 'true');
+            } else {
+                document.body.classList.remove('high-contrast');
+                localStorage.setItem('highContrast', 'false');
+            }
+        });
+    }
+    
+    // Reduce motion
+    const reduceMotionToggle = document.getElementById('reduce-motion');
+    if (reduceMotionToggle) {
+        // Load saved preference
+        if (localStorage.getItem('reduceMotion') === 'true') {
+            document.body.classList.add('reduce-motion');
+            reduceMotionToggle.checked = true;
+        }
+        
+        reduceMotionToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('reduce-motion');
+                localStorage.setItem('reduceMotion', 'true');
+            } else {
+                document.body.classList.remove('reduce-motion');
+                localStorage.setItem('reduceMotion', 'false');
+            }
+        });
+    }
+    
+    // Font size controls
+    const decreaseFontBtn = document.getElementById('decrease-font');
+    const increaseFontBtn = document.getElementById('increase-font');
+    const fontSizeValue = document.querySelector('.font-size-value');
+    
+    // Initialize font size from localStorage or default to 100
+    let currentFontSize = parseInt(localStorage.getItem('fontSize')) || 100;
+    updateFontSize(currentFontSize);
+    
+    if (decreaseFontBtn) {
+        decreaseFontBtn.addEventListener('click', function() {
+            if (currentFontSize > 80) {
+                currentFontSize -= 10;
+                updateFontSize(currentFontSize);
+            }
+        });
+    }
+    
+    if (increaseFontBtn) {
+        increaseFontBtn.addEventListener('click', function() {
+            if (currentFontSize < 150) {
+                currentFontSize += 10;
+                updateFontSize(currentFontSize);
+            }
+        });
+    }
+    
+    // Read page content functionality
+    const readPageBtn = document.getElementById('read-page-content');
+    if (readPageBtn) {
+        readPageBtn.addEventListener('click', function() {
+            readPageContent();
+        });
+    }
+}
+
+// Update font size function
+function updateFontSize(size) {
+    document.documentElement.style.fontSize = size + '%';
+    const fontSizeValue = document.querySelector('.font-size-value');
+    if (fontSizeValue) {
+        fontSizeValue.textContent = size + '%';
+    }
+    localStorage.setItem('fontSize', size);
+    
+    // Update body classes for specific size ranges
+    document.body.classList.remove('large-text', 'larger-text');
+    if (size >= 120 && size < 140) {
+        document.body.classList.add('large-text');
+    } else if (size >= 140) {
+        document.body.classList.add('larger-text');
+    }
+}
+
+// Read page content function
+function readPageContent() {
+    // Check if speech synthesis is supported
+    if (!('speechSynthesis' in window)) {
+        alert('Sorry, your browser does not support text-to-speech.');
+        return;
+    }
+    
+    // Stop any ongoing speech
+    window.speechSynthesis.cancel();
+    
+    // Get main content
+    const mainContent = document.querySelector('.main-content');
+    if (!mainContent) {
+        alert('No content found to read.');
+        return;
+    }
+    
+    // Collect text from various elements
+    let textToRead = '';
+    
+    // Get page title
+    const pageTitle = document.querySelector('.section-title');
+    if (pageTitle) {
+        textToRead += pageTitle.textContent + '. ';
+    }
+    
+    // Get subtitle
+    const subtitle = document.querySelector('.section-subtitle');
+    if (subtitle) {
+        textToRead += subtitle.textContent + '. ';
+    }
+    
+    // Get job count
+    const jobsCount = document.getElementById('jobs-count');
+    if (jobsCount) {
+        textToRead += jobsCount.textContent + '. ';
+    }
+    
+    // Get job cards
+    const jobCards = document.querySelectorAll('.job-card');
+    jobCards.forEach((card, index) => {
+        const title = card.querySelector('.job-title');
+        const company = card.querySelector('.company');
+        const location = card.querySelector('.location');
+        
+        if (title) {
+            textToRead += `Job ${index + 1}: ${title.textContent}. `;
+        }
+        if (company) {
+            textToRead += `Company: ${company.textContent}. `;
+        }
+        if (location) {
+            textToRead += `Location: ${location.textContent}. `;
+        }
+    });
+    
+    // Create speech synthesis utterance
+    const utterance = new SpeechSynthesisUtterance(textToRead);
+    utterance.rate = 0.9; // Slightly slower for better comprehension
+    utterance.pitch = 1;
+    utterance.volume = 1;
+    
+    // Update button text while speaking
+    const readPageBtn = document.getElementById('read-page-content');
+    if (readPageBtn) {
+        readPageBtn.innerHTML = '<i class="fas fa-stop"></i> Stop Reading';
+        readPageBtn.onclick = function() {
+            window.speechSynthesis.cancel();
+            readPageBtn.innerHTML = '<i class="fas fa-volume-up"></i> Read Page Content';
+            readPageBtn.onclick = function() { readPageContent(); };
+        };
+    }
+    
+    // Reset button when finished
+    utterance.onend = function() {
+        if (readPageBtn) {
+            readPageBtn.innerHTML = '<i class="fas fa-volume-up"></i> Read Page Content';
+            readPageBtn.onclick = function() { readPageContent(); };
+        }
+    };
+    
+    // Speak the text
+    window.speechSynthesis.speak(utterance);
+}
+
+// Add keyboard shortcuts for accessibility
+document.addEventListener('keydown', function(e) {
+    // Alt + A to toggle accessibility panel
+    if (e.altKey && e.key === 'a') {
+        e.preventDefault();
+        const accessibilityToggle = document.querySelector('.accessibility-toggle');
+        if (accessibilityToggle) {
+            accessibilityToggle.click();
+        }
+    }
+    
+    // Alt + R to read page content
+    if (e.altKey && e.key === 'r') {
+        e.preventDefault();
+        readPageContent();
+    }
+    
+    // Alt + Plus to increase font size
+    if (e.altKey && e.key === '=') {
+        e.preventDefault();
+        const increaseFontBtn = document.getElementById('increase-font');
+        if (increaseFontBtn) {
+            increaseFontBtn.click();
+        }
+    }
+    
+    // Alt + Minus to decrease font size
+    if (e.altKey && e.key === '-') {
+        e.preventDefault();
+        const decreaseFontBtn = document.getElementById('decrease-font');
+        if (decreaseFontBtn) {
+            decreaseFontBtn.click();
+        }
+    }
+});

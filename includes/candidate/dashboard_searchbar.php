@@ -1,7 +1,6 @@
 <div class="search-bar">
     <div class="search-container">
         <div class="search-input">
-            <i class="fas fa-search"></i>
             <input type="text" id="job-search" placeholder="Search for jobs, companies, or skills..." autocomplete="off">
             <i class="fas fa-times search-clear" id="search-clear"></i>
         </div>
@@ -18,6 +17,9 @@
     </div>
     
     <div class="notification-icons">
+        <button class="search-btn" id="search-btn" title="Search">
+            <i class="fas fa-search"></i>
+        </button>
         <a href="notifications.php" class="notification-link">
             <i class="far fa-bell"></i>
             <span class="notification-badge" id="notification-badge" style="display: none;">0</span>
@@ -38,15 +40,35 @@ document.addEventListener('DOMContentLoaded', function() {
 function initializeSearch() {
     const searchInput = document.getElementById('job-search');
     const searchClear = document.getElementById('search-clear');
+    const searchBtn = document.getElementById('search-btn');
     const searchResults = document.getElementById('search-results-dropdown');
     const searchStatus = document.getElementById('search-status');
     
     if (!searchInput) return;
     
+    // Search button click
+    if (searchBtn) {
+        searchBtn.addEventListener('click', function() {
+            const query = searchInput.value.trim();
+            if (query.length > 0) {
+                goToJobListings();
+            } else {
+                searchInput.focus();
+            }
+        });
+    }
+    
     // Search input event
     searchInput.addEventListener('input', function() {
         const query = this.value.trim();
         currentSearchQuery = query;
+        
+        // Show/hide clear button
+        if (query.length > 0) {
+            searchClear.classList.add('visible');
+        } else {
+            searchClear.classList.remove('visible');
+        }
         
         clearTimeout(searchTimeout);
         
@@ -78,6 +100,7 @@ function initializeSearch() {
         hideSearchResults();
         updateSearchStatus('');
         currentSearchQuery = '';
+        searchClear.classList.remove('visible');
     });
     
     // Keyboard navigation
@@ -439,6 +462,7 @@ setInterval(loadNotificationCount, 30000);
     align-items: center;
     position: relative;
     z-index: 100;
+    gap: 20px;
 }
 
 .search-container {
@@ -453,16 +477,10 @@ setInterval(loadNotificationCount, 30000);
     align-items: center;
 }
 
-.search-input i:first-child {
-    position: absolute;
-    left: 15px;
-    color: #666;
-    z-index: 2;
-}
-
+/* INPUT FIELD - NO ICON INSIDE */
 #job-search {
     width: 100%;
-    padding: 12px 45px 12px 45px;
+padding: 12px 55px 12px 20px;
     border: 2px solid #e1e5e9;
     border-radius: 25px;
     font-size: 16px;
@@ -477,17 +495,35 @@ setInterval(loadNotificationCount, 30000);
     box-shadow: 0 0 0 3px rgba(47, 138, 153, 0.1);
 }
 
+/* CLEAR BUTTON (X) - INSIDE INPUT, RIGHT SIDE */
 .search-clear {
     position: absolute;
-    right: 15px;
+    right: 20px;  /* Changed from 18px to 20px */
+    top: 50%;
+    transform: translateY(-50%);
     color: #999;
     cursor: pointer;
-    z-index: 2;
-    transition: color 0.2s ease;
+    z-index: 3;
+    transition: all 0.2s ease;
+    opacity: 0;
+    visibility: hidden;
+    font-size: 16px;  /* Made icon slightly bigger */
+    width: 22px;  /* Made button area bigger */
+    height: 22px;  /* Made button area bigger */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
 }
 
 .search-clear:hover {
     color: #666;
+    background: rgba(0,0,0,0.05);
+}
+
+.search-clear.visible {
+    opacity: 1;
+    visibility: visible;
 }
 
 .search-results-dropdown {
@@ -756,10 +792,36 @@ setInterval(loadNotificationCount, 30000);
     z-index: 999;
 }
 
+/* NOTIFICATION ICONS - NOW WITH SEARCH BUTTON */
 .notification-icons {
     display: flex;
     align-items: center;
     gap: 15px;
+}
+
+.search-btn {
+    background: linear-gradient(135deg, #2F8A99, #267A87);
+    color: white;
+    border: none;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(47, 138, 153, 0.3);
+}
+
+.search-btn:hover {
+    background: linear-gradient(135deg, #267A87, #1e6670);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(47, 138, 153, 0.4);
+}
+
+.search-btn i {
+    font-size: 16px;
 }
 
 .notification-link {
@@ -822,7 +884,11 @@ setInterval(loadNotificationCount, 30000);
     
     #job-search {
         font-size: 14px;
-        padding: 10px 40px 10px 40px;
+    }
+    
+    .notification-icons {
+        width: 100%;
+        justify-content: flex-end;
     }
     
     .search-results-dropdown {
