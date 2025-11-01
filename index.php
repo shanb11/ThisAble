@@ -22,7 +22,7 @@ if (isset($_SESSION['setup_complete']) && $_SESSION['setup_complete']) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Landing Page</title>
+    <title>ThisAble</title>
     
     <?php output_js_config(); ?>
     
