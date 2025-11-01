@@ -7,8 +7,18 @@ require_once('../db.php');
 // Google API configuration - Same as candidates
 $clientID = '83628564105-ebo9ng5modqfhkgepbm55rkv92d669l9.apps.googleusercontent.com';
 $clientSecret = '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';
-$redirectUri = 'http://localhost/ThisAble/backend/employer/google_auth.php';
+// Detect environment dynamically
+$hostname = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$isProduction = (strpos($hostname, 'railway.app') !== false || 
+                 strpos($hostname, 'up.railway.app') !== false);
 
+if ($isProduction) {
+    // Production Railway URL
+    $redirectUri = 'https://thisable-production.up.railway.app/backend/candidate/google_auth.php';
+} else {
+    // Local development URL
+    $redirectUri = 'http://localhost/ThisAble/backend/candidate/google_auth.php';
+}
 // Check if this is a callback from Google
 if (isset($_GET['code'])) {
     // Handle Google OAuth callback
