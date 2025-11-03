@@ -245,8 +245,33 @@ try {
     
     error_log("BULLETPROOF: Suggested jobs found: " . count($suggestedJobs));
     
-    // ===== STEP 5: COMPILE RESPONSE =====
+    // ===== STEP 5: GET USER INFO AND PROFILE COMPLETION =====
+
+    // Get user's first name
+    $stmt = $conn->prepare("SELECT first_name, last_name FROM job_seekers WHERE seeker_id = ?");
+    $stmt->execute([$seekerId]);
+    $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $userInfo = [
+        'first_name' => $userData['first_name'] ?? '',
+        'last_name' => $userData['last_name'] ?? '',
+    ];
+
+    // Calculate profile completion (matching web logic)
+    require_once __DIR__ . '/../../includes/candidate/profile_completion_handler.php';
+    $completionData = calculateProfileCompletion($conn, $seekerId);
+    $profileCompletion = [
+        'percentage' => $completionData['percentage'],
+        'sections' => $completionData['sections']
+    ];
+
+    error_log("User info: " . json_encode($userInfo));
+    error_log("Profile completion: " . $completionData['percentage'] . "%");
+
+    // ===== STEP 6: COMPILE RESPONSE =====
     $responseData = [
+        'user_info' => $userInfo,  // 🆕 ADDED
+        'profile_completion' => $profileCompletion,  // 🆕 ADDED
         'stats' => $stats,
         'recent_applications' => $recentApplications,
         'upcoming_interviews' => $upcomingInterviews,
