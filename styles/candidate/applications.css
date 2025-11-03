@@ -623,6 +623,12 @@ body {
     background-color: var(--status-rejected);
 }
 
+/* ✅ ADD THIS NEW STYLE */
+.status-badge.status-withdrawn { 
+    background: #f5f5f5; 
+    color: #757575; 
+}
+
 .application-actions {
     display: flex;
     flex-direction: column;

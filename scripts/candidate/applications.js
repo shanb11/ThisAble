@@ -336,7 +336,9 @@ function getStatusLabel(status) {
         'reviewed': 'Reviewed',
         'interview': 'Interview',
         'offered': 'Offered',
-        'rejected': 'Rejected'
+        'rejected': 'Rejected',
+        'withdrawn': 'Withdrawn'  // ✅ ADD THIS LINE
+
     };
     return statusLabels[status] || 'Unknown';
 }

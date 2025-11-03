@@ -116,7 +116,8 @@ function formatStatusDisplay(status) {
         'reviewed': 'Under Review',
         'interview': 'Interview',
         'offered': 'Job Offer',
-        'rejected': 'Rejected'
+        'rejected': 'Rejected',
+        'withdrawn': 'Withdrawn'  // ✅ ADD THIS LINE
     };
     
     return statusMap[status] || status;
@@ -188,6 +189,10 @@ function formatStatusDisplay(status) {
 .status-interview { background: #f3e5f5; color: #7b1fa2; }
 .status-offered { background: #e8f5e8; color: #388e3c; }
 .status-rejected { background: #ffebee; color: #d32f2f; }
+.status-withdrawn { 
+    background: #f5f5f5; 
+    color: #757575; 
+}
 
 .error-state {
     color: #d32f2f;
