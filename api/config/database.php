@@ -1,8 +1,8 @@
 <?php
 /**
- * API Database Configuration - Railway + Supabase Compatible
- * Uses Supabase Connection Pooler for cloud deployments
- * Works on Railway, Vercel, and localhost (XAMPP)
+ * API Database Configuration - Railway MySQL Compatible
+ * UPDATED: Now uses MySQL instead of PostgreSQL (Supabase)
+ * Works on Railway (production) and localhost (XAMPP)
  */
 
 // Enhanced environment variable reading
@@ -23,100 +23,88 @@ function getEnvVar($key, $default = null) {
     return $default;
 }
 
-// Detect environment - Railway sets RAILWAY_ENVIRONMENT
-$isRailway = !empty($_ENV['RAILWAY_ENVIRONMENT']) || 
-             !empty(getenv('RAILWAY_ENVIRONMENT')) ||
-             !empty($_SERVER['RAILWAY_ENVIRONMENT'] ?? '');
+// Detect environment
+$hostname = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$isProduction = (strpos($hostname, 'railway.app') !== false || 
+                 strpos($hostname, 'up.railway.app') !== false);
 
-$isVercel = !empty($_ENV['VERCEL']) || !empty(getenv('VERCEL'));
-$isCloudEnvironment = $isRailway || $isVercel;
-
-// Database credentials
-$dbname = getEnvVar('DB_NAME', 'postgres');
-$password = getEnvVar('DB_PASSWORD', '082220EthanDrake');
-
-// Connection configuration based on environment
-if ($isCloudEnvironment) {
-    // ===== CLOUD DEPLOYMENT: Try pooler first, fallback to direct =====
-    
-    // OPTION 1: Supabase Connection Pooler (Supavisor) - IPv4 Compatible
-    // CORRECT configuration verified from Supabase dashboard
-    $poolerHost = 'aws-1-ap-southeast-1.pooler.supabase.com'; // CORRECTED: aws-1 not aws-0!
-    $poolerPortSession = '5432'; // Session mode - behaves like direct connection
-    $poolerPortTransaction = '6543'; // Transaction mode - for serverless
-    $poolerUsername = 'postgres.jxllnfnzossijeidzhrq'; // Verified from dashboard
-    
-    // Try session mode by default (more compatible)
-    $useSessionMode = getEnvVar('USE_SESSION_MODE', 'true') === 'true';
-    $poolerPort = $useSessionMode ? $poolerPortSession : $poolerPortTransaction;
-    
-    // OPTION 2: Direct connection with IPv4 forced (temporary fallback)
-    $directHost = 'db.jxllnfnzossijeidzhrq.supabase.co';
-    $directPort = '5432';
-    $directUsername = 'postgres';
-    
-    // Use pooler (NOW CORRECT - verified from Supabase dashboard)
-    $usePooler = getEnvVar('USE_POOLER', 'true') === 'true'; // Re-enabled with correct host!
-    
-    if ($usePooler) {
-        $host = $poolerHost;
-        $port = $poolerPort;
-        $username = $poolerUsername;
-        $mode = $useSessionMode ? 'SESSION' : 'TRANSACTION';
-        error_log("🌐 CLOUD: Attempting Supabase Connection Pooler ($mode mode)");
+try {
+    if ($isProduction) {
+        // ===== PRODUCTION: Railway MySQL =====
+        error_log("🌐 API: PRODUCTION ENVIRONMENT DETECTED (Railway)");
+        
+        // Try to get from MYSQL_URL first (Railway's standard variable)
+        $mysql_url = getenv('MYSQL_URL');
+        
+        if ($mysql_url) {
+            // Parse the MYSQL_URL
+            $parsed = parse_url($mysql_url);
+            $host = $parsed['host'] ?? 'localhost';
+            $port = $parsed['port'] ?? '3306';
+            $dbname = isset($parsed['path']) ? ltrim($parsed['path'], '/') : 'railway';
+            $username = $parsed['user'] ?? 'root';
+            $password = $parsed['pass'] ?? '';
+        } else {
+            // Fallback to individual environment variables
+            $host = getenv('MYSQLHOST') ?: getenv('MYSQL_HOST') ?: 'localhost';
+            $port = getenv('MYSQLPORT') ?: getenv('MYSQL_PORT') ?: '3306';
+            $dbname = getenv('MYSQLDATABASE') ?: getenv('MYSQL_DATABASE') ?: 'railway';
+            $username = getenv('MYSQLUSER') ?: getenv('MYSQL_USER') ?: 'root';
+            $password = getenv('MYSQLPASSWORD') ?: getenv('MYSQL_PASSWORD') ?: '';
+        }
+        
+        error_log("🔧 API: Connecting to Railway MySQL");
+        error_log("🔧 API: Host=$host, Port=$port, DB=$dbname");
+        
+        // MySQL connection for Railway
+        $conn = new PDO(
+            "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4",
+            $username,
+            $password,
+            [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES => false,
+                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci",
+                PDO::ATTR_TIMEOUT => 10,
+                PDO::ATTR_PERSISTENT => false,
+            ]
+        );
+        
+        error_log("✅ API: Connected to Railway MySQL successfully!");
+        
     } else {
-        $host = $directHost;
-        $port = $directPort;
-        $username = $directUsername;
-        error_log("🌐 CLOUD: Attempting Direct Connection (IPv4)");
+        // ===== LOCAL DEVELOPMENT: Localhost MySQL (XAMPP) =====
+        error_log("💻 API: LOCAL ENVIRONMENT DETECTED (XAMPP)");
+        
+        $host = "localhost";
+        $port = "3306";
+        $dbname = "jobportal_db";
+        $username = "root";
+        $password = "";
+        
+        error_log("🔧 API: Connecting to Local MySQL (XAMPP)");
+        
+        // MySQL connection for localhost
+        $conn = new PDO(
+            "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4",
+            $username,
+            $password,
+            [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci",
+                PDO::ATTR_TIMEOUT => 5,
+            ]
+        );
+        
+        error_log("✅ API: Connected to Local MySQL (XAMPP) successfully!");
     }
     
-    error_log("🔧 Host: $host:$port");
-    error_log("🔧 Username: $username");
-    
-    $pdoOptions = [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        PDO::ATTR_EMULATE_PREPARES => false,
-        PDO::ATTR_TIMEOUT => 10,
-        PDO::ATTR_PERSISTENT => false,
-    ];
-    
-} else {
-    // ===== LOCAL DEVELOPMENT: Direct connection =====
-    $host = getEnvVar('DB_HOST', 'db.jxllnfnzossijeidzhrq.supabase.co');
-    $port = getEnvVar('DB_PORT', '5432');
-    $username = getEnvVar('DB_USER', 'postgres');
-    
-    error_log("💻 LOCAL ENVIRONMENT DETECTED");
-    error_log("🔧 Using Direct Connection");
-    error_log("🔧 Host: $host:$port");
-    
-    $pdoOptions = [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        PDO::ATTR_EMULATE_PREPARES => false,
-        PDO::ATTR_TIMEOUT => 5,
-    ];
-}
-
-// Attempt connection
-try {
-    $dsn = "pgsql:host=$host;port=$port;dbname=$dbname;sslmode=require";
-    
-    error_log("🔧 DSN: $dsn");
-    error_log("🔧 Username: $username");
-    
-    $conn = new PDO($dsn, $username, $password, $pdoOptions);
-    
-    error_log("✅ DATABASE CONNECTED SUCCESSFULLY!");
-    
 } catch(PDOException $e) {
-    error_log("❌ DATABASE CONNECTION FAILED");
-    error_log("❌ Error: " . $e->getMessage());
-    error_log("❌ DSN: $dsn");
-    error_log("❌ Username: $username");
-    error_log("❌ Environment: " . ($isCloudEnvironment ? 'CLOUD' : 'LOCAL'));
+    error_log("❌ API: DATABASE CONNECTION FAILED");
+    error_log("❌ API: Error: " . $e->getMessage());
+    error_log("❌ API: Environment: " . ($isProduction ? 'PRODUCTION (Railway)' : 'LOCAL (XAMPP)'));
     
     http_response_code(500);
     die(json_encode([
@@ -124,14 +112,14 @@ try {
         'message' => 'Database connection failed. Please try again later.',
         'debug' => [
             'error' => $e->getMessage(),
-            'environment' => $isCloudEnvironment ? 'cloud' : 'local',
-            'host' => $host,
-            'port' => $port,
-            'using_pooler' => $isCloudEnvironment
+            'environment' => $isProduction ? 'production' : 'local',
         ]
     ]));
 }
 
+/**
+ * ApiDatabase Class - Helper methods for API operations
+ */
 class ApiDatabase {
     
     private static $conn;
@@ -159,8 +147,8 @@ class ApiDatabase {
             
             error_log("🔐 GENERATED TOKEN: " . substr($token, 0, 20) . "...");
             
-            // Insert token
-            $stmt = $conn->prepare("INSERT INTO api_tokens (user_id, user_type, token, expires_at, is_active) VALUES (?, ?, ?, ?, true)");
+            // Insert token (MySQL syntax)
+            $stmt = $conn->prepare("INSERT INTO api_tokens (user_id, user_type, token, expires_at, is_active) VALUES (?, ?, ?, ?, 1)");
             $result = $stmt->execute([$userId, $userType, $token, $expiresAt]);
             
             if ($result) {
@@ -186,8 +174,9 @@ class ApiDatabase {
             
             $conn = self::getConnection();
             
+            // MySQL syntax - use NOW() instead of PostgreSQL's NOW()
             $stmt = $conn->prepare("SELECT user_id, user_type FROM api_tokens 
-                                   WHERE token = ? AND is_active = true 
+                                   WHERE token = ? AND is_active = 1 
                                    AND expires_at > NOW()");
             $stmt->execute([$token]);
             
@@ -195,6 +184,10 @@ class ApiDatabase {
             
             if ($result) {
                 error_log("🔐 TOKEN VALID: user={$result['user_id']}, type={$result['user_type']}");
+                
+                // Update last_used timestamp
+                $updateStmt = $conn->prepare("UPDATE api_tokens SET last_used = NOW() WHERE token = ?");
+                $updateStmt->execute([$token]);
             } else {
                 error_log("🔐 TOKEN INVALID OR EXPIRED");
             }
@@ -210,20 +203,19 @@ class ApiDatabase {
 
 /**
  * Extract authentication token from request headers
- * This is a helper function used for debugging and logging
  */
 function getAuthToken() {
     $headers = getallheaders();
     $token = null;
     
-    // Try different header formats (case-insensitive for web compatibility)
+    // Try different header formats (case-insensitive)
     if (isset($headers['Authorization'])) {
         $token = str_replace('Bearer ', '', $headers['Authorization']);
-    } elseif (isset($headers['authorization'])) { // lowercase variant for some web servers
+    } elseif (isset($headers['authorization'])) {
         $token = str_replace('Bearer ', '', $headers['authorization']);
     } elseif (isset($headers['X-API-Token'])) {
         $token = $headers['X-API-Token'];
-    } elseif (isset($headers['x-api-token'])) { // lowercase variant
+    } elseif (isset($headers['x-api-token'])) {
         $token = $headers['x-api-token'];
     }
     
@@ -239,8 +231,12 @@ function requireAuth() {
     
     if (isset($headers['Authorization'])) {
         $token = str_replace('Bearer ', '', $headers['Authorization']);
+    } elseif (isset($headers['authorization'])) {
+        $token = str_replace('Bearer ', '', $headers['authorization']);
     } elseif (isset($headers['X-API-Token'])) {
         $token = $headers['X-API-Token'];
+    } elseif (isset($headers['x-api-token'])) {
+        $token = $headers['x-api-token'];
     }
     
     if (!$token) {
