@@ -14,10 +14,10 @@ $isProduction = (strpos($hostname, 'railway.app') !== false ||
 
 if ($isProduction) {
     // Production Railway URL
-    $redirectUri = 'https://thisable-production.up.railway.app/backend/candidate/google_auth.php';
+    $redirectUri = 'https://thisable-production.up.railway.app/backend/employer/google_auth.php';
 } else {
     // Local development URL
-    $redirectUri = 'http://localhost/ThisAble/backend/candidate/google_auth.php';
+    $redirectUri = 'http://localhost/ThisAble/backend/employer/google_auth.php';
 }
 // Check if this is a callback from Google
 if (isset($_GET['code'])) {

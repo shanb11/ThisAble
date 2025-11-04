@@ -362,3 +362,58 @@
 2025-10-23 09:27:52 | Setup marked as complete for seeker_id: 9
 2025-10-23 09:27:52 | Transaction committed successfully
 2025-10-23 09:27:52 | Setup process completed successfully
+2025-11-04 15:04:16 | save_setup_data.php received data: Array
+(
+    [seeker_id] => 11
+    [skills] => ["Scheduling","Social Media Management"]
+    [work_style] => remote
+    [job_type] => fulltime
+    [disability_type] => apparent
+    [accommodation_list] => []
+    [no_accommodations_needed] => 0
+)
+
+2025-11-04 15:04:16 | Processing setup for seeker_id: 11
+2025-11-04 15:04:16 | Transaction started
+2025-11-04 15:04:16 | Processing skills: Array
+(
+    [0] => Scheduling
+    [1] => Social Media Management
+)
+
+2025-11-04 15:04:16 | Cleared existing skills
+2025-11-04 15:04:16 | Added 2 skills
+2025-11-04 15:04:16 | Saving preferences - work_style: remote, job_type: fulltime
+2025-11-04 15:04:16 | Inserted new preferences
+2025-11-04 15:04:16 | Saving accommodations - type: apparent, list: [], no_needs: 0
+2025-11-04 15:04:16 | Inserted new accommodations
+2025-11-04 15:04:16 | Setup marked as complete for seeker_id: 11
+2025-11-04 15:04:16 | Transaction committed successfully
+2025-11-04 15:04:16 | Setup process completed successfully
+2025-11-04 15:04:45 | save_setup_data.php received data: Array
+(
+    [seeker_id] => 11
+    [skills] => ["Scheduling"]
+    [work_style] => remote
+    [job_type] => fulltime
+    [disability_type] => apparent
+    [accommodation_list] => []
+    [no_accommodations_needed] => 1
+)
+
+2025-11-04 15:04:45 | Processing setup for seeker_id: 11
+2025-11-04 15:04:45 | Transaction started
+2025-11-04 15:04:45 | Processing skills: Array
+(
+    [0] => Scheduling
+)
+
+2025-11-04 15:04:45 | Cleared existing skills
+2025-11-04 15:04:45 | Added 1 skills
+2025-11-04 15:04:45 | Saving preferences - work_style: remote, job_type: fulltime
+2025-11-04 15:04:45 | Updated existing preferences
+2025-11-04 15:04:45 | Saving accommodations - type: apparent, list: [], no_needs: 1
+2025-11-04 15:04:45 | Updated existing accommodations
+2025-11-04 15:04:45 | Setup marked as complete for seeker_id: 11
+2025-11-04 15:04:45 | Transaction committed successfully
+2025-11-04 15:04:45 | Setup process completed successfully
