@@ -880,7 +880,7 @@ body {
 }
 
 .info-label {
-    color: var(--text-light);
+    color: var(--text-dark);
     font-size: 14px;
 }
 
