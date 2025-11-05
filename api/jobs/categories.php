@@ -44,7 +44,7 @@ try {
         $params = [];
         
         foreach ($category['departments'] as $dept) {
-            $deptConditions[] = "jp.department ILIKE ?";
+            $deptConditions[] = "jp.department LIKE ?";
             $params[] = "%{$dept}%";
         }
         
