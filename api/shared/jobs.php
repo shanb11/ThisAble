@@ -63,7 +63,7 @@ try {
 
     // Add search filter
     if (!empty($search)) {
-        $sql .= " AND (jp.job_title ILIKE ? OR jp.job_description ILIKE ? OR jp.job_requirements ILIKE ? OR e.company_name ILIKE ?)";
+        $sql .= " AND (jp.job_title LIKE ? OR jp.job_description LIKE ? OR jp.job_requirements LIKE ? OR e.company_name LIKE ?)";
         $searchTerm = "%{$search}%";
         $params[] = $searchTerm;
         $params[] = $searchTerm;
@@ -73,7 +73,7 @@ try {
 
     // Add location filter
     if (!empty($location)) {
-        $sql .= " AND jp.location ILIKE ?";
+        $sql .= " AND jp.location LIKE ?";
         $params[] = "%{$location}%";
     }
 
@@ -94,7 +94,7 @@ try {
         if (isset($categoryMap[$category])) {
             $categoryConditions = [];
             foreach ($categoryMap[$category] as $dept) {
-                $categoryConditions[] = "jp.department ILIKE ?";
+                $categoryConditions[] = "jp.department LIKE ?";
                 $params[] = "%{$dept}%";
             }
             $sql .= " AND (" . implode(' OR ', $categoryConditions) . ")";
@@ -149,7 +149,7 @@ try {
     $countParams = [];
 
     if (!empty($search)) {
-        $countSql .= " AND (jp.job_title ILIKE ? OR jp.job_description ILIKE ? OR jp.job_requirements ILIKE ? OR e.company_name ILIKE ?)";
+        $countSql .= " AND (jp.job_title LIKE ? OR jp.job_description LIKE ? OR jp.job_requirements LIKE ? OR e.company_name LIKE ?)";
         $searchTerm = "%{$search}%";
         $countParams[] = $searchTerm;
         $countParams[] = $searchTerm;
@@ -158,14 +158,14 @@ try {
     }
 
     if (!empty($location)) {
-        $countSql .= " AND jp.location ILIKE ?";
+        $countSql .= " AND jp.location LIKE ?";
         $countParams[] = "%{$location}%";
     }
 
     if (!empty($category) && isset($categoryMap[$category])) {
         $categoryConditions = [];
         foreach ($categoryMap[$category] as $dept) {
-            $categoryConditions[] = "jp.department ILIKE ?";
+            $categoryConditions[] = "jp.department LIKE ?";
             $countParams[] = "%{$dept}%";
         }
         $countSql .= " AND (" . implode(' OR ', $categoryConditions) . ")";
