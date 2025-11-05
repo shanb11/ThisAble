@@ -1,4 +1,24 @@
 <?php
+// Send headers FIRST before anything else
+header('Access-Control-Allow-Origin: *');
+header('Content-Type: application/json');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
+
+// Handle OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    exit(0);
+}
+
+// Start session
+ if (session_status() === PHP_SESSION_NONE) {
+     session_start();
+}
+
+// Include database - use absolute path
+require_once(__DIR__ . '/../db.php');
+
+
+try {
 // Start session
 if (session_status() === PHP_SESSION_NONE) {
     session_start([
@@ -7,17 +27,16 @@ if (session_status() === PHP_SESSION_NONE) {
     ]);
 }
 
-// FIXED: Clean output buffer to prevent any extra output before JSON
-if (ob_get_level()) {
-    ob_end_clean();
-}
-ob_start();
+// // FIXED: Clean output buffer to prevent any extra output before JSON
+// if (ob_get_level()) {
+//     ob_end_clean();
+// }
+// ob_start();
 
 // Include database connection
-require_once('../../backend/db.php');
+// require_once('../../backend/db.php');
 
 // Set content type to JSON
-header('Content-Type: application/json');
 
 // FIXED: Disable error display for production to prevent breaking JSON output
 ini_set('display_errors', 0);
@@ -233,8 +252,16 @@ try {
     debug_log('Save setup data error: ' . $e->getMessage());
 }
 
-// FIXED: Clean output buffer and ensure only JSON is returned
-ob_clean();
+// Send response
 echo json_encode($response);
 exit;
+} catch (Exception $e) {
+    echo json_encode([
+        'success' => false,
+        'message' => 'Fatal error: ' . $e->getMessage(),
+        'file' => basename($e->getFile()),
+        'line' => $e->getLine()
+    ]);
+    exit;
+}
 ?>
