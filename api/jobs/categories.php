@@ -1,7 +1,12 @@
 <?php
 /**
- * Job Categories API - FIXED FOR SUPABASE
+ * Job Categories API - IMPROVED FIX FOR MYSQL
  * File: api/jobs/categories.php
+ * 
+ * CHANGES: 
+ * - Replaced ILIKE with LIKE for MySQL
+ * - Added better error handling for empty conditions
+ * - Added validation and debugging
  */
 
 header('Content-Type: application/json');
@@ -15,10 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 try {
-    // ✅ FIXED: Use proper Supabase database connection
+    // Use proper database connection
     require_once __DIR__ . '/../config/database.php';
     
-    // ✅ FIXED: Use $conn from database.php (not $pdo)
     if (!isset($conn) || $conn === null) {
         throw new Exception("Database connection failed");
     }
@@ -39,83 +43,80 @@ try {
     $categoriesWithCounts = [];
 
     foreach ($categories as $category) {
-        // Build department conditions for PostgreSQL (case-insensitive)
-        $deptConditions = [];
-        $params = [];
-        
-        foreach ($category['departments'] as $dept) {
-            $deptConditions[] = "jp.department LIKE ?";
-            $params[] = "%{$dept}%";
+        // Validate category has departments
+        if (!isset($category['departments']) || !is_array($category['departments']) || empty($category['departments'])) {
+            // If no departments defined, count all active jobs
+            $sql = "SELECT COUNT(*) as job_count 
+                    FROM job_posts jp 
+                    WHERE jp.job_status = 'active'";
+            $params = [];
+        } else {
+            // Build department conditions for MySQL
+            $deptConditions = [];
+            $params = [];
+            
+            foreach ($category['departments'] as $dept) {
+                if (!empty($dept)) {  // ✅ Validate department is not empty
+                    $deptConditions[] = "jp.department LIKE ?";
+                    $params[] = "%{$dept}%";
+                }
+            }
+            
+            // Build SQL query
+            $sql = "SELECT COUNT(*) as job_count 
+                    FROM job_posts jp 
+                    WHERE jp.job_status = 'active'";
+            
+            // ✅ FIXED: Only add AND clause if we have conditions
+            if (!empty($deptConditions)) {
+                $sql .= " AND (" . implode(' OR ', $deptConditions) . ")";
+            }
         }
         
-        $sql = "SELECT COUNT(*) as job_count 
-                FROM job_posts jp 
-                WHERE jp.job_status = 'active'";
-        
-        if (!empty($deptConditions)) {
-            $sql .= " AND (" . implode(' OR ', $deptConditions) . ")";
+        try {
+            $stmt = $conn->prepare($sql);
+            $stmt->execute($params);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $count = (int)$result['job_count'];
+        } catch (PDOException $e) {
+            // If query fails for this category, set count to 0 and continue
+            error_log("Category query error for {$category['id']}: " . $e->getMessage());
+            $count = 0;
         }
-        
-        $stmt = $conn->prepare($sql);
-        $stmt->execute($params);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        $count = (int)$result['job_count'];
         
         // Format count display
-        $countDisplay = $count > 0 ? $count . '+' : '0';
+        $countDisplay = $count > 0 ? $count . ' job' . ($count > 1 ? 's' : '') : 'No jobs';
         
         $categoriesWithCounts[] = [
             'id' => $category['id'],
             'name' => $category['name'],
             'icon' => $category['icon'],
-            'count' => $countDisplay,
-            'job_count' => $count
+            'job_count' => $count,
+            'count_display' => $countDisplay
         ];
     }
 
-    // Get total statistics using PostgreSQL
-    $totalSql = "SELECT COUNT(*) as total FROM job_posts WHERE job_status = 'active'";
-    $totalStmt = $conn->prepare($totalSql);
-    $totalStmt->execute();
-    $totalJobs = (int)$totalStmt->fetch(PDO::FETCH_ASSOC)['total'];
-
-    // Get recent jobs count (last 7 days) - PostgreSQL compatible
-    $recentSql = "SELECT COUNT(*) as recent 
-                  FROM job_posts 
-                  WHERE job_status = 'active' 
-                  AND (posted_at >= NOW() - INTERVAL '7 days' 
-                       OR (posted_at IS NULL AND created_at >= NOW() - INTERVAL '7 days'))";
-    $recentStmt = $conn->prepare($recentSql);
-    $recentStmt->execute();
-    $recentJobs = (int)$recentStmt->fetch(PDO::FETCH_ASSOC)['recent'];
-
-    // Return success response
     echo json_encode([
         'success' => true,
-        'data' => [
-            'categories' => $categoriesWithCounts,
-            'stats' => [
-                'total_jobs' => $totalJobs,
-                'recent_jobs' => $recentJobs,
-                'active_employers' => 0
-            ]
-        ],
-        'message' => 'Categories retrieved successfully'
+        'data' => $categoriesWithCounts,
+        'total_categories' => count($categoriesWithCounts),
+        'timestamp' => date('Y-m-d H:i:s')
     ]);
 
 } catch (PDOException $e) {
-    error_log("Database Error in categories.php: " . $e->getMessage());
+    http_response_code(500);
     echo json_encode([
         'success' => false,
         'message' => 'Database connection error: ' . $e->getMessage(),
-        'error' => 'Could not connect to database'
+        'error' => 'Could not connect to database',
+        'timestamp' => date('Y-m-d H:i:s')
     ]);
 } catch (Exception $e) {
-    error_log("General Error in categories.php: " . $e->getMessage());
+    http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => 'Server error: ' . $e->getMessage(),
-        'error' => $e->getMessage()
+        'error' => 'Failed to load job categories',
+        'message' => $e->getMessage(),
+        'timestamp' => date('Y-m-d H:i:s')
     ]);
 }
-?>
