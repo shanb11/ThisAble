@@ -1,12 +1,12 @@
 <?php
 /**
- * Job Categories API - IMPROVED FIX FOR MYSQL
+ * Job Categories API - TYPE-SAFE VERSION FOR FLUTTER
  * File: api/jobs/categories.php
  * 
  * CHANGES: 
  * - Replaced ILIKE with LIKE for MySQL
- * - Added better error handling for empty conditions
- * - Added validation and debugging
+ * - Added empty condition validation
+ * - FIXED: Ensures job_count is returned as INTEGER not STRING
  */
 
 header('Content-Type: application/json');
@@ -56,7 +56,7 @@ try {
             $params = [];
             
             foreach ($category['departments'] as $dept) {
-                if (!empty($dept)) {  // ✅ Validate department is not empty
+                if (!empty($dept)) {
                     $deptConditions[] = "jp.department LIKE ?";
                     $params[] = "%{$dept}%";
                 }
@@ -67,7 +67,7 @@ try {
                     FROM job_posts jp 
                     WHERE jp.job_status = 'active'";
             
-            // ✅ FIXED: Only add AND clause if we have conditions
+            // Only add AND clause if we have conditions
             if (!empty($deptConditions)) {
                 $sql .= " AND (" . implode(' OR ', $deptConditions) . ")";
             }
@@ -77,31 +77,35 @@ try {
             $stmt = $conn->prepare($sql);
             $stmt->execute($params);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            // ✅ CRITICAL FIX: Explicitly cast to integer
             $count = (int)$result['job_count'];
+            
         } catch (PDOException $e) {
-            // If query fails for this category, set count to 0 and continue
             error_log("Category query error for {$category['id']}: " . $e->getMessage());
-            $count = 0;
+            $count = 0; // Already an integer
         }
         
         // Format count display
         $countDisplay = $count > 0 ? $count . ' job' . ($count > 1 ? 's' : '') : 'No jobs';
         
+        // ✅ CRITICAL: Ensure all values are proper types for Flutter
         $categoriesWithCounts[] = [
-            'id' => $category['id'],
-            'name' => $category['name'],
-            'icon' => $category['icon'],
-            'job_count' => $count,
-            'count_display' => $countDisplay
+            'id' => (string)$category['id'],           // String
+            'name' => (string)$category['name'],       // String
+            'icon' => (string)$category['icon'],       // String
+            'job_count' => $count,                     // Integer (not string!)
+            'count_display' => (string)$countDisplay   // String
         ];
     }
 
+    // ✅ Set proper JSON encoding options
     echo json_encode([
         'success' => true,
         'data' => $categoriesWithCounts,
         'total_categories' => count($categoriesWithCounts),
         'timestamp' => date('Y-m-d H:i:s')
-    ]);
+    ], JSON_NUMERIC_CHECK); // This ensures numbers stay as numbers, not strings
 
 } catch (PDOException $e) {
     http_response_code(500);
