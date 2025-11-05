@@ -39,7 +39,7 @@ require_once '../../config/config.php';
                 <?php include('../../includes/landing/landing_jobs_featured.php'); ?>
 
                 <!-- Job Alert Section -->
-                <?php include('../../includes/landing/landing_jobs_jobalert.php'); ?>
+                <!-- ?php include('../../includes/landing/landing_jobs_jobalert.php'); ?> -->
 
             </div>
         </main>

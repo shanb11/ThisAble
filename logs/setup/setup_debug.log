@@ -417,3 +417,84 @@
 2025-11-04 15:04:45 | Setup marked as complete for seeker_id: 11
 2025-11-04 15:04:45 | Transaction committed successfully
 2025-11-04 15:04:45 | Setup process completed successfully
+2025-11-04 19:21:13 | save_setup_data.php received data: Array
+(
+    [seeker_id] => 10
+    [skills] => ["Data Analysis"]
+    [work_style] => onsite
+    [job_type] => fulltime
+    [disability_type] => non-apparent
+    [accommodation_list] => []
+    [no_accommodations_needed] => 1
+)
+
+2025-11-04 19:21:13 | Processing setup for seeker_id: 10
+2025-11-04 19:21:13 | Transaction started
+2025-11-04 19:21:13 | Processing skills: Array
+(
+    [0] => Data Analysis
+)
+
+2025-11-04 19:21:13 | Cleared existing skills
+2025-11-04 19:21:13 | Added 1 skills
+2025-11-04 19:21:13 | Saving preferences - work_style: onsite, job_type: fulltime
+2025-11-04 19:21:13 | Inserted new preferences
+2025-11-04 19:21:13 | Saving accommodations - type: non-apparent, list: [], no_needs: 1
+2025-11-04 19:21:13 | Inserted new accommodations
+2025-11-04 19:21:13 | Setup marked as complete for seeker_id: 10
+2025-11-04 19:21:13 | Transaction committed successfully
+2025-11-04 19:21:13 | Setup process completed successfully
+2025-11-04 19:21:20 | save_setup_data.php received data: Array
+(
+    [seeker_id] => 10
+    [skills] => ["Data Analysis"]
+    [work_style] => onsite
+    [job_type] => fulltime
+    [disability_type] => non-apparent
+    [accommodation_list] => []
+    [no_accommodations_needed] => 1
+)
+
+2025-11-04 19:21:20 | Processing setup for seeker_id: 10
+2025-11-04 19:21:20 | Transaction started
+2025-11-04 19:21:20 | Processing skills: Array
+(
+    [0] => Data Analysis
+)
+
+2025-11-04 19:21:20 | Cleared existing skills
+2025-11-04 19:21:20 | Added 1 skills
+2025-11-04 19:21:20 | Saving preferences - work_style: onsite, job_type: fulltime
+2025-11-04 19:21:20 | Updated existing preferences
+2025-11-04 19:21:20 | Saving accommodations - type: non-apparent, list: [], no_needs: 1
+2025-11-04 19:21:20 | Updated existing accommodations
+2025-11-04 19:21:20 | Setup marked as complete for seeker_id: 10
+2025-11-04 19:21:20 | Transaction committed successfully
+2025-11-04 19:21:20 | Setup process completed successfully
+2025-11-04 19:21:21 | save_setup_data.php received data: Array
+(
+    [seeker_id] => 10
+    [skills] => ["Data Analysis"]
+    [work_style] => onsite
+    [job_type] => fulltime
+    [disability_type] => non-apparent
+    [accommodation_list] => []
+    [no_accommodations_needed] => 1
+)
+
+2025-11-04 19:21:21 | Processing setup for seeker_id: 10
+2025-11-04 19:21:21 | Transaction started
+2025-11-04 19:21:21 | Processing skills: Array
+(
+    [0] => Data Analysis
+)
+
+2025-11-04 19:21:21 | Cleared existing skills
+2025-11-04 19:21:21 | Added 1 skills
+2025-11-04 19:21:21 | Saving preferences - work_style: onsite, job_type: fulltime
+2025-11-04 19:21:21 | Updated existing preferences
+2025-11-04 19:21:21 | Saving accommodations - type: non-apparent, list: [], no_needs: 1
+2025-11-04 19:21:21 | Updated existing accommodations
+2025-11-04 19:21:21 | Setup marked as complete for seeker_id: 10
+2025-11-04 19:21:21 | Transaction committed successfully
+2025-11-04 19:21:21 | Setup process completed successfully

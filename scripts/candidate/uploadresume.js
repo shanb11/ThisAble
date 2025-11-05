@@ -201,7 +201,7 @@ function goToNextPage() {
         }
         
         // FIXED: Use absolute path and better error handling
-        const uploadUrl = window.location.origin + '/ThisAble/backend/candidate/upload_resume_process.php';
+        const uploadUrl = apiPath('backend/candidate/upload_resume_process.php');
         console.log('Upload URL:', uploadUrl);
         
         fetch(uploadUrl, {
@@ -316,7 +316,7 @@ function saveProfileData(seekerId, saveIndicator) {
     }
     
     // FIXED: Use absolute path for save_setup_data
-    const saveUrl = window.location.origin + '/ThisAble/backend/candidate/save_setup_data.php';
+    const saveUrl = apiPath('backend/candidate/save_setup_data.php');
     console.log('Save data URL:', saveUrl);
     
     // Send the data to the server

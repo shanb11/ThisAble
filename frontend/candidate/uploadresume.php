@@ -10,6 +10,7 @@ $seekerId = $isLoggedIn ? $_SESSION['seeker_id'] : null;
 
 // Skip login check during setup
 // require_login(); 
+require_once '../../config/config.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -117,7 +118,7 @@ $seekerId = $isLoggedIn ? $_SESSION['seeker_id'] : null;
     ?>
 
     <input type="file" id="fileInput" accept=".pdf,.doc,.docx" hidden>
-
+    <script src="../../scripts/api-config.js"></script>
     <script src="../../scripts/candidate/uploadresume.js"></script>
 
 </body>

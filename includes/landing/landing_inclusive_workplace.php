@@ -3,7 +3,7 @@
             <div class="inclusive-content">
                 <h2>Create an Inclusive Workplace</h2>
                 <p>With leading organizations committed to building diverse and inclusive teams. Post your job opportunities and connect with qualified candidates from all backgrounds.</p>
-                <a href="#" id="post-job-btn" class="btn btn-primary">Post a Job</a>
+                <!-- <a href="#" id="post-job-btn" class="btn btn-primary">Post a Job</a> -->
             </div>
             <div class="inclusive-features">
                 <div class="feature">

@@ -2,6 +2,9 @@
 // Start session at the beginning of all pages
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
+
+require_once '../../config/config.php';
+
 }
 ?>
 <!DOCTYPE html>

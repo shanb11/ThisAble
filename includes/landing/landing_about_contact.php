@@ -28,7 +28,7 @@
                     </div>
                 </div>
             </div>
-            <div class="contact-form">
+            <!-- <div class="contact-form">
                 <form id="contact-form" aria-labelledby="contact-heading">
                     <div class="form-group">
                         <label for="name">Your Name</label>
@@ -48,7 +48,7 @@
                     </div>
                     <button type="submit" class="btn btn-primary">Send Message</button>
                 </form>
-            </div>
+            </div> -->
         </div>
     </div>
 </section>
