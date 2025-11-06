@@ -45,15 +45,29 @@ try {
     }
     
     // Construct file path
-    $file_path = __DIR__ . '/../../' . $resume['file_path'];
-    
+    // Detect environment and construct correct path
+    $projectRoot = realpath(__DIR__ . '/../../');
+    $file_path = $projectRoot . '/' . $resume['file_path'];
+
+    // Debug logging
+    error_log("=== VIEW RESUME DEBUG ===");
+    error_log("Project Root: " . $projectRoot);
+    error_log("DB file_path: " . $resume['file_path']);
+    error_log("Constructed path: " . $file_path);    
+
     // Security: Validate file path to prevent directory traversal
     $real_path = realpath($file_path);
-    $upload_dir = realpath(__DIR__ . '/../../uploads/resumes/');
-    
+    $upload_dir = realpath($projectRoot . '/uploads/resumes/');
+
+    error_log("Real path: " . ($real_path ?: 'NULL'));
+    error_log("Upload dir: " . ($upload_dir ?: 'NULL'));
+    error_log("File exists: " . (file_exists($file_path) ? 'YES' : 'NO'));
+
     if (!$real_path || strpos($real_path, $upload_dir) !== 0) {
         http_response_code(403);
-        die('Invalid file path');
+        error_log("ERROR: Path validation failed");
+        error_log("Reason: " . (!$real_path ? "realpath returned false" : "path not in upload dir"));
+        die('Invalid file path - Debug: Check server logs');
     }
     
     // Check if file exists
