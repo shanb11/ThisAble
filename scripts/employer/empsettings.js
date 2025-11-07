@@ -21,6 +21,7 @@ const confirmCloseAccount = document.getElementById('confirm-close-account');
 
 // Single loader instance
 let loaderInstance = null;
+let isGoogleAccount = false;
 
 // Create loader once
 function initLoader() {
@@ -75,27 +76,20 @@ function hideLoader() {
 // ========== ACCOUNT TYPE & SECURITY FUNCTIONS ==========
 async function checkAccountType() {
     try {
-        const response = await fetch('../../backend/employer/get_account_type.php', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
+        const response = await fetch('../../backend/employer/check_account_type.php');
+        const result = await response.json();
         
-        const data = await response.json();
-        
-        if (data.success) {
-            handleAccountTypeUI(data.data);
-            return data.data;
-        } else {
-            console.error('Failed to check account type:', data.message);
-            return null;
+        if (result.success) {
+            isGoogleAccount = result.is_google_account;
         }
-        
     } catch (error) {
         console.error('Error checking account type:', error);
-        return null;
     }
+}
+
+// Call this when settings page loads
+if (closeAccountBtn) {
+    checkAccountType();
 }
 
 function handleAccountTypeUI(accountData) {
@@ -362,7 +356,46 @@ if (confirmSignOut) {
 
 // Close Account functionality
 if (closeAccountBtn) {
-    closeAccountBtn.addEventListener('click', () => {
+    closeAccountBtn.addEventListener('click', async () => {
+        // Update modal content based on account type
+        const modalContent = document.querySelector('#close-account-modal .modal-body');
+        
+        if (isGoogleAccount) {
+            // Google account - show confirmation checkbox instead of password
+            modalContent.innerHTML = `
+                <h4 style="margin-bottom: 15px;">Close Company Account</h4>
+                <p style="margin: 15px 0;">You're about to close your company account. This action will:</p>
+                <ul style="margin-left: 20px; margin-bottom: 15px;">
+                    <li>Deactivate your company profile immediately</li>
+                    <li>Close all active job postings</li>
+                    <li>Give you 30 days to reactivate by logging in</li>
+                </ul>
+                <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin: 15px 0; border-left: 4px solid #ffc107;">
+                    <strong>⚠️ Note:</strong> Since you signed in with Google, you can reactivate your account anytime within 30 days by simply logging in again with Google.
+                </div>
+                <div style="margin: 20px 0;">
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" id="confirm-google-closure" style="margin-right: 10px;">
+                        <span>I understand and want to close the company account</span>
+                    </label>
+                </div>
+            `;
+        } else {
+            // Regular account - show password field
+            modalContent.innerHTML = `
+                <h4 style="margin-bottom: 15px;">Close Company Account</h4>
+                <p style="margin: 15px 0;">Please enter your password to confirm account closure.</p>
+                <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin: 15px 0; border-left: 4px solid #ffc107;">
+                    <strong>⚠️ Note:</strong> You have 30 days to reactivate by logging in again.
+                </div>
+                <input type="password" 
+                       id="confirm-password-close" 
+                       class="form-control" 
+                       placeholder="Enter your password"
+                       style="width: 100%; padding: 10px; margin: 15px 0; border: 1px solid #ddd; border-radius: 5px;">
+            `;
+        }
+        
         openModal('close-account-modal');
     });
 }
@@ -374,25 +407,77 @@ if (cancelCloseAccount) {
 }
 
 if (confirmCloseAccount) {
-    confirmCloseAccount.addEventListener('click', () => {
-        const password = document.getElementById('confirm-password-close').value;
+    confirmCloseAccount.addEventListener('click', async () => {
+        let formData = new FormData();
         
-        if (!password) {
-            alert('Please enter your password to confirm account closure.');
-            return;
+        if (isGoogleAccount) {
+            // Google account - check confirmation checkbox
+            const checkbox = document.getElementById('confirm-google-closure');
+            if (!checkbox || !checkbox.checked) {
+                showToast('Please confirm that you want to close your account.');
+                return;
+            }
+            formData.append('confirm_closure', 'yes');
+        } else {
+            // Regular account - get password
+            const password = document.getElementById('confirm-password-close').value;
+            if (!password) {
+                showToast('Please enter your password to confirm account closure.');
+                return;
+            }
+            formData.append('password', password);
         }
+        
+        // Disable button and show loading
+        confirmCloseAccount.disabled = true;
+        const originalText = confirmCloseAccount.textContent;
+        confirmCloseAccount.textContent = 'Closing Account...';
         
         showLoader();
         
-        setTimeout(() => {
-            hideLoader();
-            showToast('Account closed successfully.');
-            closeModal('close-account-modal');
+        try {
+            const response = await fetch('../../backend/employer/close_account.php', {
+                method: 'POST',
+                body: formData
+            });
             
-            setTimeout(() => {
-                window.location.href = '../employer/emplogin.php';
-            }, 1000);
-        }, 800);
+            const result = await response.json();
+            
+            hideLoader();
+            
+            if (result.success) {
+                // Show success toast/message
+                showToast(result.message || 'Your company account has been closed successfully.');
+                
+                // Close modal
+                closeModal('close-account-modal');
+                
+                // Clear any stored session data
+                sessionStorage.clear();
+                
+                // Redirect to login page
+                setTimeout(() => {
+                    window.location.href = '../employer/emplogin.php';
+                }, 2000);
+                
+            } else {
+                // Show error message
+                showToast(result.message || 'Failed to close account. Please try again.');
+                
+                // Re-enable button
+                confirmCloseAccount.disabled = false;
+                confirmCloseAccount.textContent = originalText;
+            }
+            
+        } catch (error) {
+            console.error('Close account error:', error);
+            hideLoader();
+            showToast('An error occurred while closing your account. Please try again.');
+            
+            // Re-enable button
+            confirmCloseAccount.disabled = false;
+            confirmCloseAccount.textContent = originalText;
+        }
     });
 }
 

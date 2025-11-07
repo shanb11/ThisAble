@@ -14,6 +14,26 @@ const confirmSignOut = document.getElementById('confirm-sign-out');
 const cancelCloseAccount = document.getElementById('cancel-close-account');
 const confirmCloseAccount = document.getElementById('confirm-close-account');
 
+let isGoogleAccount = false;
+
+async function checkAccountType() {
+    try {
+        const response = await fetch('../../backend/candidate/check_account_type.php');
+        const result = await response.json();
+        
+        if (result.success) {
+            isGoogleAccount = result.is_google_account;
+        }
+    } catch (error) {
+        console.error('Error checking account type:', error);
+    }
+}
+
+// Call this when settings page loads
+if (closeAccountBtn) {
+    checkAccountType();
+}
+
 // Toggle sidebar
 if (toggleBtn) {
     toggleBtn.addEventListener('click', () => {
@@ -82,7 +102,46 @@ if (confirmSignOut) {
 
 // Close Account functionality
 if (closeAccountBtn) {
-    closeAccountBtn.addEventListener('click', () => {
+    closeAccountBtn.addEventListener('click', async () => {
+        // Update modal content based on account type
+        const modalContent = document.querySelector('#close-account-modal .modal-content');
+        
+        if (isGoogleAccount) {
+            // Google account - show confirmation checkbox instead of password
+            modalContent.innerHTML = `
+                <h3>Close Your Account</h3>
+                <p style="margin: 15px 0;">You're about to close your account. This action will:</p>
+                <ul style="margin-left: 20px; margin-bottom: 15px;">
+                    <li>Deactivate your profile immediately</li>
+                    <li>Withdraw all pending job applications</li>
+                    <li>Give you 30 days to reactivate by logging in</li>
+                </ul>
+                <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin: 15px 0; border-left: 4px solid #ffc107;">
+                    <strong>⚠️ Note:</strong> Since you signed in with Google, you can reactivate your account anytime within 30 days by simply logging in again with Google.
+                </div>
+                <div style="margin: 20px 0;">
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" id="confirm-google-closure" style="margin-right: 10px;">
+                        <span>I understand and want to close my account</span>
+                    </label>
+                </div>
+            `;
+        } else {
+            // Regular account - show password field
+            modalContent.innerHTML = `
+                <h3>Close Your Account</h3>
+                <p style="margin: 15px 0;">Please enter your password to confirm account closure.</p>
+                <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin: 15px 0; border-left: 4px solid #ffc107;">
+                    <strong>⚠️ Note:</strong> You have 30 days to reactivate by logging in again.
+                </div>
+                <input type="password" 
+                       id="confirm-password-close" 
+                       class="form-control" 
+                       placeholder="Enter your password"
+                       style="width: 100%; padding: 10px; margin: 15px 0; border: 1px solid #ddd; border-radius: 5px;">
+            `;
+        }
+        
         closeAccountModal.classList.add('show');
     });
 }
@@ -94,15 +153,73 @@ if (cancelCloseAccount) {
 }
 
 if (confirmCloseAccount) {
-    confirmCloseAccount.addEventListener('click', () => {
-        const password = document.getElementById('confirm-password-close').value;
+    confirmCloseAccount.addEventListener('click', async () => {
+        let formData = new FormData();
         
-        if (password) {
-            alert('Your account has been closed successfully.');
-            closeAccountModal.classList.remove('show');
-            window.location.href = 'login.html';
+        if (isGoogleAccount) {
+            // Google account - check confirmation checkbox
+            const checkbox = document.getElementById('confirm-google-closure');
+            if (!checkbox || !checkbox.checked) {
+                alert('Please confirm that you want to close your account.');
+                return;
+            }
+            formData.append('confirm_closure', 'yes');
         } else {
-            alert('Please enter your password to confirm account closure.');
+            // Regular account - get password
+            const password = document.getElementById('confirm-password-close').value;
+            if (!password) {
+                alert('Please enter your password to confirm account closure.');
+                return;
+            }
+            formData.append('password', password);
+        }
+        
+        // Disable button to prevent double submission
+        confirmCloseAccount.disabled = true;
+        confirmCloseAccount.textContent = 'Closing...';
+        
+        try {
+            const response = await fetch('../../backend/candidate/close_account.php', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                // Clear all localStorage
+                localStorage.clear();
+                
+                // Clear all sessionStorage
+                sessionStorage.clear();
+                
+                // Show success message
+                alert(result.message || 'Your account has been closed successfully. You have 30 days to reactivate by logging in again.');
+                
+                // Close modal
+                closeAccountModal.classList.remove('show');
+                
+                // Redirect to login page
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1000);
+                
+            } else {
+                // Show error message
+                alert(result.message || 'Failed to close account. Please try again.');
+                
+                // Re-enable button
+                confirmCloseAccount.disabled = false;
+                confirmCloseAccount.textContent = 'Close Account';
+            }
+            
+        } catch (error) {
+            console.error('Close account error:', error);
+            alert('An error occurred while closing your account. Please try again.');
+            
+            // Re-enable button
+            confirmCloseAccount.disabled = false;
+            confirmCloseAccount.textContent = 'Close Account';
         }
     });
 }
