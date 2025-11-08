@@ -103,8 +103,7 @@ if (confirmSignOut) {
 // Close Account functionality
 if (closeAccountBtn) {
     closeAccountBtn.addEventListener('click', async () => {
-        // Update modal content based on account type
-        const modalContent = document.querySelector('#close-account-modal .modal-content');
+        const modalBody = document.querySelector('#close-account-modal .modal-body');
         
         if (isGoogleAccount) {
             // Google account - show confirmation checkbox instead of password

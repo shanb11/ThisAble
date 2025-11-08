@@ -49,7 +49,7 @@ require_login(); // Add this line to enforce login check
             <?php include('../../modals/candidate/settings_closeacc_modal.php'); ?>
 
         </div>
-
+ 
         <!-- Accessibility Elements -->
         <?php include('../../includes/candidate/accessibility_panel.php'); ?>
 

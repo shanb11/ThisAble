@@ -15,4 +15,4 @@
             <button class="btn btn-danger" id="confirm-close-account">Close Account</button>
         </div>
     </div>
-</div>
+</div> 
