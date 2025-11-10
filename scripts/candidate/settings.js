@@ -103,11 +103,12 @@ if (confirmSignOut) {
 // Close Account functionality
 if (closeAccountBtn) {
     closeAccountBtn.addEventListener('click', async () => {
+        // Update modal content based on account type
         const modalBody = document.querySelector('#close-account-modal .modal-body');
         
         if (isGoogleAccount) {
             // Google account - show confirmation checkbox instead of password
-            modalContent.innerHTML = `
+            modalBody.innerHTML = `
                 <h3>Close Your Account</h3>
                 <p style="margin: 15px 0;">You're about to close your account. This action will:</p>
                 <ul style="margin-left: 20px; margin-bottom: 15px;">
@@ -127,7 +128,7 @@ if (closeAccountBtn) {
             `;
         } else {
             // Regular account - show password field
-            modalContent.innerHTML = `
+            modalBody.innerHTML = `
                 <h3>Close Your Account</h3>
                 <p style="margin: 15px 0;">Please enter your password to confirm account closure.</p>
                 <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin: 15px 0; border-left: 4px solid #ffc107;">
@@ -194,13 +195,13 @@ if (confirmCloseAccount) {
                 
                 // Show success message
                 alert(result.message || 'Your account has been closed successfully. You have 30 days to reactivate by logging in again.');
-                
+
                 // Close modal
                 closeAccountModal.classList.remove('show');
-                
+
                 // Redirect to login page
                 setTimeout(() => {
-                    window.location.href = 'login.html';
+                    window.location.href = 'login.php';
                 }, 1000);
                 
             } else {

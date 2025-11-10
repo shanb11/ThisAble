@@ -9,6 +9,12 @@
 session_start();
 require_once '../db.php';
 
+// TEMPORARY DEBUG - Remove after testing
+error_log("=== CLOSE ACCOUNT DEBUG START ===");
+error_log("Session seeker_id: " . (isset($_SESSION['seeker_id']) ? $_SESSION['seeker_id'] : 'NOT SET'));
+error_log("POST data: " . print_r($_POST, true));
+error_log("=== CLOSE ACCOUNT DEBUG END ===");
+
 header('Content-Type: application/json');
 
 // Only accept POST requests
@@ -100,10 +106,9 @@ try {
         // 2. Withdraw all pending job applications
         $stmt = $conn->prepare("
             UPDATE job_applications 
-            SET application_status = 'withdrawn',
-                updated_at = NOW()
+            SET application_status = 'withdrawn'
             WHERE seeker_id = ? 
-            AND application_status IN ('pending', 'under_review', 'shortlisted')
+            AND application_status IN ('pending', 'under_review', 'shortlisted', 'submitted', 'interview_scheduled')
         ");
         $stmt->execute([$seeker_id]);
         
