@@ -26,7 +26,7 @@ $diagnostics = [
     ],
     'environment' => [
         'RAILWAY_ENVIRONMENT' => getenv('RAILWAY_ENVIRONMENT') ?: 'not set',
-        'has_mysql_url' => getenv('MYSQL_URL') !== false,
+        'has_mysql_url' => getenv('MYSQL_URL') !== false,   
     ],
     'uploads_directory' => [
         'path' => __DIR__ . '/uploads/resumes',
