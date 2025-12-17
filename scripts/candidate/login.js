@@ -195,11 +195,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     // Redirect based on account setup status
                     if (data.setup_complete) {
-                        window.location.href = '../candidate/dashboard.php';
+                        window.location.href = window.APP_BASE_URL + 'frontend/candidate/dashboard.php';
                     } else {
                         // Use the redirect_page from server response
                         const redirectPage = data.redirect_page || 'accountsetup.php';
-                        window.location.href = '../candidate/' + redirectPage;
+                        window.location.href = window.APP_BASE_URL + 'frontend/candidate/' + redirectPage;
                     }
                 } else {
                     alert(data.message || 'Login failed');

@@ -172,9 +172,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     } else {
                         // Default redirect based on setup status
                         if (result.data && result.data.setup_info && !result.data.setup_info.setup_complete) {
-                            window.location.href = 'empaccsetup.php';
+                            window.location.href = window.APP_BASE_URL + 'frontend/employer/empaccsetup.php';
                         } else {
-                            window.location.href = 'empdashboard.php';
+                            window.location.href = window.APP_BASE_URL + 'frontend/employer/empdashboard.php';
                         }
                     }
                 }, 1500);
