@@ -53,7 +53,7 @@ if (session_status() === PHP_SESSION_NONE) {
         }
         ?>
 
-        <script src="../../scripts/api-config.js"></script>
-        <script src="../../scripts/candidate/login.js"></script>
+        <script src="../../scripts/api-config.js?v=2"></script>
+        <script src="../../scripts/candidate/login.js?v=2"></script>
     </body>
 </html>

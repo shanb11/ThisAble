@@ -7,14 +7,31 @@ require_once('../../backend/db.php');
 // Google API configuration
 $clientID = '83628564105-ebo9ng5modqfhkgepbm55rkv92d669l9.apps.googleusercontent.com';
 $clientSecret = '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';
-// Detect environment dynamically
+
+// ✅ FIXED: Detect environment and set BASE_URL
 $hostname = $_SERVER['HTTP_HOST'] ?? 'localhost';
+if (strpos($hostname, 'localhost') !== false) {
+    $BASE_URL = '/ThisAble/';
+} elseif (strpos($hostname, 'infinityfree.me') !== false) {
+    $BASE_URL = '/';
+} elseif (strpos($hostname, 'railway.app') !== false) {
+    $BASE_URL = '/';
+} else {
+    $BASE_URL = '/';
+}
+
+// Set redirect URI based on environment
 $isProduction = (strpos($hostname, 'railway.app') !== false || 
-                 strpos($hostname, 'up.railway.app') !== false);
+                 strpos($hostname, 'up.railway.app') !== false ||
+                 strpos($hostname, 'infinityfree.me') !== false);
 
 if ($isProduction) {
-    // Production Railway URL
-    $redirectUri = 'https://thisable-production.up.railway.app/backend/candidate/google_auth.php';
+    // Production URLs
+    if (strpos($hostname, 'infinityfree.me') !== false) {
+        $redirectUri = 'https://' . $hostname . '/backend/candidate/google_auth.php';
+    } else {
+        $redirectUri = 'https://thisable-production.up.railway.app/backend/candidate/google_auth.php';
+    }
 } else {
     // Local development URL
     $redirectUri = 'http://localhost/ThisAble/backend/candidate/google_auth.php';
@@ -47,8 +64,8 @@ if (isset($_GET['code'])) {
     $result = file_get_contents($tokenUrl, false, $context);
     
     if ($result === FALSE) {
-        // Handle error
-        header('Location: ../../frontend/candidate/login.php?error=google_auth_failed');
+        // ✅ FIXED: Use BASE_URL
+        header('Location: ' . $BASE_URL . 'frontend/candidate/login.php?error=google_auth_failed');
         exit;
     }
     
@@ -67,7 +84,8 @@ if (isset($_GET['code'])) {
     $userInfo = file_get_contents($userInfoUrl, false, $context);
     
     if ($userInfo === FALSE) {
-        header('Location: ../../frontend/candidate/login.php?error=google_userinfo_failed');
+        // ✅ FIXED: Use BASE_URL
+        header('Location: ' . $BASE_URL . 'frontend/candidate/login.php?error=google_userinfo_failed');
         exit;
     }
     
@@ -91,8 +109,8 @@ if (isset($_GET['code'])) {
         $_SESSION['user_name'] = $user['first_name'];
         $_SESSION['logged_in'] = true;
         
-        // Redirect to dashboard
-        header('Location: ../../frontend/candidate/dashboard.php');
+        // ✅ FIXED: Redirect to dashboard using BASE_URL
+        header('Location: ' . $BASE_URL . 'frontend/candidate/dashboard.php');
         exit;
     } else {
         // New user - Store in session and redirect to complete profile form
@@ -103,8 +121,8 @@ if (isset($_GET['code'])) {
             'profile_picture' => $userInfo['picture'] ?? ''
         ];
         
-        // Redirect back to login page with special parameter to show the PWD details modal
-        header('Location: ../../frontend/candidate/login.php?show_pwd_details=1');
+        // ✅ FIXED: Redirect back to login page using BASE_URL
+        header('Location: ' . $BASE_URL . 'frontend/candidate/login.php?show_pwd_details=1');
         exit;
     }
 } else {

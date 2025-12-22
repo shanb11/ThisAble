@@ -4,27 +4,42 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 require_once('../db.php');
 
-// Google API configuration - Same as candidates
+// Google API configuration
 $clientID = '83628564105-ebo9ng5modqfhkgepbm55rkv92d669l9.apps.googleusercontent.com';
 $clientSecret = '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';
-// Detect environment dynamically
+
+// ✅ FIXED: Detect environment and set BASE_URL
 $hostname = $_SERVER['HTTP_HOST'] ?? 'localhost';
+if (strpos($hostname, 'localhost') !== false) {
+    $BASE_URL = '/ThisAble/';
+} elseif (strpos($hostname, 'infinityfree.me') !== false) {
+    $BASE_URL = '/';
+} elseif (strpos($hostname, 'railway.app') !== false) {
+    $BASE_URL = '/';
+} else {
+    $BASE_URL = '/';
+}
+
+// Set redirect URI based on environment
 $isProduction = (strpos($hostname, 'railway.app') !== false || 
-                 strpos($hostname, 'up.railway.app') !== false);
+                 strpos($hostname, 'up.railway.app') !== false ||
+                 strpos($hostname, 'infinityfree.me') !== false);
 
 if ($isProduction) {
-    // Production Railway URL
-    $redirectUri = 'https://thisable-production.up.railway.app/backend/employer/google_auth.php';
+    if (strpos($hostname, 'infinityfree.me') !== false) {
+        $redirectUri = 'https://' . $hostname . '/backend/employer/google_auth.php';
+    } else {
+        $redirectUri = 'https://thisable-production.up.railway.app/backend/employer/google_auth.php';
+    }
 } else {
-    // Local development URL
     $redirectUri = 'http://localhost/ThisAble/backend/employer/google_auth.php';
 }
+
 // Check if this is a callback from Google
 if (isset($_GET['code'])) {
-    // Handle Google OAuth callback
     $code = $_GET['code'];
     
-    // Exchange the authorization code for an access token
+    // Exchange authorization code for access token
     $tokenUrl = 'https://oauth2.googleapis.com/token';
     $data = [
         'code' => $code,
@@ -42,18 +57,18 @@ if (isset($_GET['code'])) {
         ]
     ];
     
-    $context  = stream_context_create($options);
+    $context = stream_context_create($options);
     $result = file_get_contents($tokenUrl, false, $context);
     
     if ($result === FALSE) {
-        // Handle error
-        header('Location: ../../frontend/employer/emplogin.php?error=google_auth_failed');
+        // ✅ FIXED: Use BASE_URL
+        header('Location: ' . $BASE_URL . 'frontend/employer/emplogin.php?error=google_auth_failed');
         exit;
     }
     
     $token = json_decode($result, true);
     
-    // Get user information with the access token
+    // Get user information
     $userInfoUrl = 'https://www.googleapis.com/oauth2/v2/userinfo';
     $options = [
         'http' => [
@@ -66,7 +81,8 @@ if (isset($_GET['code'])) {
     $userInfo = file_get_contents($userInfoUrl, false, $context);
     
     if ($userInfo === FALSE) {
-        header('Location: ../../frontend/employer/emplogin.php?error=google_userinfo_failed');
+        // ✅ FIXED: Use BASE_URL
+        header('Location: ' . $BASE_URL . 'frontend/employer/emplogin.php?error=google_userinfo_failed');
         exit;
     }
     
@@ -95,11 +111,11 @@ if (isset($_GET['code'])) {
         $_SESSION['company_name'] = $employer['company_name'];
         $_SESSION['logged_in'] = true;
         
-        // Check setup status and redirect accordingly
+        // ✅ FIXED: Check setup status and redirect using BASE_URL
         if ($employer['setup_complete']) {
-            header('Location: ../../frontend/employer/empdashboard.php');
+            header('Location: ' . $BASE_URL . 'frontend/employer/empdashboard.php');
         } else {
-            header('Location: ../../frontend/employer/empaccsetup.php');
+            header('Location: ' . $BASE_URL . 'frontend/employer/empaccsetup.php');
         }
         exit;
     } else {
@@ -111,8 +127,8 @@ if (isset($_GET['code'])) {
             'profile_picture' => $userInfo['picture'] ?? ''
         ];
         
-        // Redirect to company setup page
-        header('Location: ../../frontend/employer/empsignup.php?google_setup=1');
+        // ✅ FIXED: Redirect to company setup page using BASE_URL
+        header('Location: ' . $BASE_URL . 'frontend/employer/empsignup.php?google_setup=1');
         exit;
     }
 } else {

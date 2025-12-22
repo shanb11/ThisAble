@@ -481,7 +481,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     sessionStorage.removeItem('pwdVerificationToken');
                     
                     alert('Profile completed successfully! Redirecting to account setup...');
-                    window.location.href = '../../frontend/candidate/accountsetup.php';
+                    const baseUrl = (typeof window.APP_BASE_URL !== 'undefined') ? window.APP_BASE_URL : (typeof API !== 'undefined' && API.baseUrl) ? API.baseUrl : '/';
+                    window.location.href = baseUrl + 'frontend/candidate/accountsetup.php';
                 } else {
                     const formErrors = document.getElementById('formErrors');
                     if (formErrors) {

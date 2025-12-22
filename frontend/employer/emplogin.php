@@ -36,7 +36,7 @@ if (session_status() === PHP_SESSION_NONE) {
         <?php include('../../modals/candidate/selection_modal.php'); ?>
 
         <!-- Use employer-specific JavaScript -->
-        <script src="../../scripts/api-config.js"></script>
-        <script src="../../scripts/employer/emplogin.js"></script>
+        <script src="../../scripts/api-config.js?v=2"></script>
+        <script src="../../scripts/employer/emplogin.js?v=2"></script>
     </body>
 </html>

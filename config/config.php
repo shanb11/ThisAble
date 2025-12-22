@@ -1,12 +1,7 @@
 <?php
 /**
- * ThisAble Configuration File
- * Auto-detects environment and sets appropriate paths
- * 
- * Works on:
- * - Localhost (XAMPP): /ThisAble/
- * - InfinityFree: /
- * - Railway: /
+ * ThisAble Configuration File - FIXED FOR INFINITYFREE
+ * Replaced heredoc syntax with simple echo for compatibility
  */
 
 // Detect environment based on hostname
@@ -31,7 +26,7 @@ if (strpos($hostname, 'localhost') !== false || strpos($hostname, '127.0.0.1') !
     define('ENVIRONMENT', 'production');
 }
 
-// API Base URL (same as BASE_URL in most cases)
+// API Base URL
 define('API_BASE_URL', BASE_URL . 'api/');
 
 // Asset paths
@@ -41,41 +36,27 @@ define('JS_URL', BASE_URL . 'scripts/');
 
 /**
  * Output JavaScript configuration
- * Call this in <head> section: <?php output_js_config(); ?>
+ * FIXED: Using simple echo instead of heredoc for InfinityFree compatibility
  */
 function output_js_config() {
     $baseUrl = BASE_URL;
     $apiBaseUrl = API_BASE_URL;
     $environment = ENVIRONMENT;
     
-    echo <<<HTML
-<script>
-    // ThisAble Configuration
-    window.APP_BASE_URL = '{$baseUrl}';
-    window.API_BASE_URL = '{$apiBaseUrl}';
-    window.ENVIRONMENT = '{$environment}';
+    // Use simple echo statements instead of heredoc
+    echo '<script>';
+    echo 'window.APP_BASE_URL = "' . $baseUrl . '";';
+    echo 'window.API_BASE_URL = "' . $apiBaseUrl . '";';
+    echo 'window.ENVIRONMENT = "' . $environment . '";';
+    echo 'window.url = function(path) { path = path.replace(/^\/+/, ""); return window.APP_BASE_URL + path; };';
+    echo 'window.apiUrl = function(endpoint) { endpoint = endpoint.replace(/^\/+/, ""); return window.API_BASE_URL + endpoint; };';
     
-    // Helper functions
-    window.url = function(path) {
-        path = path.replace(/^\/+/, '');
-        return window.APP_BASE_URL + path;
-    };
-    
-    window.apiUrl = function(endpoint) {
-        endpoint = endpoint.replace(/^\/+/, '');
-        return window.API_BASE_URL + endpoint;
-    };
-    
-    // Log config (development only)
-    if (window.ENVIRONMENT === 'development') {
-        console.log('ThisAble Config:', {
-            baseUrl: window.APP_BASE_URL,
-            apiBaseUrl: window.API_BASE_URL,
-            environment: window.ENVIRONMENT
-        });
+    // Log config in development mode
+    if ($environment === 'development') {
+        echo 'console.log("ThisAble Config:", { baseUrl: window.APP_BASE_URL, apiBaseUrl: window.API_BASE_URL, environment: window.ENVIRONMENT });';
     }
-</script>
-HTML;
+    
+    echo '</script>';
 }
 
 /**
