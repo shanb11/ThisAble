@@ -1,24 +1,18 @@
 <?php
 /**
- * Jobs API for ThisAble Landing Page - FIXED FOR SUPABASE
+ * Jobs API - HTACCESS HANDLES CORS
  * File: api/shared/jobs.php
+ * 
+ * IMPORTANT: CORS headers removed from PHP - .htaccess handles them
+ * This prevents duplicate headers that confuse browsers
  */
 
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization');
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
+// NO CORS HEADERS HERE - .htaccess handles them!
 
 try {
-    // ✅ FIXED: Use proper Supabase database connection
+    // Use proper database connection
     require_once __DIR__ . '/../config/database.php';
     
-    // ✅ FIXED: Use $conn from database.php (not $pdo)
     if (!isset($conn) || $conn === null) {
         throw new Exception("Database connection failed");
     }
@@ -31,7 +25,7 @@ try {
     $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 20;
     $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
 
-    // PostgreSQL compatible query
+    // Build SQL query
     $sql = "SELECT 
                 jp.job_id,
                 jp.job_title,
@@ -53,7 +47,7 @@ try {
                 e.industry,
                 e.industry_id,
                 i.industry_name,
-                EXTRACT(DAY FROM (NOW() - COALESCE(jp.posted_at, jp.created_at))) as days_ago
+                DATEDIFF(NOW(), COALESCE(jp.posted_at, jp.created_at)) as days_ago
             FROM job_posts jp
             JOIN employers e ON jp.employer_id = e.employer_id
             LEFT JOIN industries i ON e.industry_id = i.industry_id
@@ -133,7 +127,7 @@ try {
             'remote_work' => (bool)$job['remote_work_available'],
             'flexible_schedule' => (bool)$job['flexible_schedule'],
             'posted_date' => $job['posted_at'] ?? $job['created_at'],
-            'days_ago' => (int)$job['days_ago'],
+            'days_ago' => (int)($job['days_ago'] ?? 0),
             'views_count' => (int)$job['views_count'],
             'applications_count' => (int)$job['applications_count'],
             'job_description' => $job['job_description'],
@@ -142,12 +136,16 @@ try {
         ];
     }
 
-    // Get total count
-    $countSql = "SELECT COUNT(*) as total FROM job_posts jp 
-                 JOIN employers e ON jp.employer_id = e.employer_id 
+    // Get total count for pagination
+    $countSql = "SELECT COUNT(*) as total
+                 FROM job_posts jp
+                 JOIN employers e ON jp.employer_id = e.employer_id
+                 LEFT JOIN industries i ON e.industry_id = i.industry_id
                  WHERE jp.job_status = 'active'";
+    
     $countParams = [];
-
+    
+    // Apply same filters to count query
     if (!empty($search)) {
         $countSql .= " AND (jp.job_title LIKE ? OR jp.job_description LIKE ? OR jp.job_requirements LIKE ? OR e.company_name LIKE ?)";
         $searchTerm = "%{$search}%";
@@ -156,31 +154,48 @@ try {
         $countParams[] = $searchTerm;
         $countParams[] = $searchTerm;
     }
-
+    
     if (!empty($location)) {
         $countSql .= " AND jp.location LIKE ?";
         $countParams[] = "%{$location}%";
     }
+    
+    if (!empty($category)) {
+        $categoryMap = [
+            'education' => ['Education', 'Training', 'Teaching'],
+            'office' => ['Administration', 'Office', 'Administrative'],
+            'customer' => ['Customer Service', 'Support', 'Call Center'],
+            'business' => ['Business', 'Management', 'Operations'],
+            'healthcare' => ['Healthcare', 'Medical', 'Wellness', 'Health'],
+            'finance' => ['Finance', 'Accounting', 'Banking'],
+            'engineering' => ['Engineering', 'Technical', 'IT'],
+            'design' => ['Design', 'Creative', 'Art'],
+            'marketing' => ['Marketing', 'Sales', 'Advertising']
+        ];
 
-    if (!empty($category) && isset($categoryMap[$category])) {
-        $categoryConditions = [];
-        foreach ($categoryMap[$category] as $dept) {
-            $categoryConditions[] = "jp.department LIKE ?";
-            $countParams[] = "%{$dept}%";
+        if (isset($categoryMap[$category])) {
+            $categoryConditions = [];
+            foreach ($categoryMap[$category] as $dept) {
+                $categoryConditions[] = "jp.department LIKE ?";
+                $countParams[] = "%{$dept}%";
+            }
+            $countSql .= " AND (" . implode(' OR ', $categoryConditions) . ")";
         }
-        $countSql .= " AND (" . implode(' OR ', $categoryConditions) . ")";
     }
-
+    
     if (!empty($job_type)) {
         $countSql .= " AND jp.employment_type = ?";
         $countParams[] = $job_type;
     }
-
+    
     $countStmt = $conn->prepare($countSql);
     $countStmt->execute($countParams);
     $totalCount = (int)$countStmt->fetch(PDO::FETCH_ASSOC)['total'];
 
-    // Return success response
+    // Set content type (still needed for JSON)
+    header('Content-Type: application/json; charset=UTF-8');
+    
+    // Return response
     echo json_encode([
         'success' => true,
         'data' => [
@@ -203,6 +218,8 @@ try {
 
 } catch (PDOException $e) {
     error_log("Database Error in jobs.php: " . $e->getMessage());
+    header('Content-Type: application/json; charset=UTF-8');
+    http_response_code(500);
     echo json_encode([
         'success' => false,
         'message' => 'Database connection error: ' . $e->getMessage(),
@@ -210,6 +227,8 @@ try {
     ]);
 } catch (Exception $e) {
     error_log("General Error in jobs.php: " . $e->getMessage());
+    header('Content-Type: application/json; charset=UTF-8');
+    http_response_code(500);
     echo json_encode([
         'success' => false,
         'message' => 'Server error: ' . $e->getMessage(),

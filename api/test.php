@@ -1,7 +1,11 @@
 <?php
 /**
- * API Test Endpoint for ThisAble Mobile
+ * API Test Endpoint for ThisAble Mobile - UPDATED
+ * Tests both API availability AND database connection
+ * Correctly detects InfinityFree vs XAMPP
+ * 
  * Save as: C:\xampp\htdocs\ThisAble\api\test.php
+ * Upload to: /htdocs/api/test.php (InfinityFree)
  */
 
 // Basic CORS headers for Flutter
@@ -21,6 +25,14 @@ try {
     $timestamp = date('Y-m-d H:i:s');
     $client_ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
     $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
+    
+    // ✅ FIXED: Detect environment based on hostname (like database.php does)
+    $hostname = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $isProduction = (strpos($hostname, 'infinityfree.me') !== false || 
+                     strpos($hostname, 'infinityfree.com') !== false ||
+                     strpos($hostname, 'infinityfreeapp.com') !== false);
+    
+    $environment = $isProduction ? 'InfinityFree Production' : 'Local XAMPP';
     
     // Detect platform from User-Agent
     $platform = 'Unknown';
@@ -42,10 +54,42 @@ try {
     
     // Special detection for emulators
     $is_emulator = false;
-    if ($client_ip === '10.0.2.2' || strpos($user_agent, 'Android') !== false && strpos($user_agent, 'Chrome') !== false) {
+    if ($client_ip === '10.0.2.2' || (strpos($user_agent, 'Android') !== false && strpos($user_agent, 'Chrome') !== false)) {
         $is_emulator = 'Likely Android Emulator';
     } elseif ($client_ip === '127.0.0.1' || $client_ip === '::1') {
         $is_emulator = 'Localhost/Simulator';
+    }
+    
+    // ✅ NEW: Test database connection
+    $database_status = 'Not tested';
+    $database_info = [];
+    
+    try {
+        // Include the database configuration
+        require_once __DIR__ . '/config/database.php';
+        
+        if (isset($conn)) {
+            // Test query to verify connection
+            $stmt = $conn->query("SELECT COUNT(*) as total FROM job_seekers");
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            $database_status = $isProduction 
+                ? 'Connected to InfinityFree MySQL' 
+                : 'Connected to Local MySQL (XAMPP)';
+            
+            $database_info = [
+                'connection' => 'Active',
+                'environment' => $environment,
+                'total_candidates' => $result['total'] ?? 0
+            ];
+        } else {
+            $database_status = 'Database connection object not found';
+        }
+    } catch (Exception $db_error) {
+        $database_status = 'Database connection failed';
+        $database_info = [
+            'error' => $db_error->getMessage()
+        ];
     }
     
     // Success response with detailed info
@@ -58,12 +102,18 @@ try {
                 'ip' => $client_ip,
                 'platform' => $platform,
                 'emulator_detected' => $is_emulator,
-                'user_agent' => substr($user_agent, 0, 100) . '...' // Truncate for readability
+                'user_agent' => substr($user_agent, 0, 100) . '...'
             ],
             'server_info' => [
                 'php_version' => phpversion(),
                 'server_software' => $_SERVER['SERVER_SOFTWARE'] ?? 'unknown',
-                'xampp_detected' => strpos($_SERVER['SERVER_SOFTWARE'] ?? '', 'Apache') !== false
+                'environment' => $environment,
+                'hostname' => $hostname,
+                'is_production' => $isProduction
+            ],
+            'database_info' => [
+                'status' => $database_status,
+                'details' => $database_info
             ],
             'api_info' => [
                 'project' => 'ThisAble Mobile API',
@@ -75,11 +125,11 @@ try {
     ];
     
     // Log successful connection
-    error_log("ThisAble API Test - SUCCESS - Platform: $platform - IP: $client_ip - Time: $timestamp");
+    error_log("ThisAble API Test - SUCCESS - Environment: $environment - Platform: $platform - IP: $client_ip - DB: $database_status");
     
     // Send response
     http_response_code(200);
-    echo json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    echo json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     
 } catch (Exception $e) {
     // Error response

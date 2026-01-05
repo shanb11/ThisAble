@@ -1,11 +1,13 @@
 <?php
 /**
- * API Database Configuration - Railway MySQL Compatible
- * UPDATED: Now uses MySQL instead of PostgreSQL (Supabase)
- * Works on Railway (production) and localhost (XAMPP)
+ * API Database Configuration - InfinityFree MySQL Compatible
+ * UPDATED: Now detects InfinityFree instead of Railway
+ * Works on InfinityFree (production) and localhost (XAMPP)
+ * 
+ * This is for the MOBILE API endpoints in /api folder
  */
 
-// Enhanced environment variable reading
+// Enhanced environment variable reading (kept for compatibility)
 function getEnvVar($key, $default = null) {
     if (isset($_ENV[$key]) && $_ENV[$key] !== '') {
         return $_ENV[$key];
@@ -23,40 +25,27 @@ function getEnvVar($key, $default = null) {
     return $default;
 }
 
-// Detect environment
+// Detect environment based on hostname
 $hostname = $_SERVER['HTTP_HOST'] ?? 'localhost';
-$isProduction = (strpos($hostname, 'railway.app') !== false || 
-                 strpos($hostname, 'up.railway.app') !== false);
+$isProduction = (strpos($hostname, 'infinityfree.me') !== false || 
+                 strpos($hostname, 'infinityfree.com') !== false ||
+                 strpos($hostname, 'infinityfreeapp.com') !== false);
 
 try {
     if ($isProduction) {
-        // ===== PRODUCTION: Railway MySQL =====
-        error_log("🌐 API: PRODUCTION ENVIRONMENT DETECTED (Railway)");
+        // ===== PRODUCTION: InfinityFree MySQL =====
+        error_log("🌐 API: PRODUCTION ENVIRONMENT DETECTED (InfinityFree)");
         
-        // Try to get from MYSQL_URL first (Railway's standard variable)
-        $mysql_url = getenv('MYSQL_URL');
+        $host = "sql202.infinityfree.com";
+        $port = "3306";
+        $dbname = "if0_40570875_jobportal";
+        $username = "if0_40570875";
+        $password = "i10cRqDoVjtsm";
         
-        if ($mysql_url) {
-            // Parse the MYSQL_URL
-            $parsed = parse_url($mysql_url);
-            $host = $parsed['host'] ?? 'localhost';
-            $port = $parsed['port'] ?? '3306';
-            $dbname = isset($parsed['path']) ? ltrim($parsed['path'], '/') : 'railway';
-            $username = $parsed['user'] ?? 'root';
-            $password = $parsed['pass'] ?? '';
-        } else {
-            // Fallback to individual environment variables
-            $host = getenv('MYSQLHOST') ?: getenv('MYSQL_HOST') ?: 'localhost';
-            $port = getenv('MYSQLPORT') ?: getenv('MYSQL_PORT') ?: '3306';
-            $dbname = getenv('MYSQLDATABASE') ?: getenv('MYSQL_DATABASE') ?: 'railway';
-            $username = getenv('MYSQLUSER') ?: getenv('MYSQL_USER') ?: 'root';
-            $password = getenv('MYSQLPASSWORD') ?: getenv('MYSQL_PASSWORD') ?: '';
-        }
-        
-        error_log("🔧 API: Connecting to Railway MySQL");
+        error_log("🔧 API: Connecting to InfinityFree MySQL");
         error_log("🔧 API: Host=$host, Port=$port, DB=$dbname");
         
-        // MySQL connection for Railway
+        // MySQL connection for InfinityFree
         $conn = new PDO(
             "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4",
             $username,
@@ -71,10 +60,10 @@ try {
             ]
         );
         
-        error_log("✅ API: Connected to Railway MySQL successfully!");
+        error_log("✅ API: Connected to InfinityFree MySQL successfully!");
         
     } else {
-        // ===== LOCAL DEVELOPMENT: Localhost MySQL (XAMPP) =====
+        // ===== DEVELOPMENT: Localhost MySQL (XAMPP) =====
         error_log("💻 API: LOCAL ENVIRONMENT DETECTED (XAMPP)");
         
         $host = "localhost";
@@ -104,7 +93,7 @@ try {
 } catch(PDOException $e) {
     error_log("❌ API: DATABASE CONNECTION FAILED");
     error_log("❌ API: Error: " . $e->getMessage());
-    error_log("❌ API: Environment: " . ($isProduction ? 'PRODUCTION (Railway)' : 'LOCAL (XAMPP)'));
+    error_log("❌ API: Environment: " . ($isProduction ? 'PRODUCTION (InfinityFree)' : 'LOCAL (XAMPP)'));
     
     http_response_code(500);
     die(json_encode([
@@ -174,83 +163,36 @@ class ApiDatabase {
             
             $conn = self::getConnection();
             
-            // MySQL syntax - use NOW() instead of PostgreSQL's NOW()
+            // MySQL syntax
             $stmt = $conn->prepare("SELECT user_id, user_type FROM api_tokens 
-                                   WHERE token = ? AND is_active = 1 
+                                   WHERE token = ? 
+                                   AND is_active = 1 
                                    AND expires_at > NOW()");
             $stmt->execute([$token]);
             
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if ($result) {
-                error_log("🔐 TOKEN VALID: user={$result['user_id']}, type={$result['user_type']}");
+                error_log("🔐 TOKEN VALID");
                 
                 // Update last_used timestamp
                 $updateStmt = $conn->prepare("UPDATE api_tokens SET last_used = NOW() WHERE token = ?");
                 $updateStmt->execute([$token]);
-            } else {
-                error_log("🔐 TOKEN INVALID OR EXPIRED");
+                
+                return [
+                    'valid' => true,
+                    'user_id' => $result['user_id'],
+                    'user_type' => $result['user_type']
+                ];
             }
             
-            return $result;
+            error_log("🔐 TOKEN INVALID");
+            return ['valid' => false];
             
         } catch (Exception $e) {
             error_log("🔐 TOKEN VALIDATION ERROR: " . $e->getMessage());
-            return false;
+            return ['valid' => false];
         }
     }
-}
-
-/**
- * Extract authentication token from request headers
- */
-function getAuthToken() {
-    $headers = getallheaders();
-    $token = null;
-    
-    // Try different header formats (case-insensitive)
-    if (isset($headers['Authorization'])) {
-        $token = str_replace('Bearer ', '', $headers['Authorization']);
-    } elseif (isset($headers['authorization'])) {
-        $token = str_replace('Bearer ', '', $headers['authorization']);
-    } elseif (isset($headers['X-API-Token'])) {
-        $token = $headers['X-API-Token'];
-    } elseif (isset($headers['x-api-token'])) {
-        $token = $headers['x-api-token'];
-    }
-    
-    return $token;
-}
-
-/**
- * Require authentication middleware
- */
-function requireAuth() {
-    $headers = getallheaders();
-    $token = null;
-    
-    if (isset($headers['Authorization'])) {
-        $token = str_replace('Bearer ', '', $headers['Authorization']);
-    } elseif (isset($headers['authorization'])) {
-        $token = str_replace('Bearer ', '', $headers['authorization']);
-    } elseif (isset($headers['X-API-Token'])) {
-        $token = $headers['X-API-Token'];
-    } elseif (isset($headers['x-api-token'])) {
-        $token = $headers['x-api-token'];
-    }
-    
-    if (!$token) {
-        http_response_code(401);
-        die(json_encode(['success' => false, 'message' => 'Authentication required']));
-    }
-    
-    $user = ApiDatabase::validateToken($token);
-    
-    if (!$user) {
-        http_response_code(401);
-        die(json_encode(['success' => false, 'message' => 'Invalid or expired token']));
-    }
-    
-    return $user;
 }
 ?>

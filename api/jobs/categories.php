@@ -1,23 +1,14 @@
 <?php
 /**
- * Job Categories API - TYPE-SAFE VERSION FOR FLUTTER
+ * Job Categories API - HTACCESS HANDLES CORS
  * File: api/jobs/categories.php
  * 
- * CHANGES: 
- * - Replaced ILIKE with LIKE for MySQL
- * - Added empty condition validation
- * - FIXED: Ensures job_count is returned as INTEGER not STRING
+ * IMPORTANT: CORS headers removed from PHP - .htaccess handles them
+ * This prevents duplicate headers that confuse browsers
  */
 
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization');
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
+// NO CORS HEADERS HERE - .htaccess handles them!
+// This prevents duplicate header conflicts
 
 try {
     // Use proper database connection
@@ -99,6 +90,9 @@ try {
         ];
     }
 
+    // Set content type header (still needed for JSON)
+    header('Content-Type: application/json; charset=UTF-8');
+    
     // ✅ Set proper JSON encoding options
     echo json_encode([
         'success' => true,
@@ -108,6 +102,7 @@ try {
     ], JSON_NUMERIC_CHECK); // This ensures numbers stay as numbers, not strings
 
 } catch (PDOException $e) {
+    header('Content-Type: application/json; charset=UTF-8');
     http_response_code(500);
     echo json_encode([
         'success' => false,
@@ -116,6 +111,7 @@ try {
         'timestamp' => date('Y-m-d H:i:s')
     ]);
 } catch (Exception $e) {
+    header('Content-Type: application/json; charset=UTF-8');
     http_response_code(500);
     echo json_encode([
         'success' => false,
